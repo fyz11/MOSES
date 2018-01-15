@@ -1,7 +1,8 @@
 # MOSES (Motion Sensing Superpixels)
 
 <p align="center">
-  <img src="https://github.com/fyz11/MOSES/blob/master/mesh_frame20_green.png" width="200"/>
+  <img src="https://github.com/fyz11/MOSES/blob/master/mesh_frame20_green.png" width="300"/>
+  <img src="https://github.com/fyz11/MOSES/blob/master/mesh_frame20_red.png" width="300"/>
 </p>
 
 ### COPYRIGHT INFORMATION:
