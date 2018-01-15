@@ -1,7 +1,6 @@
 # MOSES (Motion Sensing Superpixels)
 
-
-
+![alt text](https://github.com/fyz11/MOSES/master/mesh_frame20_green.png)
 
 ### COPYRIGHT INFORMATION:
 
