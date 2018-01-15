@@ -2,7 +2,7 @@
 
 
 
-Copyright Information:
+COPYRIGHT INFORMATION:
 
 FOR ACADEMIC AND NON-PROFIT USERS
 ---------------------------------
