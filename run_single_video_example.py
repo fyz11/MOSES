@@ -31,9 +31,9 @@ if __name__=="__main__":
     from Utility_Functions.file_io import read_multiimg_PIL
     from Visualisation_Tools.track_plotting import plot_tracks
     from Track_Filtering.filter_meantracks_superpixels import filter_red_green_tracks
-    from Motion_Analysis.mesh_statistics_tools import construct_MOSES_mesh, from_neighbor_list_to_graph, compute_MOSES_mesh_strain_curve, compute_motion_saliency_map, compute_boundary_formation_index, compute_MOSES_motion_stability_index, compute_max_vccf_cells_before_after_gap, compute_mesh_disorder, compute_spatial_correlation_function, compute_mesh_disorder_index
+    from Motion_Analysis.mesh_statistics_tools import construct_MOSES_mesh, from_neighbor_list_to_graph, compute_MOSES_mesh_strain_curve, construct_mesh_strain_vector, compute_motion_saliency_map, compute_boundary_formation_index, compute_MOSES_mesh_stability_index, compute_max_vccf_cells_before_after_gap, compute_spatial_correlation_function, compute_mesh_principal_strain_angle_ellipse, compute_mesh_order
     from Motion_Analysis.wound_close_sweepline_area_segmentation import wound_sweep_area_segmentation
-    from Visualisation_Tools.mesh_visualisation import visualise_mesh
+    from Visualisation_Tools.mesh_visualisation import visualise_mesh, visualise_mesh_strain_ellipses
     from skimage.filters import gaussian
 
     """
@@ -47,8 +47,9 @@ if __name__=="__main__":
     """
     print 'reading .tif video ...'
     vidstack = read_multiimg_PIL(infile)
-    _, n_rows, n_cols, _ = vidstack.shape
+    n_frames, n_rows, n_cols, _ = vidstack.shape
     
+    print('Size of video: (%d,%d,%d)' %(n_frames,n_rows,n_cols))
     
     """
     3. Superpixel tracks with optical flow algorithm, compute 1 for each relevant color channel.
@@ -57,8 +58,8 @@ if __name__=="__main__":
     
     """
     print 'extracting superpixel tracks from video, can be slow...'
-    meantracks_r = compute_grayscale_vid_superpixel_tracks(vidstack[:,:,:,0], optical_flow_params, n_spixels)
-    meantracks_g = compute_grayscale_vid_superpixel_tracks(vidstack[:,:,:,1], optical_flow_params, n_spixels)
+    optflow_r, meantracks_r = compute_grayscale_vid_superpixel_tracks(vidstack[:,:,:,0], optical_flow_params, n_spixels)
+    optflow_g, meantracks_g = compute_grayscale_vid_superpixel_tracks(vidstack[:,:,:,1], optical_flow_params, n_spixels)
     
     # save the output:
     savetracksmat = ('meantracks_'+infile).replace('.tif', '.mat')
@@ -128,9 +129,7 @@ if __name__=="__main__":
     MOSES_mesh_strain_time_r, MOSES_mesh_neighborlist_r = construct_MOSES_mesh(meantracks_r, dist_thresh=1.2, spixel_size=spixel_size)
     MOSES_mesh_strain_time_g, MOSES_mesh_neighborlist_g = construct_MOSES_mesh(meantracks_g, dist_thresh=1.2, spixel_size=spixel_size)
     
-    MOSES_mesh_strain_r = MOSES_mesh_strain_time_r.mean(axis=-1)
-    MOSES_mesh_strain_g = MOSES_mesh_strain_time_g.mean(axis=-1)
-    
+
     # visualise the two meshes independently by exploiting networkx for a chosen frame .e.g. 20, first turn the neighborlist into a networkx graph object.
     mesh_frame20_networkx_G_red = from_neighbor_list_to_graph(meantracks_r, MOSES_mesh_neighborlist_r, 20)
     mesh_frame20_networkx_G_green = from_neighbor_list_to_graph(meantracks_g, MOSES_mesh_neighborlist_g, 20)
@@ -161,6 +160,17 @@ if __name__=="__main__":
     ax.set_xlim([0,n_cols])
     fig.savefig('mesh_frame20_green.png', dpi=height)
     
+    # we can plot the mesh strain in terms of the local strain ellipse based on the normalised direction of displacement/stretching at the same timepoint.
+    eigenvalues_time, eigenangles_time, stretch_ratio_time, select_time = compute_mesh_principal_strain_angle_ellipse(meantracks_r, MOSES_mesh_neighborlist_r, point_thresh=8)
+    
+    # red ellipses show highly distorted regions (regions of high point density)
+    fig, ax = plt.subplots()
+    ax.imshow(vidstack[20], alpha=0.5)
+    visualise_mesh_strain_ellipses(mesh_frame20_networkx_G_red, meantracks_r[:,20,[1,0]], 
+                                   eigenvalues_time[20], eigenangles_time[20], spixel_size, ax, mask =select_time[20],
+                                   node_size=10, width=.3, linewidths=.5, node_color='k')
+    plt.show()
+    
     
     """
     6. Normalised mesh strain, computes the mesh strain curve for each colour and combines them to produce the normalised mesh strain for the video which is used as a motion signature.
@@ -179,6 +189,8 @@ if __name__=="__main__":
     plt.ylabel('Mesh Strain')
     plt.legend(loc='best')
     plt.savefig('MOSES_mesh_strain_curve_red-green.png', dpi=80, bbox_inches='tight', pad_inches=0)
+    plt.show()
+    
     
     """
     7. Infer the gap closure frame, using image segmentation.
@@ -192,16 +204,14 @@ if __name__=="__main__":
     """
     8. Compute the Metrics Presented in the paper:
         a) Boundary formation index
-        b) Motion Stability Index
+        b) Mesh Stability Index
         c) Max. Velocity cross correlation Index
         d) Spatial Correlation 
-        e) Mesh Disorder Index
+        e) Mesh Order Curve/Index
     """
     #==============================================================================
     #     a) Boundary Formation Index.
     #==============================================================================
-    print 'predicted gap closure frame is: %d' 
-    
     final_saliency_map_r, spatial_time_saliency_map_r = compute_motion_saliency_map(meantracks_r, dist_thresh=5.*spixel_size, shape=(n_rows, n_cols), filt=1, filt_size=spixel_size)
     final_saliency_map_g, spatial_time_saliency_map_g = compute_motion_saliency_map(meantracks_g, dist_thresh=5.*spixel_size, shape=(n_rows, n_cols), filt=1, filt_size=spixel_size)
     
@@ -221,9 +231,9 @@ if __name__=="__main__":
     #==============================================================================
     
     # returns the combined normalised mesh strain curve.
-    motion_stability_index, normalised_mesh_strain_curve = compute_MOSES_motion_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_strain_time_g, last_frames=5)
+    mesh_stability_index, normalised_mesh_strain_curve = compute_MOSES_mesh_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_strain_time_g, last_frames=5)
     
-    print 'motion stability index: %.3f' %(motion_stability_index)
+    print 'mesh stability index: %.3f' %(mesh_stability_index)
     
     #==============================================================================
     #     c) Max. Velocity Cross-Correlation Index
@@ -251,27 +261,42 @@ if __name__=="__main__":
 
     
     #==============================================================================
-    #     e) Mesh Disorder Index + visualization, red ellipses show excluded regions.
+    #     e) Mesh Order Curve + mesh strain vector
     #==============================================================================
-    mesh_disorder_curve_r = compute_mesh_disorder(meantracks_r, MOSES_mesh_neighborlist_r, 2*4, to_plot=True, frame_plot=30) # if to_plot, displays the mesh with ellipses. red ellipses is excluded points due to high density as set by the threshold, blue ellipses is included in calculation.
-    mesh_disorder_curve_g = compute_mesh_disorder(meantracks_g, MOSES_mesh_neighborlist_g, 2*4, to_plot=True, frame_plot=30)
+    mesh_strain_vector_r = construct_mesh_strain_vector(meantracks_r, [MOSES_mesh_neighborlist_r]) # if to_plot, displays the mesh with ellipses. red ellipses is excluded points due to high density as set by the threshold, blue ellipses is included in calculation.
+    mesh_strain_vector_g = construct_mesh_strain_vector(meantracks_g, [MOSES_mesh_neighborlist_g])
 
-    av_mesh_disorder_curve = .5*(mesh_disorder_curve_r+mesh_disorder_curve_g)
-    mesh_disorder_index = compute_mesh_disorder_index(av_mesh_disorder_curve, wound_closure_frame) # mesh disorder index is just the median value before wound closure.
-    
+    mesh_order_curve_r = compute_mesh_order(mesh_strain_vector_r, remove_mean=False)
+    mesh_order_curve_g = compute_mesh_order(mesh_strain_vector_g, remove_mean=False)
     
     plt.figure()
-    plt.title('Mesh Disorder Index (before closure): %.3f' %(mesh_disorder_index))
-    plt.plot(av_mesh_disorder_curve, label='mesh disorder curve')
-    plt.plot(wound_closure_frame-1, av_mesh_disorder_curve[wound_closure_frame-1], 'ko', label='gap closure frame')
-    plt.plot([wound_closure_frame-1, wound_closure_frame-1], [np.min(av_mesh_disorder_curve), av_mesh_disorder_curve[wound_closure_frame-1]], 'k--')
-    plt.plot([0, wound_closure_frame-1], [av_mesh_disorder_curve[wound_closure_frame-1], av_mesh_disorder_curve[wound_closure_frame-1]], 'k--')
+    plt.title('Mesh Order')
+    plt.plot(mesh_order_curve_r, label='Red')
+    plt.plot(mesh_order_curve_g, label='Green')
     plt.legend(loc='best')
     plt.xlabel('Frame Number')
-    plt.ylabel('Mesh Disorder')
+    plt.ylabel('Mesh Order')
+    plt.show()
+    
 
-    print 'Mesh disorder index of video: %.3f' %(mesh_disorder_index)
-
+    # we can also visualise the mesh strain vector on the mesh using matplotlib quiver plot 
+    fig, ax = plt.subplots()
+    ax.imshow(vidstack[20], alpha=0.5)
+    visualise_mesh(mesh_frame20_networkx_G_red, meantracks_r[:,20,[1,0]], ax, node_size=.5, node_color='r')
+    ax.quiver(meantracks_r[:,20,1], meantracks_r[:,20,0], mesh_strain_vector_r[20,:,1], mesh_strain_vector_r[20,:,0], color='r', scale_units='xy')
+    # note the minus sign for the y vector velocity. This is to abide with image conventions used in python.
+    ax.set_ylim([n_rows,0])
+    ax.set_xlim([0,n_cols])
+    plt.show()
+    
+    fig, ax = plt.subplots()
+    ax.imshow(vidstack[20], alpha=0.5)
+    visualise_mesh(mesh_frame20_networkx_G_green, meantracks_g[:,20,[1,0]], ax, node_size=.5, node_color='g')
+    ax.quiver(meantracks_g[:,20,1], meantracks_g[:,20,0], mesh_strain_vector_g[20,:,1], mesh_strain_vector_g[20,:,0], color='g', scale_units='xy')
+    # note the minus sign for the y vector velocity. This is to abide with image conventions used in python.
+    ax.set_ylim([n_rows,0])
+    ax.set_xlim([0,n_cols])
+    plt.show()
     
     
     

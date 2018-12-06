@@ -107,9 +107,10 @@ def construct_mesh_strain_vector(tracks, neighbours):
     n_regions, n_frames, _ = tracks.shape
 
     if len(neighbours) == 1:
-        continue
-    elif len(neighbours)!= n_frames:
-        raise Exception('number of neighbour lists should equal number of frames or 1')
+        pass
+    else: 
+        if len(neighbours)!= n_frames:
+            raise Exception('number of neighbour lists should equal number of frames or 1')
 
     # now for each superpixel we can compute the average distance to its neighbours. 
     mesh_strain_time_vector = []
