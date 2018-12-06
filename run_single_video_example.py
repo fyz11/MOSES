@@ -269,10 +269,14 @@ if __name__=="__main__":
     mesh_order_curve_r = compute_mesh_order(mesh_strain_vector_r, remove_mean=False)
     mesh_order_curve_g = compute_mesh_order(mesh_strain_vector_g, remove_mean=False)
     
+    print 'mean mesh order red: %.3f' %(np.nanmean(mesh_order_curve_r))
+    print 'mean mesh order green: %.3f' %(np.nanmean(mesh_order_curve_g))
+    
+    
     plt.figure()
     plt.title('Mesh Order')
-    plt.plot(mesh_order_curve_r, label='Red')
-    plt.plot(mesh_order_curve_g, label='Green')
+    plt.plot(mesh_order_curve_r, 'r', label='Red')
+    plt.plot(mesh_order_curve_g, 'g', label='Green')
     plt.legend(loc='best')
     plt.xlabel('Frame Number')
     plt.ylabel('Mesh Order')

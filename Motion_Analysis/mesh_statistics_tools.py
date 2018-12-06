@@ -685,11 +685,12 @@ def vector_order_curve(vector_field, remove_mean=False):
     order_curve = []
 
     for frame in range(n_frames):
-        vectors = vector_field[:,frame]
+        vectors = vector_field[frame,:]
         order = vector_order(vectors, remove_mean=remove_mean)
         order_curve.append(order)
     return np.hstack(order_curve)
     
+
 def compute_mesh_order(mesh_strain_vector, remove_mean=False):
 
     """
