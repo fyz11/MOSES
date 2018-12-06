@@ -502,7 +502,7 @@ def wound_sweep_area_segmentation(vid_stack, spixel_size, max_frame, n_sweeps=50
         plt.plot(x_dist, fitted_dist, 'k--', label='fitted baseline')
         plt.plot(x_dist, 2*np.std(fitted_dist) + fitted_dist, 'r--',label='fitted baseline + 2 s.t.d')
         plt.plot(wound_frame+1, norm_dist[wound_frame], 'b^', ms=15, label='predicted gap close frame')
-        plt.legend(loc='top right')
+        plt.legend(loc='best')
         plt.show()
     
     return wound_frame + 1 # remember to add one onto... 

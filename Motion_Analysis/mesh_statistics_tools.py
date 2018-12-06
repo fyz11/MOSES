@@ -14,6 +14,7 @@ see README.md for details on usage.
 
 #import Visualisation_Tools
 from Visualisation_Tools.mesh_visualisation import visualise_mesh
+import numpy as np 
 
 #==============================================================================
 #  Compute MOSES mesh and the motion stability index.
@@ -85,6 +86,50 @@ def construct_MOSES_mesh(tracks, dist_thresh, spixel_size):
             
     return MOSES_mesh_strain_time.T, nearest_neighbors_refined
 
+
+def construct_mesh_strain_vector(tracks, neighbours):
+    
+    """
+    Given an arbitrary graph defined by a neighbour list, constructs the mesh strain vector for all time
+
+    Inputs:
+    -------
+    tracks: (n_superpixels, n_frames, 2), numpy array of superpixel tracks.
+    neighbours: list of neighbours, the neighbours for n_superpixels over n_frames. If len() of list = 1 and n_frames>1 then we assume the neighbour is fixed and propagate for all time.
+
+    Outputs:
+    --------
+    mesh_strain_time_vector: (n_frames x n_superpixels x 2) numpy array, giving the mean mesh strain vector of each superpixel relative to its neighbours at each time point.
+    """
+    
+    import numpy as np 
+
+    n_regions, n_frames, _ = tracks.shape
+
+    if len(neighbours) == 1:
+        continue
+    elif len(neighbours)!= n_frames:
+        raise Exception('number of neighbour lists should equal number of frames or 1')
+
+    # now for each superpixel we can compute the average distance to its neighbours. 
+    mesh_strain_time_vector = []
+    
+    for i in range(n_frames):
+
+        mesh_strain_frame = [] # initialise.
+        if len(neighbours)==1:
+            neighbours_frame = neighbours[0]
+        else:
+            neighbours_frame = neighbours[i]
+        for j in range(n_regions):
+            effective_strain = np.mean( tracks[neighbours_frame[j], i, :] - tracks[j,i,:][None,:] , axis=0)
+            mesh_strain_frame.append(effective_strain)
+            
+        mesh_strain_time_vector.append(np.array(mesh_strain_frame))
+        
+    mesh_strain_time_vector = np.array(mesh_strain_time_vector)
+            
+    return mesh_strain_time_vector
     
     
 def compute_MOSES_mesh_strain_curve(mesh_strain_time, normalise=False):
@@ -156,10 +201,10 @@ def from_neighbor_list_to_graph(tracks, neighbourlist, frame):
     return G
     
 
-def compute_MOSES_motion_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_strain_time_g, last_frames=24):
+def compute_MOSES_mesh_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_strain_time_g, last_frames=24):
     
     """
-    Compute the motion stability index and return the normalised mesh strain curve for the whole video.
+    Compute the mesh stability index and return the normalised mesh strain curve for the whole video.
     
     Inputs:
     -------
@@ -169,7 +214,7 @@ def compute_MOSES_motion_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_st
     
     Outputs:
     --------
-    motion_stability_index: 1 - normalised grad, grad being computed from the average diff over the last last_frames frames.
+    mesh_stability_index: 1 - normalised grad, grad being computed from the average diff over the last last_frames frames.
     norm_mean_strain: normalised mesh strain curve, the average of the individual divided by max value.
     """
     
@@ -186,9 +231,9 @@ def compute_MOSES_motion_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_st
     grad = np.mean(np.abs(grad))
     grad /= dx_eff
     
-    motion_stability_index = 1. - grad
+    mesh_stability_index = 1. - grad
     
-    return motion_stability_index, norm_mean_strain
+    return mesh_stability_index, norm_mean_strain
     
     
 #==============================================================================
@@ -493,114 +538,75 @@ def compute_local_point_density(tracks, frame, radius):
     return n_neighbours_regions
 
 
-def compute_mesh_disorder(tracks, neighbours, point_thresh, to_plot=False, frame_plot=None):
+def compute_mesh_principal_strain_angle_ellipse(tracks, neighbours, point_thresh):
     
     """
-    Compute the mesh disorder curve, given the region adjacency graph as a neighbour list.
+    Compute the principal strain ellipses at each superpixel point in the constructed mesh where the mesh connections is given in terms of a region adjacency graph (RAG) and the RAG is a neighbour list.
     
     Inputs:
     -------
     tracks: (n_superpixels, n_frames, 2) numpy array of superpixel tracks.
     neighbours: n_superpixels neighbour list describing the neighbours of each superpixel.
     point_thresh: (float or int) threshold for detecting and masking out regions of natural high point density which may introduce artifacts such as the image borders and interfaces.
-    to_plot: (True/False) flag whether or not to plot the pca ellipse strains for diagnosis.
-    frame_plot: only if to_plot is set to True, create the PCA ellipse plot at this frame.
-    
+ 
     Outputs:
     --------
-    ang_var: (n_frames) mean angular variance of the strain ellipses at each frame. 
-        var(ecc*cos(theta)) + var(ecc*sin(theta))
+    eigenvalues_time: n_frames x n_superpixels x 2 eigenvalue of 1st (max_strain) and 2nd (min_strain) eigenvectors.
+    eigenangles_time: n_frames x n_superpixels or principal angles in rads
+    stretch_ratio_time: n_frames x n_superpixels of the stretch ratio which is the eccentricity of an ellipse, sqrt(abs(1-(min_strain**2)/(max_strain**2)))
+    select_time: n_frames x n_superpixels, the binary mask of where the local density exceeds the threshold of high point density
     """
     import numpy as np 
     import pylab as plt 
     import matplotlib as mpl
 
-    
     nframes = tracks.shape[1]
     spixel_size = tracks[1,0,1] - tracks[0,0,1]
     
-    ang_var = np.zeros(nframes)
-    
+    eigenvalues_time = []
     eigenangles_time = []
-    stretch_time = []
+    stretch_ratio_time = []
     select_time = []
-
+    
     for frame in range(nframes):
         
         # think i need the other strain. 
-        eigenvectors, eigenangles, angle_binning  = compute_principal_strain_angles(tracks, neighbours, frame)
+        eigenvalues, eigenangles, angle_binning  = compute_principal_strain_angles(tracks, neighbours, frame)
     
-        # before masking for point density ... (avoid large density of points. )
-        max_strain = np.maximum(eigenvectors[:,0], eigenvectors[:,1])
-        min_strain = np.minimum(eigenvectors[:,0], eigenvectors[:,1]) 
+        # Compute strains
+        max_strain = np.maximum(eigenvalues[:,0], eigenvalues[:,1])
+        min_strain = np.minimum(eigenvalues[:,0], eigenvalues[:,1]) 
 
         stretch_ratio = np.sqrt( np.abs(1. - (min_strain**2) / (max_strain**2) ) )
         
-        stretch_time.append(eigenvectors[None,:])
-        eigenangles_time.append(eigenangles[None,:])
- 
+        eigenvalues_time.append(eigenvalues)
+        eigenangles_time.append(eigenangles)
+        stretch_ratio_time.append(stretch_ratio)
+
         """
         Accounting for density defects... 
         """
         point_neighbors = compute_local_point_density(tracks, frame=frame, radius=spixel_size) 
         select = point_neighbors <= point_thresh
         
-        select_time.append(select[None,:])
+        select_time.append(select)
 
-#        stretch_ratio_select = np.nanmean(stretch_ratio[select])       
-        """
-        Look at the angle ordering  
-        """
-        valid_stretch = stretch_ratio[select][~np.isnan(stretch_ratio[select])]
-        valid_angle = eigenangles[select][~np.isnan(stretch_ratio[select])]
-#        n_order = np.linalg.norm( [np.sum(valid_stretch * np.cos(valid_angle*np.pi/180.)),  np.sum(valid_stretch * np.sin(valid_angle*np.pi/180.))]) / np.sum(valid_stretch)
+    eigenvalues_time = np.array(eigenvalues_time)
+    eigenangles_time = np.array(eigenangles_time)
+    stretch_ratio_time = np.array(stretch_ratio_time)
+    select_time = np.array(select_time)
 
-        var_select = np.var(valid_stretch * np.cos(valid_angle*np.pi/180.)) + np.var(valid_stretch * np.sin(valid_angle*np.pi/180.))
-        
-        ang_var[frame] = var_select
+    if len(eigenvalues_time.shape)==4:
+        eigenvalues_time = eigenvalues_time[:,0]
+    if len(eigenangles_time.shape)==3:
+        eigenangles_time = eigenangles_time[:,0]
+    if len(stretch_ratio_time.shape)==3:
+        stretch_ratio_time = stretch_ratio_time[:,0]
+    if len(select_time.shape)==3:
+        select_time = select_time[:,0] 
 
-    # stack to array.
-    eigenangles_time = np.vstack(eigenangles_time)
-    stretch_time = np.vstack(stretch_time)
-    select_time = np.vstack(select_time)
+    return eigenvalues_time, eigenangles_time, stretch_ratio_time, select_time
     
-    if to_plot:
-        # plot the PCA ellipses..., for all valid... first constructing the region graph.
-        rag_G = from_neighbor_list_to_graph(tracks, neighbours, frame_plot)
-        
-        max_x = np.max(tracks[:,:,1])
-        max_y = np.max(tracks[:,:,0])
-
-        fig_ratio = float(max_y)/max_x
-        scale = 10
-        
-        coords = tracks[:,frame_plot,:]
-        principal_angs = eigenangles_time[frame_plot]
-        principal_strain = stretch_time[frame_plot]
-        select_strain = select_time[frame_plot]
-        
-        fig, ax = plt.subplots(figsize=(1.*scale, fig_ratio*scale))
-        visualise_mesh(rag_G, coords[:,[1,0]], ax, node_size=5, node_color='k')
-        
-        for j in range(len(principal_angs)):
-            
-            ell = mpl.patches.Ellipse(xy=(coords[j,1], coords[j,0]),
-                      width=spixel_size/2.*2*principal_strain[j,0], height=spixel_size/2.*2*principal_strain[j,1],
-                      angle=principal_angs[j])
-    #    ell.set_clip_box(ax.bbox)
-            sel_ = select_strain[j]
-
-            if sel_ == True:
-                ell.set_facecolor('b')
-            elif sel_ == False:
-                ell.set_facecolor('r')
-            ell.set_alpha(0.5)
-            ax.add_artist(ell)
-    
-        ax.set_ylim([max_y,0])
-        ax.set_xlim([0,max_x])
-
-    return ang_var
     
 def fit_spline(x, y, k=4, smooth_factor=50):
 
@@ -626,31 +632,82 @@ def fit_spline(x, y, k=4, smooth_factor=50):
     
     return y_pred, spl
 
-    
-def compute_mesh_disorder_index(mesh_disorder_curve, wound_closure_frame, wound_closure_err=5, spline_order=1):
+
+def vector_order(vectors, remove_mean=False):
     
     """
-    Compute the mesh disorder index, given the mesh disorder curve.
+    also known as the polar order parameter. (with optional subtraction of the mean vector)
     
     Inputs:
     -------
-    mesh_disorder_curve: (n_frames) numpy array, the output of compute_mesh_disorder function
-    wound_closure_frame: predicted frame number for which we the gap is closed.
-    wound_closure_err: margin of error in number of frames giving the fidelity in which we predict wound closure.
-    spline_order: the order of the spline used for interpolation 1-piecewise, 2-piece quadratic etc.
+    vectors: n_vectors x 2, numpy array of directional (x,y) or (y,x) values
+    remove_mean: flag to either compute the order after removal of mean or not.
     
     Outputs:
     --------
-    mesh_disorder_index: (float), giving the mesh disorder. 
+    vorder: scalar, return vector order parameter a.k.a normalised mean vector.
     """
+    
     import numpy as np 
     
-    fitted_strain, spline_fn = fit_spline(np.arange(len(mesh_disorder_curve)), mesh_disorder_curve, k=spline_order, smooth_factor=0.5*np.var(mesh_disorder_curve))
-
-    mesh_disorder_index = np.mean(fitted_strain[:wound_closure_frame-wound_closure_err])
-
-    return mesh_disorder_index
+    mean_vector = np.mean(vectors, axis=0)
     
+    if remove_mean:
+    # remove the mean     
+        v = vectors - mean_vector[None,:]
+    else:
+        v = vectors.copy()
+        
+    # vector order is computed by taking the magnitude effective velocity and dividing by the total magnitude of the vectors
+    vorder = np.linalg.norm(np.sum(v, axis=0))/ float(len(v)  * (np.nanmean( np.linalg.norm(v, axis=1))) + 1e-16)
+    
+    return vorder
+
+def vector_order_curve(vector_field, remove_mean=False):
+    
+    """
+    Given a temporally varying vector field, compute the averaged normalized vector as a measure of order.
+    
+     Inputs:
+    -------
+    vector_field: n_frames x n_vectors x 2, numpy array of directional (x,y) or (y,x) values over n_frames.
+    remove_mean: flag to either compute the order after removal of mean or not.
+    
+    Outputs:
+    --------
+    vorder: n_frames, return vector order parameter at each frame.
+    """
+
+    # here we can use the cosine directionality for measuring this ? and the vorder. 
+    n_frames, n_spixels, _ = vector_field.shape #(x,y) convention.
+    
+    order_curve = []
+
+    for frame in range(n_frames):
+        vectors = vector_field[:,frame]
+        order = vector_order(vectors, remove_mean=remove_mean)
+        order_curve.append(order)
+    return np.hstack(order_curve)
+    
+def compute_mesh_order(mesh_strain_vector, remove_mean=False):
+
+    """
+    Computes the proposed mesh order presented in the paper. This is the vector order but using mesh strain vectors instead as a 'velocity'
+    
+    Inputs:
+    -------
+    mesh_strain_vector: n_frames x n_superpixels x 2, local average mesh strain vector as returned from mesh_statistics_tools.construct_mesh_strain_vector() function.
+    remove_mean: flag to either compute the order after removal of mean or not.   
+    
+    Outputs:
+    --------
+    mesh_order_curve: n_frames, return mesh order parameter at each frame based on the constructed mesh strain vector.
+    """
+
+    mesh_order_curve = vector_order_curve(mesh_strain_vector, remove_mean=remove_mean)
+    
+    return mesh_order_curve
+
     
 def compute_principal_strain_angles(tracks, neighbourhood, frame):
     
@@ -987,33 +1044,3 @@ def correlation_tracks_time(track1, track2):
     av_corr = np.nanmean([x_corr, y_corr])
 
     return av_corr
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
