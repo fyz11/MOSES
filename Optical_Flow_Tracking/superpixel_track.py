@@ -45,7 +45,7 @@ def compute_vid_opt_flow(vidstack, params):
     
     """
     
-    from Eval_dense_optic_flow import Eval_dense_optic_flow
+    from .Eval_dense_optic_flow import Eval_dense_optic_flow
     import numpy as np 
     
     nframes = vidstack.shape[0]
