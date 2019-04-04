@@ -13,7 +13,8 @@ see README.md for details on usage.
 """
 
 #import Visualisation_Tools
-from Visualisation_Tools.mesh_visualisation import visualise_mesh
+#from Visualisation_Tools.mesh_visualisation import visualise_mesh
+from ..Visualisation_Tools.mesh_visualisation import visualise_mesh
 import numpy as np 
 
 #==============================================================================
@@ -558,9 +559,7 @@ def compute_mesh_principal_strain_angle_ellipse(tracks, neighbours, point_thresh
     select_time: n_frames x n_superpixels, the binary mask of where the local density exceeds the threshold of high point density
     """
     import numpy as np 
-    import pylab as plt 
-    import matplotlib as mpl
-
+    
     nframes = tracks.shape[1]
     spixel_size = tracks[1,0,1] - tracks[0,0,1]
     
@@ -1004,7 +1003,6 @@ def compute_spatial_correlation(disps, filt, neighbors):
             move_vector0 = disps[i,:,:]
             move_vector_neighbours = disps[neighbor,:,:]
 
-
             velocity_corr = []
 
             for j in range(len(neighbor)):
@@ -1046,3 +1044,156 @@ def correlation_tracks_time(track1, track2):
     av_corr = np.nanmean([x_corr, y_corr])
 
     return av_corr
+    
+    
+#==============================================================================
+#   Local motion statistics 
+#==============================================================================
+
+def compute_mesh_curl(meantracks, neighbors, filt=None):
+    """
+    Computes the spatial correlation for each superpixel using a time dependent velocity vector.
+    
+    Inputs:
+    -------
+    disps: (n_superpixels, n_frames-1, 2), a numpy array zof superpixel displacement vectors, n_frames here is equal to the truncated length if we choose not to use the entire duration to compute correlation.
+    neighbors: (n_superpixels,) list of numpy array to detail which superpixel ids are the neighbours of the current superpixel index.
+    filt: (n_superpixels,) binary mask to indicate which superpixels to take for the calculation
+    
+    Outputs:
+    --------
+    mesh_curl : for the given region adjacency specified by neighbours return the local cross product of the neighbour vectors relative to the central.
+    
+    """
+    # neighbours is a neighbour list for each superpixel 
+    import numpy as np 
+    
+    disps = meantracks[:,1:] - meantracks[:,:-1] # get the velocity of the position.
+    
+    n_regions = len(neighbors)
+    n_frames = meantracks.shape[1]-1
+    good_index = np.arange(n_regions)[filt]
+
+    mesh_curl = np.zeros((n_regions, n_frames))
+
+    for i in range(n_regions):
+        if i in good_index:
+            
+            neighbor = neighbors[i]
+
+            if len(neighbor) > 0:
+                move_vector0 = disps[i,:,:]
+                pos_vector0 = meantracks[i,:,:]
+
+                move_vector_neighbours = disps[neighbor,:,:]
+                pos_vector_neighbours = meantracks[neighbor, :n_frames, :] # only up to the same number of frames as displacements.            
+
+                for frame_no in range(n_frames):
+                    
+                    vector0 = move_vector0[frame_no]
+                    pos0 = pos_vector0[frame_no]
+
+                    vectorN = move_vector_neighbours[:,frame_no]
+                    posN = pos_vector_neighbours[:,frame_no]
+                    
+                    # curl:  dFy_dx - dFx_dy in 2D.
+                    dxy = posN - pos0[None,:] # physical deltas
+                    dvector = vectorN - vector0[None,:] # velocity deltas
+                     
+#                    print(dvector.min(), dvector.max())
+#                    print(dxy.min(), dxy.max())
+                    val = dvector[:,0]/np.float32(dxy[:,1]) - dvector[:,1]/np.float32(dxy[:,0])
+                    val = np.nanmean(val)
+                    if np.isnan(val) or np.isinf(val):
+                        val = 0
+                    mesh_curl[i, frame_no] = val
+
+    return mesh_curl
+    
+
+#==============================================================================
+#   batch_processing function
+#==============================================================================
+def compute_aggregated_stats_map(meantracks, shape, dist_thresh=None, map_vals=None, max_frame=None, filt=0, filt_size=5):
+    
+    """
+    Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified)
+    
+    Inputs:
+    -------
+    meantracks: (n_superpixels x n_frames x 2), numpy array of superpixel tracks
+    map_vals: (n_superpixels x n_frames), the temporal mesh strain
+    shape: (n_rows x n_cols), image shape
+    max_frame: the final frame to which we aggregate the statistic and compute maps for.
+    filt: (0 or 1), run over the heat map with an average filter or not. if 1, filt_size sets the kernel size for smoothing.
+    filt_size: (float), sigma setting the standard deviation of the gaussian for kernel smoothing.
+    
+    Outputs:
+    --------
+    final_saliency_map: (n_rows x n_cols), heatmap of saliency 
+    spatial_time_saliency_map: (n_frames x n_rows x n_cols), frame by frame heatmap of saliency.
+    
+    """
+    import numpy as np 
+    from skimage.segmentation import slic, relabel_sequential 
+    from skimage.morphology import square
+    import cv2
+    
+    # compute the saliency map
+    if map_vals is None:
+        map_vals = count_dynamic_nn_neighbors(meantracks, dist_thresh, limits=shape)
+    
+    # coerce meantracks into the intended shape 
+    meantracks = np.transpose(meantracks,(1,0,2))
+    nframes, nregions, _ = meantracks.shape
+    
+    # create superpixel map 
+    nrows, ncols = shape
+    
+    # Create the superpixel canvas we will aggregate over. 
+    nothing = np.zeros((nrows, ncols, 3))
+    spixels = slic(nothing, n_segments=nregions)
+    spixels, _,_ = relabel_sequential(spixels)	
+ 
+    regs = np.unique(spixels)
+    # iterate over all the tracks and collate positions. 
+    all_positions  = np.zeros((nrows, ncols))
+
+    if max_frame:
+        end_frame = max_frame
+    else:
+        end_frame = nframes
+    
+    spatial_time_saliency_map = []
+    
+    for frame in xrange(end_frame):
+
+        blank = np.zeros((nrows, ncols))
+        posframe = meantracks[frame,:,:]
+
+        # multiplication factor is just for the running average. 
+        blank[posframe[:,0], posframe[:,1]] += map_vals[:, frame] 
+        blank[posframe[:,0], posframe[:,1]] *= (frame+1) / float(frame+2)
+#* (frame+1 / float(frame+2)) # add on the values in the thing already.. 
+        all_positions += blank
+        
+        spatial_time_saliency_map.append(blank[None,:])
+        
+    spatial_time_saliency_map = np.concatenate(spatial_time_saliency_map, axis=0)
+
+    if filt:
+        kernel = square(filt_size)
+        all_positions = cv2.filter2D(all_positions,-1,kernel)
+        
+        for ii in range(spatial_time_saliency_map.shape[0]):
+            spatial_time_saliency_map[ii] = cv2.filter2D(spatial_time_saliency_map[ii],-1,kernel)
+
+    final_saliency_map = np.zeros((nrows, ncols))
+
+    # final aggregation, should we sum here ? or should we average? 
+    for reg in regs:
+        final_saliency_map[spixels == reg] = np.mean(all_positions[spixels==reg])
+            
+    return final_saliency_map, spatial_time_saliency_map
+    
+    

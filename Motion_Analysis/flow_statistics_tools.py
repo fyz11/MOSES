@@ -56,3 +56,38 @@ def curl_vector_flow(im, *args):
 
     return curl
     
+    
+def div_vector_flow(im, *args):
+    
+    """
+    Computes the divergence of the vector field f, corresponding to dFx/dx + dFy/dy + ...
+    
+    input im: channels are (x,y) or (x,y,z)
+    
+    image dimensions are z,y,x
+    """
+    dim = im.shape[-1] # number of dimensions of vector.
+    
+    if dim == 2:
+        Fx = im[...,0]  
+        Fy = im[...,1]
+        dFx_dy, dFx_dx = np.gradient(Fx, *args) 
+        dFy_dy, dFy_dx = np.gradient(Fy, *args) 
+        
+        div = dFx_dx + dFy_dy
+
+    if dim == 3:
+        Fx = im[..., 0]
+        Fy = im[..., 1]
+        Fz = im[..., 2]
+
+        dFx_dz, dFx_dy, dFx_dx = np.gradient(Fx, *args)
+        dFy_dz, dFy_dy, dFy_dx = np.gradient(Fy, *args)
+        dFz_dz, dFz_dy, dFz_dx = np.gradient(Fz, *args)
+        
+        # hard-code the equations.        
+        div = dFx_dx + dFy_dy + dFz_dz
+        
+    return div
+
+    
