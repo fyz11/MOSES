@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Motion_Analysis.wound_statistics_tools module" href="MOSES.Motion_Analysis.wound_statistics_tools.html" />
+    <link rel="prev" title="MOSES.Motion_Analysis.tracks_statistics_tools module" href="MOSES.Motion_Analysis.tracks_statistics_tools.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Motion_Analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Motion_Analysis.html#module-MOSES.Motion_Analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation">
+<span id="moses-motion-analysis-wound-close-sweepline-area-segmentation-module"></span><h1>MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module<a class="headerlink" href="#module-MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation" title="Permalink to this headline">¶</a></h1>
+<p>Created on Sat Jan 14 12:54:50 2017</p>
+<p>&#64;author: felix
+&#64;email: <a class="reference external" href="mailto:felixzhou1&#37;&#52;&#48;gmail&#46;com">felixzhou1<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<p>This script and all the code within is licensed under the Ludwig License.</p>
+<p>see README.md for details on usage.</p>
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">baseline_als</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#baseline_als"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als" title="Permalink to this definition">¶</a></dt>
+<dd><p>Code adapted from <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a>.</p>
+<p>Implements paper of &#8220;Asymmetric Least Squares Smoothing&#8221; by P. Eilers and H. Boelens in 2005.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>y :</strong></dt>
+<dd><p class="first last">numpy vector of observations to fit.</p>
+</dd>
+<dt><strong>lam</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>niter</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>z :</strong></dt>
+<dd><p class="first last">fitted baseline, same numpy vector size as y.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_direction_wound">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">find_direction_wound</code><span class="sig-paren">(</span><em>points</em>, <em>limits</em>, <em>spixel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#find_direction_wound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_direction_wound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the direction in which the epithelial sheet is moving in by looking at the position of the sheet points ...</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points :</strong></dt>
+<dd><p class="first last">(y,x) numpy array of points, (n_points x 2)</p>
+</dd>
+<dt><strong>limits :</strong></dt>
+<dd><p class="first last">(n_rows, n_cols), essentially the image dimension.</p>
+</dd>
+<dt><strong>spixel_size :</strong></dt>
+<dd><p class="first last">(float) average superpixel width</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>direction :</strong></dt>
+<dd><p class="first last">a string either &#8216;left&#8217; or &#8216;right&#8217; designating the direction in which the superpixel moves.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_nearest_pairs_points">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">find_nearest_pairs_points</code><span class="sig-paren">(</span><em>points_r</em>, <em>points_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#find_nearest_pairs_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_nearest_pairs_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Match the boundary points of the red sheet, (points_r) with those of the green sheet (points_g)</p>
+<p>n_sweeps - the number of horizontal strips dividing the image.
+n_points_to_keep - the number of points kept to approximate boundary for each strip.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points_r :</strong></dt>
+<dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of red sheet</p>
+</dd>
+<dt><strong>points_g :</strong></dt>
+<dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of green sheet</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>spixels_r :</strong></dt>
+<dd><p class="first last">the green ids in points_g to match each r point to.</p>
+</dd>
+<dt><strong>spixels_g :</strong></dt>
+<dd><p class="first last">the red ids in points_r to match each g point to.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.kmeans_cluster">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">kmeans_cluster</code><span class="sig-paren">(</span><em>image</em>, <em>n_clusters=2</em>, <em>train_split=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#kmeans_cluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.kmeans_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses kmeans cluster to group the image intensities into n_clusters, sorted by image intensity, the lowest intensity pixels are grouped as 0 etc...</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>image :</strong></dt>
+<dd><p class="first last">(n_rows x n_cols), grayscale image</p>
+</dd>
+<dt><strong>n_clusters :</strong></dt>
+<dd><p class="first last">the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.</p>
+</dd>
+<dt><strong>train_split :</strong></dt>
+<dd><p class="first last">(0-1 float) proportion of pixels to use for fitting the kmeans cluster.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>Y_new :</strong></dt>
+<dd><p class="first last">(n_rows x n_cols), integer image, labelled by the cluster numbers.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_boundary_points_sweepline_segmentation">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">locate_boundary_points_sweepline_segmentation</code><span class="sig-paren">(</span><em>areas_img</em>, <em>spixel_size</em>, <em>direction=None</em>, <em>n_sweeps=20</em>, <em>n_points_keep=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#locate_boundary_points_sweepline_segmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_boundary_points_sweepline_segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the binary mask of an epithelial sheet, locate the boundary points of the sheet and infer which vertical strip and direction the sheet is moving in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>areas_img :</strong></dt>
+<dd><p class="first last">(n_rows x n_cols) binary image of the epithelial sheet.</p>
+</dd>
+<dt><strong>frame :</strong></dt>
+<dd><p class="first last">int, which frame number to compute.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">(float)</span><dd><p class="first last">the average superpixel width.</p>
+</dd>
+<dt><strong>direction</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">(default None)</span><dd><p class="first last">which direction the sheet is moving, takes &#8216;left&#8217; or &#8216;right&#8217;</p>
+</dd>
+<dt><strong>n_sweeps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">(int)</span><dd><p class="first last">the number of vertical divisions of the image.</p>
+</dd>
+<dt><strong>n_points_keep</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">(int)</span><dd><p class="first last">for each vertical strip, the number of points to sample to approximate the sheet boundary.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>good_boundary_coords :</strong></dt>
+<dd><p class="first last">the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.</p>
+</dd>
+<dt><strong>sweepline_seg_y :</strong></dt>
+<dd><p class="first last">(n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in.</p>
+</dd>
+<dt><strong>direction :</strong></dt>
+<dd><p class="first last">&#8216;left&#8217; or &#8216;right&#8217; string, denoting the direction in which the epithelial sheet is moving in</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_thresh">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">locate_thresh</code><span class="sig-paren">(</span><em>array</em>, <em>thresh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#locate_thresh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_thresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the first entry in array (left to right) which just above a defined cutoff given by thresh  (assumes array represents a function that is approximately monotonically decreasing).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>array :</strong></dt>
+<dd><p class="first last">a numpy array of numbers</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">specified cutoff</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>wound_close :</strong></dt>
+<dd><p class="first last">the position of the array for which the value is just above thresh.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.postprocess_img">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">postprocess_img</code><span class="sig-paren">(</span><em>img</em>, <em>close_ksize=5</em>, <em>size_factor=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#postprocess_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.postprocess_img" title="Permalink to this definition">¶</a></dt>
+<dd><p>Postprocess the binary mask from kmeans clustering in order to fill holes and remove small elements to grab the main epithelial sheet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols) binary image</p>
+</dd>
+<dt><strong>close_ksize</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">kernel size for binary_closing with a disk kernel.</p>
+</dd>
+<dt><strong>size_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">0-1, the proportion of image area below which are regarded as small objects and removed from the binary mask</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>filt :</strong></dt>
+<dd><p class="first last">(n_rows x n_cols), post-processed binary image.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.wound_sweep_area_segmentation">
+<code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">wound_sweep_area_segmentation</code><span class="sig-paren">(</span><em>vid_stack</em>, <em>spixel_size</em>, <em>max_frame</em>, <em>n_sweeps=50</em>, <em>n_points_keep=1</em>, <em>n_clusters=2</em>, <em>p_als=0.001</em>, <em>to_plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#wound_sweep_area_segmentation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.wound_sweep_area_segmentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use boundary point finding and matching to find the closure point between two coloured sheets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>vid_stack :</strong></dt>
+<dd><p class="first last">(n_frames, n_rows, n_cols, 3),</p>
+</dd>
+<dt><strong>spixel_size :</strong></dt>
+<dd><p class="first last">average superpixel width (int)</p>
+</dd>
+<dt><strong>max_frame :</strong></dt>
+<dd><p class="first last">maximum frame number to which to compute the gap closure over.</p>
+</dd>
+<dt><strong>n_sweeps :</strong></dt>
+<dd><p class="first last">number of strips to divide vertically the image.</p>
+</dd>
+<dt><strong>n_points_keep :</strong></dt>
+<dd><p class="first last">the number of points to keep for summarising the boundary.</p>
+</dd>
+<dt><strong>n_clusters :</strong></dt>
+<dd><p class="first last">number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.</p>
+</dd>
+<dt><strong>p_als :</strong></dt>
+<dd><p class="first last">this controls the assymmetry in fitting the baseline. see stackoverflow: <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a></p>
+</dd>
+<dt><strong>to_plot :</strong></dt>
+<dd><p class="first last">plot the diagnostic image or not to check fitting and inference.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>wound_frame :</strong></dt>
+<dd><p class="first last">predicted frame where gap closure occurs.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Motion_Analysis.wound_statistics_tools.html" class="btn btn-neutral float-right" title="MOSES.Motion_Analysis.wound_statistics_tools module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Motion_Analysis.tracks_statistics_tools.html" class="btn btn-neutral" title="MOSES.Motion_Analysis.tracks_statistics_tools module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

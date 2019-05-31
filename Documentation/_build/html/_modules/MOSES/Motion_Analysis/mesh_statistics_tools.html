@@ -1,0 +1,1474 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.mesh_statistics_tools &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.mesh_statistics_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Motion_Analysis.mesh_statistics_tools</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Fri Jun 30 01:40:16 2017</span>
+
+<span class="sd">@author: felix</span>
+<span class="sd">@email: felixzhou1@gmail.com</span>
+
+<span class="sd">This script and all the code within is licensed under the Ludwig License.</span>
+
+<span class="sd">see README.md for details on usage.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">..Visualisation_Tools.mesh_visualisation</span> <span class="k">import</span> <span class="n">visualise_mesh</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="c1">#==============================================================================</span>
+<span class="c1">#  Compute MOSES mesh and the motion stability index.</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="construct_MOSES_mesh"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.construct_MOSES_mesh">[docs]</a><span class="k">def</span> <span class="nf">construct_MOSES_mesh</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; constructs the MOSES mesh, linking neighbours defined by the initial positions of the superpixels.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        radial distance cut-off as a multiplier of the average superpixel width.</span>
+<span class="sd">    spixel_size : float</span>
+<span class="sd">        average superpixel width.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MOSES_mesh_strain_time : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames), specifying the average neighbourhood mesh strain of each superpixel in each frame.</span>
+<span class="sd">    nearest_neighbors_refined : list of numpy arrays</span>
+<span class="sd">        adjacency graph of how superpixels are connected (only found from initial points therefore is defined with the one timepoint at frame 0)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># for first frame determine the partners. </span>
+    <span class="n">first_frame</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span>    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="n">first_frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">dist_thresh</span><span class="o">*</span><span class="n">spixel_size</span>
+
+    <span class="n">dist_regions</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+    <span class="n">dist_regions</span><span class="p">[</span><span class="n">dist_regions</span><span class="o">&gt;</span><span class="n">dist_thresh</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="c1">#set to ridiculously high   </span>
+    <span class="c1"># sort the regions </span>
+    <span class="n">nearest_neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist_regions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># iterate and for each one, remove those that have inf. </span>
+    <span class="n">nearest_neighbors_refined</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+            
+        <span class="n">good_index</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_regions</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">dist_regions</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+                <span class="n">good_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nearest_neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+            
+        <span class="n">nearest_neighbors_refined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">good_index</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        
+    <span class="c1"># now for each superpixel we can compute the average distance to its neighbours. </span>
+    <span class="n">avg_distance_neighbours</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">equilibrium_dist</span> <span class="o">=</span> <span class="n">dist_regions</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">nearest_neighbors_refined</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="c1"># find the normal distances. </span>
+            <span class="n">paired_diff</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">j</span><span class="p">,:,:][</span><span class="kc">None</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[</span><span class="n">nearest_neighbors_refined</span><span class="p">[</span><span class="n">j</span><span class="p">],:,:]</span> <span class="c1"># should give n_neighbours x n_frames x 2</span>
+            <span class="n">paired_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">paired_diff</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">paired_diff</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">paired_diff_tension</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">paired_diff</span> <span class="o">-</span> <span class="n">equilibrium_dist</span><span class="p">[:,</span><span class="kc">None</span><span class="p">])</span> <span class="c1"># do we want the abs? </span>
+            <span class="n">avg_distance_neighbours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">paired_diff_tension</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paired_diff_tension</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
+            <span class="n">paired_diff_tension</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">avg_distance_neighbours</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paired_diff_tension</span><span class="p">)</span>
+        
+    <span class="n">MOSES_mesh_strain_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">avg_distance_neighbours</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">MOSES_mesh_strain_time</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nearest_neighbors_refined</span></div>
+
+
+<div class="viewcode-block" id="construct_mesh_strain_vector"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.construct_mesh_strain_vector">[docs]</a><span class="k">def</span> <span class="nf">construct_mesh_strain_vector</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given an arbitrary graph defined by a neighbour list, constructs the mesh strain vector for all time</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    neighbours : list of numpy arrays</span>
+<span class="sd">        list of superpixel neighbours, the neighbours for n_superpixels over n_frames. If len() of list = 1 and n_frames&gt;1 then we assume the neighbour is fixed and propagate for all time.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_strain_time_vector : numpy array</span>
+<span class="sd">        (n_frames x n_superpixels x 2), giving the mean mesh strain vector of each superpixel relative to its neighbours at each time point.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+    <span class="n">n_regions</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbours</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbours</span><span class="p">)</span><span class="o">!=</span> <span class="n">n_frames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;number of neighbour lists should equal number of frames or 1&#39;</span><span class="p">)</span>
+
+    <span class="c1"># now for each superpixel we can compute the average distance to its neighbours. </span>
+    <span class="n">mesh_strain_time_vector</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+
+        <span class="n">mesh_strain_frame</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># initialise.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbours</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">neighbours_frame</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">neighbours_frame</span> <span class="o">=</span> <span class="n">neighbours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+            <span class="n">effective_strain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">tracks</span><span class="p">[</span><span class="n">neighbours_frame</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">,:][</span><span class="kc">None</span><span class="p">,:]</span> <span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">mesh_strain_frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">effective_strain</span><span class="p">)</span>
+            
+        <span class="n">mesh_strain_time_vector</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mesh_strain_frame</span><span class="p">))</span>
+        
+    <span class="n">mesh_strain_time_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mesh_strain_time_vector</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">mesh_strain_time_vector</span></div>
+    
+    
+<div class="viewcode-block" id="compute_MOSES_mesh_strain_curve"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_strain_curve">[docs]</a><span class="k">def</span> <span class="nf">compute_MOSES_mesh_strain_curve</span><span class="p">(</span><span class="n">mesh_strain_time</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes the MOSES mesh strain (normalized/unnormalized) across superpixels for each time. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesh_strain_time : numpy array</span>
+<span class="sd">        (n_frames, n_superpixels), the strain of each superpixel at each frame.</span>
+<span class="sd">    normalise : bool</span>
+<span class="sd">        if &#39;true&#39; divide the mesh strain curve by the maximum value, if false return the raw values.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    MOSES_mesh_strain_curve : numpy array</span>
+<span class="sd">        (n_frames,) numpy array vector giving the moshes mesh strain (normalised if the normalise flag is set to true)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>
+        
+        <span class="n">MOSES_mesh_strain_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">mesh_strain_time</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MOSES_mesh_strain_curve</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">MOSES_mesh_strain_curve</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">MOSES_mesh_strain_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">mesh_strain_time</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MOSES_mesh_strain_curve</span></div>
+    
+
+    
+<div class="viewcode-block" id="from_neighbor_list_to_graph"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.from_neighbor_list_to_graph">[docs]</a><span class="k">def</span> <span class="nf">from_neighbor_list_to_graph</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">neighbourlist</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts the adjacency graph definition from a list of neighbours of superpixels to a networkx graph. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks</span>
+<span class="sd">    neighbourlist : list of numpy arrays</span>
+<span class="sd">        (list of numpy arrays), giving the various neighbours to superpixels</span>
+<span class="sd">    frame : int</span>
+<span class="sd">        which frame fo which to construct the graph for visualisation.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    G : networkx graph</span>
+<span class="sd">        networkx graph representation of the neighbourhood relationships.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">points_frame</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">,</span> <span class="p">:]</span> <span class="c1">#(y,x)</span>
+    
+    <span class="c1"># we can easily transfer to network x if we can build a graph. </span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbourlist</span><span class="p">)):</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="n">neighbourlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">points_frame</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
+        <span class="n">neighbor_points</span> <span class="o">=</span> <span class="n">points_frame</span><span class="p">[</span><span class="n">neighbors</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="n">dist_points</span> <span class="o">=</span> <span class="n">neighbor_points</span> <span class="o">-</span> <span class="n">point</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span>        
+        <span class="n">dist_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dist_points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dist_points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)):</span>
+            
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="p">{</span><span class="s1">&#39;weight&#39;</span><span class="p">:</span><span class="n">dist_points</span><span class="p">[</span><span class="n">j</span><span class="p">]}))</span>
+            
+    <span class="n">G</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">from_edgelist</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">G</span></div>
+    
+
+<div class="viewcode-block" id="compute_MOSES_mesh_stability_index"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_stability_index">[docs]</a><span class="k">def</span> <span class="nf">compute_MOSES_mesh_stability_index</span><span class="p">(</span><span class="n">MOSES_mesh_strain_time_r</span><span class="p">,</span> <span class="n">MOSES_mesh_strain_time_g</span><span class="p">,</span> <span class="n">last_frames</span><span class="o">=</span><span class="mi">24</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the mesh stability index and return the normalised mesh strain curve for the whole video.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    MOSES_mesh_strain_time_r : numpy array</span>
+<span class="sd">        (n_frames, n_superpixels), numpy array of strain of each superpixel at each frame for the red channel</span>
+<span class="sd">    MOSES_mesh_strain_time_g : numpy array</span>
+<span class="sd">        (n_frames, n_superpixels), numpy array of strain of each superpixel at each frame for the green channel</span>
+<span class="sd">    last_frames : int</span>
+<span class="sd">        (int) the number of frames interval for averaging and computing the motion stability index.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_stability_index : float</span>
+<span class="sd">        1 - normalised gradient where gradient is computed from the average difference over the last last_frames frames.</span>
+<span class="sd">    norm_mean_strain : numpy array</span>
+<span class="sd">        normalised mesh strain curve, the average of the individual divided by max value over the time interval.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">mean_strain_r</span> <span class="o">=</span> <span class="n">MOSES_mesh_strain_time_r</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mean_strain_g</span> <span class="o">=</span> <span class="n">MOSES_mesh_strain_time_g</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">av_mean_strain</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean_strain_r</span> <span class="o">+</span> <span class="n">mean_strain_g</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+    <span class="n">norm_mean_strain</span> <span class="o">=</span> <span class="n">av_mean_strain</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">av_mean_strain</span><span class="p">))</span>
+    
+    <span class="n">dx_eff</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">norm_mean_strain</span><span class="p">)</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">norm_mean_strain</span><span class="p">[</span><span class="o">-</span><span class="n">last_frames</span><span class="p">:]</span> <span class="o">-</span> <span class="n">norm_mean_strain</span><span class="p">[</span><span class="o">-</span><span class="n">last_frames</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">grad</span><span class="p">))</span>
+    <span class="n">grad</span> <span class="o">/=</span> <span class="n">dx_eff</span>
+    
+    <span class="n">mesh_stability_index</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">grad</span>
+    
+    <span class="k">return</span> <span class="n">mesh_stability_index</span><span class="p">,</span> <span class="n">norm_mean_strain</span></div>
+    
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1"># Boundary formation tools</span>
+<span class="c1">#==============================================================================</span>
+    
+<div class="viewcode-block" id="count_dynamic_nn_neighbors"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.count_dynamic_nn_neighbors">[docs]</a><span class="k">def</span> <span class="nf">count_dynamic_nn_neighbors</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Uses an efficient radiusBallTree structure in sklearn to efficiently compute the number of neighbours to each superpixel efficiently for each frame.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of superpixel tracks.</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        distance cut-off to count number of neighbours for each superpixel. </span>
+<span class="sd">    limits : tuple</span>
+<span class="sd">        (n_rows, n_cols), image shape size, used to correct for edge artifacts. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    num_neighbours_time : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames) numpy array, giving the total number of counts it is near. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">BallTree</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># ignore for now the dist_thresh:</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_spixels</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">num_neighbours_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_spixels</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+        <span class="c1"># prefilter the tracks, find the tracks whose coordinates are on the boundaries.    </span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tracks</span><span class="p">[:,</span><span class="n">frame</span><span class="p">,:])</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">bad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+        
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">leaf_size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">ind</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">count_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">return_distance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>         
+                
+        <span class="n">num_neighbour_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ind_</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">ind_</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">num_neighbour_counts</span><span class="p">[</span><span class="n">bad</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">num_neighbour_counts</span><span class="p">[</span><span class="n">select</span><span class="p">])</span>
+        
+        <span class="c1"># save back into array.</span>
+        <span class="n">num_neighbours_time</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_neighbour_counts</span>
+
+    <span class="k">return</span> <span class="n">num_neighbours_time</span></div>
+
+
+<div class="viewcode-block" id="compute_motion_saliency_map"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_motion_saliency_map">[docs]</a><span class="k">def</span> <span class="nf">compute_motion_saliency_map</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">max_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">filt_size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), numpy array of superpixel tracks</span>
+<span class="sd">    map_vals : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames), the temporal mesh strain</span>
+<span class="sd">    shape : tuple-like </span>
+<span class="sd">        (n_rows x n_cols), image shape</span>
+<span class="sd">    max_frame : int</span>
+<span class="sd">        the final frame to which we aggregate the statistic and compute maps for.</span>
+<span class="sd">    filt : int</span>
+<span class="sd">        (0 or 1), run over the heat map with an average filter or not. if 1, filt_size sets the kernel size for smoothing.</span>
+<span class="sd">    filt_size : float</span>
+<span class="sd">        (float), sigma setting the standard deviation of the gaussian for kernel smoothing.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    final_saliency_map : numpy array</span>
+<span class="sd">        (n_rows x n_cols), heatmap of saliency </span>
+<span class="sd">    spatial_time_saliency_map : numpy array</span>
+<span class="sd">        (n_frames x n_rows x n_cols), frame by frame heatmap of saliency.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="kn">from</span> <span class="nn">skimage.segmentation</span> <span class="k">import</span> <span class="n">slic</span><span class="p">,</span> <span class="n">relabel_sequential</span> 
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+    
+    <span class="c1"># compute the saliency map</span>
+    <span class="n">map_vals</span> <span class="o">=</span> <span class="n">count_dynamic_nn_neighbors</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># coerce meantracks into the intended shape </span>
+    <span class="n">meantracks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">nframes</span><span class="p">,</span> <span class="n">nregions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="c1"># create superpixel map </span>
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">shape</span>
+    
+    <span class="c1"># Create the superpixel canvas we will aggregate over. </span>
+    <span class="n">nothing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">spixels</span> <span class="o">=</span> <span class="n">slic</span><span class="p">(</span><span class="n">nothing</span><span class="p">,</span> <span class="n">n_segments</span><span class="o">=</span><span class="n">nregions</span><span class="p">)</span>
+    <span class="n">spixels</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">relabel_sequential</span><span class="p">(</span><span class="n">spixels</span><span class="p">)</span>	
+ 
+    <span class="n">regs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spixels</span><span class="p">)</span>
+    <span class="c1"># iterate over all the tracks and collate positions. </span>
+    <span class="n">all_positions</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">max_frame</span><span class="p">:</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="n">max_frame</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="n">nframes</span>
+    
+    <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
+
+        <span class="n">blank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+        <span class="n">posframe</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">frame</span><span class="p">,:,:]</span>
+
+        <span class="c1"># multiplication factor is just for the running average. </span>
+        <span class="n">blank</span><span class="p">[</span><span class="n">posframe</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">posframe</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">map_vals</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> 
+        <span class="n">blank</span><span class="p">[</span><span class="n">posframe</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">posframe</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*=</span> <span class="p">(</span><span class="n">frame</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">frame</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1">#* (frame+1 / float(frame+2)) # add on the values in the thing already.. </span>
+        <span class="n">all_positions</span> <span class="o">+=</span> <span class="n">blank</span>
+        
+        <span class="n">spatial_time_saliency_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blank</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
+        
+    <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">filt</span><span class="p">:</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">filt_size</span><span class="p">)</span>
+        <span class="n">all_positions</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">all_positions</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">spatial_time_saliency_map</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
+
+    <span class="n">final_saliency_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+
+    <span class="c1"># final aggregation, should we sum here ? or should we average? </span>
+    <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">regs</span><span class="p">:</span>
+        <span class="n">final_saliency_map</span><span class="p">[</span><span class="n">spixels</span> <span class="o">==</span> <span class="n">reg</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">all_positions</span><span class="p">[</span><span class="n">spixels</span><span class="o">==</span><span class="n">reg</span><span class="p">])</span>
+            
+    <span class="k">return</span> <span class="n">final_saliency_map</span><span class="p">,</span> <span class="n">spatial_time_saliency_map</span></div>
+    
+    
+<div class="viewcode-block" id="compute_boundary_formation_index"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_boundary_formation_index">[docs]</a><span class="k">def</span> <span class="nf">compute_boundary_formation_index</span><span class="p">(</span><span class="n">saliency_map_r</span><span class="p">,</span> <span class="n">saliency_map_g</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">pad_multiple</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified). In addition return the boundary formation index as defined in the paper.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    saliency_map_r : numpy array</span>
+<span class="sd">        (n_rows, n_cols) heatmap from the red tracks</span>
+<span class="sd">    saliency_map_g : numpy array</span>
+<span class="sd">        (n_rows, n_cols) heatmap from the green tracks</span>
+<span class="sd">    spixel_size : float</span>
+<span class="sd">        average superpixel width</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boundary_formation_index : float</span>
+<span class="sd">        the propensity of boundary formation between red and green sheets.</span>
+<span class="sd">    av_saliency_map : numpy array</span>
+<span class="sd">        (n_rows, n_cols) averaged saliency map.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">threshold_otsu</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">av_saliency_map</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">saliency_map_r</span> <span class="o">+</span> <span class="n">saliency_map_g</span><span class="p">)</span>
+    <span class="n">cropped_saliency_map</span> <span class="o">=</span> <span class="n">av_saliency_map</span><span class="p">[</span><span class="n">pad_multiple</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">:</span><span class="o">-</span><span class="n">pad_multiple</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">,</span> <span class="n">pad_multiple</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">:</span><span class="o">-</span><span class="n">pad_multiple</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">]</span>
+
+    <span class="n">thresh</span> <span class="o">=</span> <span class="n">threshold_otsu</span><span class="p">(</span><span class="n">cropped_saliency_map</span><span class="p">)</span>
+    <span class="n">max_mask</span> <span class="o">=</span> <span class="n">cropped_saliency_map</span> <span class="o">&gt;=</span> <span class="n">thresh</span>
+    
+    <span class="c1"># grab the average high and average low.... to characterise the distribution.  </span>
+    <span class="n">max_av_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cropped_saliency_map</span><span class="p">[</span><span class="n">max_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">max_bg_density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">cropped_saliency_map</span><span class="p">[</span><span class="n">max_mask</span><span class="o">==</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># compute the metric ...</span>
+    <span class="n">boundary_formation_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_av_density</span> <span class="o">-</span> <span class="n">max_bg_density</span><span class="p">)</span><span class="o">/</span> <span class="n">max_av_density</span>
+    
+    <span class="k">return</span> <span class="n">boundary_formation_index</span><span class="p">,</span> <span class="n">cropped_saliency_map</span></div>
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1">#  Velocity cross-correlation function tools</span>
+<span class="c1">#==============================================================================</span>
+
+<div class="viewcode-block" id="vccf"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.vccf">[docs]</a><span class="k">def</span> <span class="nf">vccf</span><span class="p">(</span><span class="n">tracks1</span><span class="p">,</span> <span class="n">tracks2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the normalised velocity correlation function (-1,1) between a series of tracks1 and series of tracks2 whose lengths can vary.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks1 : numpy array</span>
+<span class="sd">        (n_superpixels x length1) numpy array</span>
+<span class="sd">    tracks2 : numpy array</span>
+<span class="sd">        (n_superpixels x length2) numpy array</span>
+<span class="sd">    mode : str</span>
+<span class="sd">        convolutional mode of operation, refer to numpy.correlate. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vccf : numpy array </span>
+<span class="sd">        (length1+length2-1) long velocity cross-correlation vector as defined in the SI materials and methods if mode=&#39;full&#39; </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">itertools</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">n_1</span> <span class="o">=</span> <span class="n">tracks1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_2</span> <span class="o">=</span> <span class="n">tracks2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+<span class="c1">#    list_index = itertools.permutations([n_1, n_2])</span>
+    <span class="n">list1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_1</span><span class="p">)</span>
+    <span class="n">list2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_2</span><span class="p">)</span>    
+    <span class="n">list_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">))</span>
+    
+    <span class="n">ccfs</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">list_index</span><span class="p">:</span>
+        
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">index</span>
+        
+        <span class="n">sig1</span> <span class="o">=</span> <span class="n">tracks1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">sig1_x</span> <span class="o">=</span> <span class="n">sig1</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sig1_y</span> <span class="o">=</span> <span class="n">sig1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">sig2</span> <span class="o">=</span> <span class="n">tracks2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">sig2_x</span> <span class="o">=</span> <span class="n">sig2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sig2_y</span> <span class="o">=</span> <span class="n">sig2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+               
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+
+        <span class="n">ccf_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">((</span><span class="n">sig1_x</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sig1_x</span><span class="p">))</span><span class="o">/</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sig1_x</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">sig1_x</span><span class="p">)),</span> <span class="p">(</span><span class="n">sig2_x</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sig2_x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sig2_x</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="n">ccf_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">((</span><span class="n">sig1_y</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sig1_y</span><span class="p">))</span><span class="o">/</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sig1_y</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">sig1_y</span><span class="p">)),</span> <span class="p">(</span><span class="n">sig2_y</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sig2_y</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sig2_y</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        
+        <span class="n">ccf_top</span> <span class="o">=</span> <span class="p">(</span><span class="n">ccf_x</span> <span class="o">+</span> <span class="n">ccf_y</span><span class="p">)</span>
+
+        <span class="n">ccfs</span> <span class="o">+=</span> <span class="n">ccf_top</span><span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_index</span><span class="p">))</span>
+        
+    <span class="k">return</span> <span class="n">ccfs</span></div>
+
+
+<div class="viewcode-block" id="compute_max_vccf_cells_before_after_gap"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_max_vccf_cells_before_after_gap">[docs]</a><span class="k">def</span> <span class="nf">compute_max_vccf_cells_before_after_gap</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">wound_heal_frame</span><span class="p">,</span> <span class="n">err_frame</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute maximum velocity cross correlation index before and after gap closure as defined.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks_r : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks for red</span>
+<span class="sd">    meantracks_g : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks for green</span>
+<span class="sd">    wound_heal_frame : int</span>
+<span class="sd">        the frame number for which sheets close</span>
+<span class="sd">    err_frame : int</span>
+<span class="sd">        this is the margin of error to assure before and after gap closure.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (max_vccf_index_before, vccf_all_before) : tuple of numpy arrays</span>
+<span class="sd">        tuple where max_vccf_index_before is a float of the maximum velocity correlation index before closure, vccf_all_before is the entire correlation function. </span>
+<span class="sd">    (max_vccf_index_after, vccf_all_after) : tuple of numpy arrays</span>
+<span class="sd">        tuple where max_vccf_index_after is a float of the maximum velocity correlation index after closure, vccf_all_after is the entire correlation function. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># 1. create the subset tracks before and after wound frame.</span>
+    <span class="n">meantracks_r_before</span> <span class="o">=</span> <span class="n">meantracks_r</span><span class="p">[:,:</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">wound_heal_frame</span><span class="o">-</span><span class="n">err_frame</span><span class="p">),:]</span>
+    <span class="n">meantracks_g_before</span> <span class="o">=</span> <span class="n">meantracks_g</span><span class="p">[:,:</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">wound_heal_frame</span><span class="o">-</span><span class="n">err_frame</span><span class="p">),:]</span>
+                                      
+    <span class="n">meantracks_r_after</span> <span class="o">=</span> <span class="n">meantracks_r</span><span class="p">[:,</span> <span class="n">wound_heal_frame</span><span class="o">+</span><span class="n">err_frame</span><span class="p">:,:]</span>
+    <span class="n">meantracks_g_after</span> <span class="o">=</span> <span class="n">meantracks_g</span><span class="p">[:,</span> <span class="n">wound_heal_frame</span><span class="o">+</span><span class="n">err_frame</span><span class="p">:,:]</span>
+    
+    <span class="c1"># 2. create the respective velocity vectors.</span>
+    <span class="n">velocity_r_before</span> <span class="o">=</span> <span class="n">meantracks_r_before</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">meantracks_r_before</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">velocity_g_before</span> <span class="o">=</span> <span class="n">meantracks_g_before</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">meantracks_g_before</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    
+    <span class="n">velocity_r_after</span> <span class="o">=</span> <span class="n">meantracks_r_after</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">meantracks_r_after</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">velocity_g_after</span> <span class="o">=</span> <span class="n">meantracks_g_after</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">meantracks_g_after</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    
+    <span class="c1"># 3. compute the VCCF before and after.                      </span>
+    <span class="n">vccf_all_before</span> <span class="o">=</span> <span class="n">vccf</span><span class="p">(</span><span class="n">velocity_r_before</span><span class="p">,</span> <span class="n">velocity_g_before</span><span class="p">)</span>
+    <span class="n">vccf_all_after</span> <span class="o">=</span> <span class="n">vccf</span><span class="p">(</span><span class="n">velocity_r_after</span><span class="p">,</span> <span class="n">velocity_g_after</span><span class="p">)</span>
+    
+    <span class="n">max_vccf_index_before</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vccf_all_before</span><span class="p">))</span>
+    <span class="n">max_vccf_index_after</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vccf_all_after</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">max_vccf_index_before</span><span class="p">,</span> <span class="n">vccf_all_before</span><span class="p">),</span> <span class="p">(</span><span class="n">max_vccf_index_after</span><span class="p">,</span> <span class="n">vccf_all_after</span><span class="p">)</span></div>
+    
+
+<span class="c1">#==============================================================================</span>
+<span class="c1">#   Mesh Disorder Index</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="compute_local_point_density"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_local_point_density">[docs]</a><span class="k">def</span> <span class="nf">compute_local_point_density</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes the number of neighbours within a radius for each superpixel at a given frame.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks</span>
+<span class="sd">    frame : int</span>
+<span class="sd">        (int) video frame number for which to compute the number of neighbours.</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        radial distance, smaller than which points are considered neighbours.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    n_neighbours_regions : numpy array</span>
+<span class="sd">        number of neighbours at distance &lt;= radius for each superpixel.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># for first frame determine the partners. </span>
+    <span class="n">frame_tracks</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="n">frame</span><span class="p">,:]</span>    
+    
+    <span class="n">dist_regions</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">frame_tracks</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+    <span class="n">mask_dist</span> <span class="o">=</span> <span class="n">dist_regions</span> <span class="o">&lt;=</span> <span class="n">radius</span>
+    
+    <span class="n">n_neighbours_regions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mask_dist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1">#remove the self connection </span>
+    
+    <span class="k">return</span> <span class="n">n_neighbours_regions</span></div>
+
+
+<div class="viewcode-block" id="compute_mesh_principal_strain_angle_ellipse"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_principal_strain_angle_ellipse">[docs]</a><span class="k">def</span> <span class="nf">compute_mesh_principal_strain_angle_ellipse</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">,</span> <span class="n">point_thresh</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the principal strain ellipses at each superpixel point in the constructed mesh where the mesh connections is given in terms of a region adjacency graph (RAG) and the RAG is a neighbour list.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of superpixel tracks.</span>
+<span class="sd">    neighbours : list</span>
+<span class="sd">        n_superpixels neighbour list describing the neighbours of each superpixel.</span>
+<span class="sd">    point_thresh : float </span>
+<span class="sd">        (float or int) threshold for detecting and masking out regions of natural high point density which may introduce artifacts such as the image borders and interfaces.</span>
+<span class="sd"> </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    eigenvalues_time : numpy array</span>
+<span class="sd">        n_frames x n_superpixels x 2 eigenvalue of 1st (max_strain) and 2nd (min_strain) eigenvectors.</span>
+<span class="sd">    eigenangles_time : numpy array</span>
+<span class="sd">        n_frames x n_superpixels or principal angles in rads</span>
+<span class="sd">    stretch_ratio_time : numpy array</span>
+<span class="sd">        n_frames x n_superpixels of the stretch ratio which is the eccentricity of an ellipse, sqrt(abs(1-(min_strain**2)/(max_strain**2)))</span>
+<span class="sd">    select_time : numpy array</span>
+<span class="sd">        n_frames x n_superpixels, the binary mask of where the local density exceeds the threshold of high point density</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">nframes</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="n">eigenvalues_time</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">eigenangles_time</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">stretch_ratio_time</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">select_time</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nframes</span><span class="p">):</span>
+        
+        <span class="c1"># think i need the other strain. </span>
+        <span class="n">eigenvalues</span><span class="p">,</span> <span class="n">eigenangles</span><span class="p">,</span> <span class="n">angle_binning</span>  <span class="o">=</span> <span class="n">compute_principal_strain_angles</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">neighbours</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    
+        <span class="c1"># Compute strains</span>
+        <span class="n">max_strain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">eigenvalues</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">min_strain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">eigenvalues</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span> 
+
+        <span class="n">stretch_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="p">(</span><span class="n">min_strain</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">max_strain</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+        
+        <span class="n">eigenvalues_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">)</span>
+        <span class="n">eigenangles_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eigenangles</span><span class="p">)</span>
+        <span class="n">stretch_ratio_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stretch_ratio</span><span class="p">)</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Accounting for density defects... </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">point_neighbors</span> <span class="o">=</span> <span class="n">compute_local_point_density</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">spixel_size</span><span class="p">)</span> 
+        <span class="n">select</span> <span class="o">=</span> <span class="n">point_neighbors</span> <span class="o">&lt;=</span> <span class="n">point_thresh</span>
+        
+        <span class="n">select_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">select</span><span class="p">)</span>
+
+    <span class="n">eigenvalues_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenvalues_time</span><span class="p">)</span>
+    <span class="n">eigenangles_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenangles_time</span><span class="p">)</span>
+    <span class="n">stretch_ratio_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stretch_ratio_time</span><span class="p">)</span>
+    <span class="n">select_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">select_time</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eigenvalues_time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">4</span><span class="p">:</span>
+        <span class="n">eigenvalues_time</span> <span class="o">=</span> <span class="n">eigenvalues_time</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">eigenangles_time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">eigenangles_time</span> <span class="o">=</span> <span class="n">eigenangles_time</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stretch_ratio_time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">stretch_ratio_time</span> <span class="o">=</span> <span class="n">stretch_ratio_time</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">select_time</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">select_time</span> <span class="o">=</span> <span class="n">select_time</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> 
+
+    <span class="k">return</span> <span class="n">eigenvalues_time</span><span class="p">,</span> <span class="n">eigenangles_time</span><span class="p">,</span> <span class="n">stretch_ratio_time</span><span class="p">,</span> <span class="n">select_time</span></div>
+    
+    
+<div class="viewcode-block" id="fit_spline"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.fit_spline">[docs]</a><span class="k">def</span> <span class="nf">fit_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">smooth_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; General boiler function to fit a spline to (x,y)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array</span>
+<span class="sd">        numpy array of x values</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        numpy array of desired y values</span>
+<span class="sd">    k : int </span>
+<span class="sd">        is the order of the spline for interpolation</span>
+<span class="sd">    smooth_factor : float</span>
+<span class="sd">        how smooth the interpolation, essentially controls the number of knots.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_pred : numpy array </span>
+<span class="sd">        numpy array of predicted y values evaluated using the fitted spline at x</span>
+<span class="sd">    spl: scipy spline fit object </span>
+<span class="sd">        the fitted spline function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">UnivariateSpline</span>
+
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">smooth_factor</span><span class="p">)</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">spl</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">spl</span></div>
+
+
+<div class="viewcode-block" id="vector_order"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.vector_order">[docs]</a><span class="k">def</span> <span class="nf">vector_order</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; also known as the polar order parameter. (with optional subtraction of the mean vector)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vectors : numpy array</span>
+<span class="sd">        n_vectors x 2, numpy array of directional (x,y) or (y,x) values</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vorder : float</span>
+<span class="sd">        scalar, return vector order parameter a.k.a normalised mean vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">mean_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">remove_mean</span><span class="p">:</span>
+    <span class="c1"># remove the mean     </span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">vectors</span> <span class="o">-</span> <span class="n">mean_vector</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">vectors</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+    <span class="c1"># vector order is computed by taking the magnitude effective velocity and dividing by the total magnitude of the vectors</span>
+    <span class="n">vorder</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">vorder</span></div>
+
+<div class="viewcode-block" id="vector_order_curve"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.vector_order_curve">[docs]</a><span class="k">def</span> <span class="nf">vector_order_curve</span><span class="p">(</span><span class="n">vector_field</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Given a temporally varying vector field, compute the averaged normalized vector as a measure of order.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vector_field : numpy array</span>
+<span class="sd">        n_frames x n_vectors x 2, numpy array of directional (x,y) or (y,x) values over n_frames.</span>
+<span class="sd">    remove_mean : bool</span>
+<span class="sd">        flag to either compute the order after removal of mean or not.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    vorder : numpy array </span>
+<span class="sd">        n_frames, return vector order parameter at each frame.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># here we can use the cosine directionality for measuring this ? and the vorder. </span>
+    <span class="n">n_frames</span><span class="p">,</span> <span class="n">n_spixels</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">vector_field</span><span class="o">.</span><span class="n">shape</span> <span class="c1">#(x,y) convention.</span>
+    
+    <span class="n">order_curve</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+        <span class="n">vectors</span> <span class="o">=</span> <span class="n">vector_field</span><span class="p">[</span><span class="n">frame</span><span class="p">,:]</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">vector_order</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="n">remove_mean</span><span class="p">)</span>
+        <span class="n">order_curve</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">order_curve</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="compute_mesh_order"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_order">[docs]</a><span class="k">def</span> <span class="nf">compute_mesh_order</span><span class="p">(</span><span class="n">mesh_strain_vector</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; Computes the proposed mesh order presented in the paper. This is the vector order but using mesh strain vectors instead as a &#39;velocity&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesh_strain_vector : numpy array </span>
+<span class="sd">        n_frames x n_superpixels x 2, local average mesh strain vector as returned from mesh_statistics_tools.construct_mesh_strain_vector() function.</span>
+<span class="sd">    remove_mean : bool</span>
+<span class="sd">        flag to either compute the order after removal of mean or not.   </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_order_curve : numpy array</span>
+<span class="sd">        n_frames, return mesh order parameter at each frame based on the constructed mesh strain vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mesh_order_curve</span> <span class="o">=</span> <span class="n">vector_order_curve</span><span class="p">(</span><span class="n">mesh_strain_vector</span><span class="p">,</span> <span class="n">remove_mean</span><span class="o">=</span><span class="n">remove_mean</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">mesh_order_curve</span></div>
+
+    
+<div class="viewcode-block" id="compute_principal_strain_angles"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_principal_strain_angles">[docs]</a><span class="k">def</span> <span class="nf">compute_principal_strain_angles</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">neighbourhood</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Compute the principal strain statistics of the PCA ellipses.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), numpy array of superpixel tracks.</span>
+<span class="sd">    neighbourhood : list of numpy arrays</span>
+<span class="sd">        n_superpixels long list of neighbours of each superpixel</span>
+<span class="sd">    frame : int</span>
+<span class="sd">        the frame number in which we compute the pca ellipse statistics.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    ------- </span>
+<span class="sd">    eigs : numpy array</span>
+<span class="sd">        (n_superpixels, 2) of the normalised PCA strain sorted descending by magnitude,  </span>
+<span class="sd">    angles : numpy array</span>
+<span class="sd">        (n_superpixels,) associated principle angle in degrees.</span>
+<span class="sd">    mesh_quadrant_counts : numpy array </span>
+<span class="sd">        counts in which quadrant the strain vectors fall in using the principal strain axes as the orthogonal axes. It is supposed to assess the distortion of the mesh.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    
+    <span class="n">n_neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">nhood</span><span class="p">)</span> <span class="k">for</span> <span class="n">nhood</span> <span class="ow">in</span> <span class="n">neighbourhood</span><span class="p">]</span>
+    <span class="n">max_neighbours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">n_neighbors</span><span class="p">)</span>
+
+    <span class="n">eigs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">quadrant_binning</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+        
+        <span class="c1"># directions. </span>
+        <span class="n">current_point</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">neighbour_points</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">neighbourhood</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">frame</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">current_point</span><span class="p">,</span> <span class="n">neighbour_points</span><span class="p">])</span>
+        
+        <span class="c1"># create normalised displacement vectors to fingure out direction </span>
+        <span class="n">disps</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,:][</span><span class="kc">None</span><span class="p">,:]</span>  <span class="c1"># displacements</span>
+        <span class="n">mags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">disps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">disps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span> <span class="c1">#give some magnitude to normalise..... </span>
+        <span class="n">norm_disps</span> <span class="o">=</span> <span class="n">disps</span> <span class="o">/</span> <span class="n">mags</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+        <span class="c1"># now compute the PCA to find the principal angles </span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="n">find_principal_directions</span><span class="p">(</span><span class="n">norm_disps</span><span class="p">)</span>
+        
+        <span class="c1"># count the deformities by binning into the quadrants. </span>
+        <span class="n">ang_deviation</span> <span class="o">=</span> <span class="mi">180</span><span class="o">/</span><span class="n">max_neighbours</span>
+<span class="c1">#        ang_limits = angle + ang_deviation + np.arange(0, max_neighbours)*ang_deviation*2  </span>
+        <span class="n">ang_limits</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_neighbours</span><span class="p">)</span><span class="o">*</span><span class="n">ang_deviation</span><span class="o">*</span><span class="mi">2</span>  
+        <span class="n">ang_limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">ang_limits</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span> <span class="o">-</span> <span class="mf">180.</span>
+        <span class="n">ang_limits</span> <span class="o">=</span> <span class="n">ang_limits</span> <span class="o">/</span> <span class="mf">180.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        <span class="n">ang_limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">ang_limits</span><span class="p">)</span>
+        
+        <span class="c1">#### find the displacement angs from the normal displacement vectors </span>
+        <span class="n">disp_angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">norm_disps</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">norm_disps</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="n">quadrant_counts</span> <span class="o">=</span> <span class="n">count_quadrant_bins</span><span class="p">(</span><span class="n">disp_angles</span><span class="p">,</span> <span class="n">ang_limits</span><span class="p">)</span>
+        <span class="n">quadrant_binning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">quadrant_counts</span><span class="p">)</span>
+        
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">eigs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">eigs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+ 
+    <span class="n">eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">eigs</span><span class="p">)</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">mesh_quadrant_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">quadrant_binning</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">eigs</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">mesh_quadrant_counts</span></div>
+    
+    
+<div class="viewcode-block" id="find_principal_directions"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.find_principal_directions">[docs]</a><span class="k">def</span> <span class="nf">find_principal_directions</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Given a set of (y,x) points, use PCA to compute the average directionality that covers the variance.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : numpy array</span>
+<span class="sd">        (n_points, 2) in (y,x) coordinate points giving the main displacement directions.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    s : numpy array</span>
+<span class="sd">        (2,) PCA strain largest to smallest.</span>
+<span class="sd">    V : numpy array</span>
+<span class="sd">        (2,2) associated eigenvectors to the eigenvalues.</span>
+<span class="sd">    angle: numpy array</span>
+<span class="sd">        (float [0,360]) principal angle using (min_strain, max_strain) as (x,y) </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">,:][</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="n">disps</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">disps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># do the svd decomposition. </span>
+    <span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">disps</span><span class="p">)</span>
+    
+    <span class="c1"># reorder so the first is the largest:</span>
+    <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">s</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">sort_order</span><span class="p">]</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">sort_order</span><span class="p">,:]</span>
+
+    <span class="c1"># return the principal axis orientation for plotting purposes. </span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="mi">180</span> <span class="o">*</span> <span class="n">angle</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>  <span class="c1"># convert to degrees</span>
+    
+    <span class="k">return</span> <span class="n">s</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">angle</span></div>
+    
+    
+<div class="viewcode-block" id="count_quadrant_bins"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.count_quadrant_bins">[docs]</a><span class="k">def</span> <span class="nf">count_quadrant_bins</span><span class="p">(</span><span class="n">angles_pi</span><span class="p">,</span> <span class="n">bin_limits_ascend</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Count the number of displacement vectors if we bin each displacement vector in the region adjacent graph if we use the principal strain to define a set of orthogonal axes.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    angles_pi : numpy array</span>
+<span class="sd">        (n_angles), vector of angles to each displacement vector given in radians</span>
+<span class="sd">    bin_limits_ascend : numpy array</span>
+<span class="sd">        this is the angles at which we partition the angles in increasing angles.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    counts : numpy array</span>
+<span class="sd">        (length of bin limits), the number of displacement vectors falling into designated bins. </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="c1"># bin limits are in ascending intervals. </span>
+    <span class="n">n_bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_limits_ascend</span><span class="p">)</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_bins</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">ang</span> <span class="ow">in</span> <span class="n">angles_pi</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bins</span><span class="p">):</span>
+            
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n_bins</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># for the last one, we need to wrap around ... </span>
+                <span class="k">if</span> <span class="n">ang</span> <span class="o">&gt;=</span> <span class="n">bin_limits_ascend</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="n">ang</span> <span class="o">&lt;</span> <span class="n">bin_limits_ascend</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ang</span> <span class="o">&gt;=</span> <span class="n">bin_limits_ascend</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="n">ang</span> <span class="o">&lt;</span> <span class="n">bin_limits_ascend</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">counts</span> </div>
+    
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1">#   Spatial Correlation based on superpixel distance.</span>
+<span class="c1">#==============================================================================</span>
+
+<div class="viewcode-block" id="powerfit"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.powerfit">[docs]</a><span class="k">def</span> <span class="nf">powerfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    fit a form of y=Ax**b by taking logarithms of both sides.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array</span>
+<span class="sd">        x-axis, a numpy vector</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        signal, a numpy vector</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (slope, intercept, r_value) : tuple</span>
+<span class="sd">        tuple, output from scipy.stats.linregress</span>
+<span class="sd">    y_pred : numpy array</span>
+<span class="sd">        predicted y values based on the fitted relationship at the same x values.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">linregress</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+<span class="c1">#    x = np.arange(len(y)) + 1</span>
+    <span class="c1"># form log y = log A + B log x</span>
+    <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">,</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">std_err</span> <span class="o">=</span> <span class="n">linregress</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">intercept</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="n">slope</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">),</span> <span class="n">y_pred</span></div>
+
+
+<div class="viewcode-block" id="compute_spatial_correlation_function"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation_function">[docs]</a><span class="k">def</span> <span class="nf">compute_spatial_correlation_function</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">wound_heal_frame</span><span class="p">,</span> <span class="n">wound_heal_err</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dist_range</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">)):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Given the superpixel tracks of all time, the gap closure frame, the error of the wound heal frame and the distance range we want to test correlation, this function returns the spatial correlation function. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), numpy array of superpixel tracks.</span>
+<span class="sd">    wound_heal_frame : int</span>
+<span class="sd">        (int) the frame number where the sheets are closed.</span>
+<span class="sd">    wound_heal_err : int</span>
+<span class="sd">        we truncate tracks beyond wound_heal_frame - wound_heal_err</span>
+<span class="sd">    dist_range : tuple-like</span>
+<span class="sd">        a vector of the distance to consider as a multipler given in number of superpixels away. creates a vector incrementing by 1. </span>
+<span class="sd">    </span>
+<span class="sd">    Outputs:</span>
+<span class="sd">    --------</span>
+<span class="sd">    spatial_corr : numpy array</span>
+<span class="sd">        (len(dist_range)) vector giving the mean superpixel correlation for each distance.</span>
+<span class="sd">    </span>
+<span class="sd">    (spatial_corr_pred,  a_value, b_value, r_value) : tuple</span>
+<span class="sd">        tuple giving the fitted spatial corr, and the a and b values of y = a exp(-x/b) curve. r_value is the correlation of the fit.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">tracks</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,:</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">wound_heal_frame</span><span class="o">-</span><span class="n">wound_heal_err</span><span class="p">),:]</span>
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span>
+
+    <span class="n">spatial_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dist_range</span><span class="p">))</span>
+    
+    <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dist_range</span><span class="p">)):</span>
+                    
+        <span class="n">dist_multiplier</span> <span class="o">=</span> <span class="n">dist_range</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span>
+        <span class="n">nearest_neighbours</span> <span class="o">=</span> <span class="n">find_neighbours_initial</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_multiplier</span><span class="o">*</span><span class="mf">1.2</span><span class="p">)</span>
+                    
+        <span class="n">spatial_corr</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">compute_spatial_correlation</span><span class="p">(</span><span class="n">disps</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">),</span> <span class="n">nearest_neighbours</span><span class="p">))</span>
+        
+    <span class="p">(</span><span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="n">r_value</span><span class="p">),</span> <span class="n">spatial_corr_pred</span> <span class="o">=</span> <span class="n">powerfit</span><span class="p">(</span><span class="n">dist_range</span><span class="p">,</span> <span class="n">spatial_corr</span><span class="p">)</span>
+    
+    <span class="n">b_value</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">slope</span>
+    <span class="n">a_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">intercept</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">spatial_corr</span><span class="p">,</span> <span class="p">(</span><span class="n">spatial_corr_pred</span><span class="p">,</span>  <span class="n">a_value</span><span class="p">,</span> <span class="n">b_value</span><span class="p">,</span> <span class="n">r_value</span><span class="p">)</span></div>
+    
+    
+<div class="viewcode-block" id="find_neighbours_initial"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.find_neighbours_initial">[docs]</a><span class="k">def</span> <span class="nf">find_neighbours_initial</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Generates a nieghbourlist specifying the region adjacency graph according to a distance threshold given as a multiplier of the average superpixel width.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), a numpy array of superpixel tracks.</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        (float) multiplier which is multiplied by the average superpixel distance to generate a Euclidean distance cutoff.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    nearest_neighbors_refined : list of numpy arrays</span>
+<span class="sd">        (n_superpixels,) list specifying region adjacency of each superpixel.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="c1"># for first frame determine the partners. </span>
+    
+    <span class="n">first_frame</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span>    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="n">first_frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+
+    <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">spixel_size</span> <span class="o">*</span> <span class="n">dist_thresh</span>
+    
+    <span class="n">dist_regions</span> <span class="o">=</span> <span class="n">pairwise_distances</span><span class="p">(</span><span class="n">first_frame</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+    <span class="n">nearest_neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist_regions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sort_dist_regions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">dist_regions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#sort the regions. </span>
+    
+    <span class="c1"># iterate and for each one, remove those that have inf. </span>
+    <span class="n">nearest_neighbors_refined</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+            
+        <span class="n">dist_i</span> <span class="o">=</span> <span class="n">sort_dist_regions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">nearest_neighbors_refined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nearest_neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">dist_i</span><span class="o">&lt;=</span><span class="n">dist_thresh</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># start from 1, since the first is always the identity.</span>
+            
+    <span class="k">return</span> <span class="n">nearest_neighbors_refined</span></div>
+
+    
+<div class="viewcode-block" id="compute_spatial_correlation"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation">[docs]</a><span class="k">def</span> <span class="nf">compute_spatial_correlation</span><span class="p">(</span><span class="n">disps</span><span class="p">,</span> <span class="n">filt</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the spatial correlation for each superpixel using a time dependent velocity vector.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    disps : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames-1, 2), a numpy array of superpixel displacement vectors, n_frames here is equal to the truncated length if we choose not to use the entire duration to compute correlation.</span>
+<span class="sd">    filt : numpy bool array</span>
+<span class="sd">        (n_superpixels,) binary mask to indicate which superpixels to take for the calculation</span>
+<span class="sd">    neighbors : list of numpy arrays</span>
+<span class="sd">        (n_superpixels,) list of numpy array to detail which superpixel ids are the neighbours of the current superpixel index.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spatial_corr_superpixels : numpy array</span>
+<span class="sd">        for the given region adjacency specified by neighbours return the local spatial correlation for each superpixel.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># neighbours is a neighbour list for each superpixel </span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">disps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">good_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_regions</span><span class="p">)[</span><span class="n">filt</span><span class="p">]</span>
+
+    <span class="n">time_correlations</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">good_index</span><span class="p">:</span>
+            
+            <span class="n">neighbor</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">move_vector0</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span>
+            <span class="n">move_vector_neighbours</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[</span><span class="n">neighbor</span><span class="p">,:,:]</span>
+
+            <span class="n">velocity_corr</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)):</span>
+                <span class="n">vcorr</span> <span class="o">=</span> <span class="n">correlation_tracks_time</span><span class="p">(</span><span class="n">move_vector0</span><span class="p">,</span> <span class="n">move_vector_neighbours</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">velocity_corr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vcorr</span><span class="p">)</span> 
+                
+            <span class="n">velocity_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">velocity_corr</span><span class="p">)</span>
+        
+            <span class="n">time_correlations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">velocity_corr</span><span class="p">))</span>
+    
+    <span class="n">spatial_corr_superpixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time_correlations</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">spatial_corr_superpixels</span></div>
+    
+    
+<div class="viewcode-block" id="correlation_tracks_time"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.correlation_tracks_time">[docs]</a><span class="k">def</span> <span class="nf">correlation_tracks_time</span><span class="p">(</span><span class="n">track1</span><span class="p">,</span> <span class="n">track2</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; returns the pearson correlation (cov(track1,track2)/sqrt(var(track1)*var(track2))) between time vectors. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    track1 : numpy array </span>
+<span class="sd">        (n_frames, 2) single displacement vector for a superpixel (y,x) coordinates</span>
+<span class="sd">    track2 : numpy array</span>
+<span class="sd">        (n_frames, 2) single displacment vector for a superpixel (y,x) coordinates</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    av_corr : float</span>
+<span class="sd">        average correlation coefficient across the superpixels.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">pearsonr</span>
+        
+    <span class="n">track1_copy</span> <span class="o">=</span> <span class="n">track1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    <span class="n">track2_copy</span> <span class="o">=</span> <span class="n">track2</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+    
+    <span class="n">x_corr</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">track1_copy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">track2_copy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y_corr</span> <span class="o">=</span> <span class="n">pearsonr</span><span class="p">(</span><span class="n">track1_copy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">track2_copy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">av_corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">([</span><span class="n">x_corr</span><span class="p">,</span> <span class="n">y_corr</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">av_corr</span></div>
+    
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1">#   Local motion statistics </span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="compute_mesh_curl"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_curl">[docs]</a><span class="k">def</span> <span class="nf">compute_mesh_curl</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes the spatial correlation for each superpixel using a time dependent velocity vector.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    disps : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames-1, 2), a numpy array zof superpixel displacement vectors, n_frames here is equal to the truncated length if we choose not to use the entire duration to compute correlation.</span>
+<span class="sd">    neighbors : list of numpy array</span>
+<span class="sd">        (n_superpixels,) list of numpy array to detail which superpixel ids are the neighbours of the current superpixel index.</span>
+<span class="sd">    filt : numpy bool array</span>
+<span class="sd">        (n_superpixels,) binary mask to indicate which superpixels to take for the calculation</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    mesh_curl : numpy array</span>
+<span class="sd">        for the given region adjacency specified by neighbours return the local cross product of the neighbour vectors relative to the central.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># neighbours is a neighbour list for each superpixel </span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># get the velocity of the position.</span>
+    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">good_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_regions</span><span class="p">)[</span><span class="n">filt</span><span class="p">]</span>
+
+    <span class="n">mesh_curl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_regions</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">good_index</span><span class="p">:</span>
+            
+            <span class="n">neighbor</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">move_vector0</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span>
+                <span class="n">pos_vector0</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span>
+
+                <span class="n">move_vector_neighbours</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[</span><span class="n">neighbor</span><span class="p">,:,:]</span>
+                <span class="n">pos_vector_neighbours</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">neighbor</span><span class="p">,</span> <span class="p">:</span><span class="n">n_frames</span><span class="p">,</span> <span class="p">:]</span> <span class="c1"># only up to the same number of frames as displacements.            </span>
+
+                <span class="k">for</span> <span class="n">frame_no</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+                    
+                    <span class="n">vector0</span> <span class="o">=</span> <span class="n">move_vector0</span><span class="p">[</span><span class="n">frame_no</span><span class="p">]</span>
+                    <span class="n">pos0</span> <span class="o">=</span> <span class="n">pos_vector0</span><span class="p">[</span><span class="n">frame_no</span><span class="p">]</span>
+
+                    <span class="n">vectorN</span> <span class="o">=</span> <span class="n">move_vector_neighbours</span><span class="p">[:,</span><span class="n">frame_no</span><span class="p">]</span>
+                    <span class="n">posN</span> <span class="o">=</span> <span class="n">pos_vector_neighbours</span><span class="p">[:,</span><span class="n">frame_no</span><span class="p">]</span>
+                    
+                    <span class="c1"># curl:  dFy_dx - dFx_dy in 2D.</span>
+                    <span class="n">dxy</span> <span class="o">=</span> <span class="n">posN</span> <span class="o">-</span> <span class="n">pos0</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># physical deltas</span>
+                    <span class="n">dvector</span> <span class="o">=</span> <span class="n">vectorN</span> <span class="o">-</span> <span class="n">vector0</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># velocity deltas</span>
+                     
+<span class="c1">#                    print(dvector.min(), dvector.max())</span>
+<span class="c1">#                    print(dxy.min(), dxy.max())</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">dvector</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">dxy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">dvector</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">dxy</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">mesh_curl</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">frame_no</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">return</span> <span class="n">mesh_curl</span></div>
+    
+
+<span class="c1">#==============================================================================</span>
+<span class="c1">#   batch_processing function</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="compute_aggregated_stats_map"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.compute_aggregated_stats_map">[docs]</a><span class="k">def</span> <span class="nf">compute_aggregated_stats_map</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">map_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_frame</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">filt_size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), numpy array of superpixel tracks</span>
+<span class="sd">    map_vals : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames), the temporal mesh strain</span>
+<span class="sd">    shape : tuple</span>
+<span class="sd">        (n_rows x n_cols), image shape</span>
+<span class="sd">    max_frame : int </span>
+<span class="sd">        the final frame to which we aggregate the statistic and compute maps for.</span>
+<span class="sd">    filt : bool</span>
+<span class="sd">        (0 or 1), run over the heat map with an average filter or not. if 1, filt_size sets the kernel size for smoothing.</span>
+<span class="sd">    filt_size : float</span>
+<span class="sd">        (float), sigma setting the standard deviation of the gaussian for kernel smoothing.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    final_saliency_map : numpy array</span>
+<span class="sd">        (n_rows x n_cols), heatmap of saliency </span>
+<span class="sd">    spatial_time_saliency_map : numpy array</span>
+<span class="sd">        (n_frames x n_rows x n_cols), frame by frame heatmap of saliency.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="kn">from</span> <span class="nn">skimage.segmentation</span> <span class="k">import</span> <span class="n">slic</span><span class="p">,</span> <span class="n">relabel_sequential</span> 
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span>
+    <span class="kn">import</span> <span class="nn">cv2</span>
+    
+    <span class="c1"># compute the saliency map</span>
+    <span class="k">if</span> <span class="n">map_vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">map_vals</span> <span class="o">=</span> <span class="n">count_dynamic_nn_neighbors</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># coerce meantracks into the intended shape </span>
+    <span class="n">meantracks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">nframes</span><span class="p">,</span> <span class="n">nregions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="c1"># create superpixel map </span>
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">shape</span>
+    
+    <span class="c1"># Create the superpixel canvas we will aggregate over. </span>
+    <span class="n">nothing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">spixels</span> <span class="o">=</span> <span class="n">slic</span><span class="p">(</span><span class="n">nothing</span><span class="p">,</span> <span class="n">n_segments</span><span class="o">=</span><span class="n">nregions</span><span class="p">)</span>
+    <span class="n">spixels</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">relabel_sequential</span><span class="p">(</span><span class="n">spixels</span><span class="p">)</span>	
+ 
+    <span class="n">regs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spixels</span><span class="p">)</span>
+    <span class="c1"># iterate over all the tracks and collate positions. </span>
+    <span class="n">all_positions</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">max_frame</span><span class="p">:</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="n">max_frame</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="n">nframes</span>
+    
+    <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
+
+        <span class="n">blank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+        <span class="n">posframe</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">frame</span><span class="p">,:,:]</span>
+
+        <span class="c1"># multiplication factor is just for the running average. </span>
+        <span class="n">blank</span><span class="p">[</span><span class="n">posframe</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">posframe</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">map_vals</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> 
+        <span class="n">blank</span><span class="p">[</span><span class="n">posframe</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">posframe</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]]</span> <span class="o">*=</span> <span class="p">(</span><span class="n">frame</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">frame</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1">#* (frame+1 / float(frame+2)) # add on the values in the thing already.. </span>
+        <span class="n">all_positions</span> <span class="o">+=</span> <span class="n">blank</span>
+        
+        <span class="n">spatial_time_saliency_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blank</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
+        
+    <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">filt</span><span class="p">:</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">filt_size</span><span class="p">)</span>
+        <span class="n">all_positions</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">all_positions</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">spatial_time_saliency_map</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">filter2D</span><span class="p">(</span><span class="n">spatial_time_saliency_map</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">kernel</span><span class="p">)</span>
+
+    <span class="n">final_saliency_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
+
+    <span class="c1"># final aggregation, should we sum here ? or should we average? </span>
+    <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">regs</span><span class="p">:</span>
+        <span class="n">final_saliency_map</span><span class="p">[</span><span class="n">spixels</span> <span class="o">==</span> <span class="n">reg</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">all_positions</span><span class="p">[</span><span class="n">spixels</span><span class="o">==</span><span class="n">reg</span><span class="p">])</span>
+            
+    <span class="k">return</span> <span class="n">final_saliency_map</span><span class="p">,</span> <span class="n">spatial_time_saliency_map</span></div>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

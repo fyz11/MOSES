@@ -1,0 +1,581 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Optical_Flow_Tracking.superpixel_track module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Track_Filtering package" href="MOSES.Track_Filtering.html" />
+    <link rel="prev" title="MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow module" href="MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html#module-MOSES.Optical_Flow_Tracking">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a> &raquo;</li>
+        
+      <li>MOSES.Optical_Flow_Tracking.superpixel_track module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Optical_Flow_Tracking.superpixel_track.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Optical_Flow_Tracking.superpixel_track">
+<span id="moses-optical-flow-tracking-superpixel-track-module"></span><h1>MOSES.Optical_Flow_Tracking.superpixel_track module<a class="headerlink" href="#module-MOSES.Optical_Flow_Tracking.superpixel_track" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Oct 16 15:31:11 2014</p>
+<p>&#64;author: felix
+&#64;email: <a class="reference external" href="mailto:felixzhou1&#37;&#52;&#48;gmail&#46;com">felixzhou1<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<p>This script and all the code within is licensed under the Ludwig License.</p>
+<p>see README.md for details on usage.</p>
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.compute_grayscale_vid_superpixel_tracks">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">compute_grayscale_vid_superpixel_tracks</code><span class="sig-paren">(</span><em>vidstack</em>, <em>opt_flow_params</em>, <em>n_spixels=1000</em>, <em>mask=None</em>, <em>adaptive_mask=False</em>, <em>ksize_mask=3</em>, <em>direction='F'</em>, <em>dense=False</em>, <em>mindensity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#compute_grayscale_vid_superpixel_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_grayscale_vid_superpixel_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines above functionalities into one easy to use function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>vidstack</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_rows x n_cols) numpy array representing a gray-scale movie</p>
+</dd>
+<dt><strong>opt_flow_params</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">dict</span><dd><p class="first last">optical flow parameters for farneback optical flow implementation in opencv.</p>
+</dd>
+<dt><strong>n_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of regular superpixels to decompose images.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>optflow_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols, 2) optical flow displacements as (x,y) direction vectors.</p>
+</dd>
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of tracks.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.compute_grayscale_vid_superpixel_tracks_FB">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">compute_grayscale_vid_superpixel_tracks_FB</code><span class="sig-paren">(</span><em>vidstack</em>, <em>opt_flow_params</em>, <em>n_spixels=1000</em>, <em>mask=None</em>, <em>adaptive_mask=False</em>, <em>ksize_mask=3</em>, <em>dense=False</em>, <em>mindensity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#compute_grayscale_vid_superpixel_tracks_FB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_grayscale_vid_superpixel_tracks_FB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combines above functionalities into one easy to use function to compute the tracks forward and backward with optional masking</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>vidstack</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_rows x n_cols) numpy array representing a gray-scale movie</p>
+</dd>
+<dt><strong>opt_flow_params</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">dict</span><dd><p class="first last">optical flow parameters for farneback optical flow implementation in opencv.</p>
+</dd>
+<dt><strong>n_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of regular superpixels to decompose images.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>optflow_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols, 2) optical flow displacements as (x,y) direction vectors.</p>
+</dd>
+<dt><strong>meantracks_F</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of forward tracks.</p>
+</dd>
+<dt><strong>meantracks_B</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of backward tracks.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">compute_regular_spixels</code><span class="sig-paren">(</span><em>imgsize</em>, <em>n_spixels=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#compute_regular_spixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a function exploiting the SLIC implementation within Scikit-Image in order to quickly tile an image with regular superpixels. It does this by running slic on a blank image the same size as the desired image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>imgsize</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows x n_cols) tuple</p>
+</dd>
+<dt><strong>n_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of regular partitions of the image.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>pos</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">mean positions of superpixels (n_superpixels x 2) numpy array</p>
+</dd>
+<dt><strong>mean_width_superpixel</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">int specifying width of an average superpixel.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.compute_vid_opt_flow">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">compute_vid_opt_flow</code><span class="sig-paren">(</span><em>vidstack</em>, <em>params</em>, <em>mask=None</em>, <em>adaptive=False</em>, <em>ksize=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#compute_vid_opt_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_vid_opt_flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a grayscale movie as a numpy vidstack, with the specified optical farneback params as params. Returns the stacked optical flow (frame by frame) for the entire video with optional masking.</p>
+<p>Set mask=None, adaptive=False for no masking.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vidstack</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_rows x n_cols numpy array</p>
+</dd>
+<dt><strong>params</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">python dict</span><dd><p class="first last">OpenCV opticalflowfarneback parameters (python dict) c.f. <a class="reference external" href="http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html">http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html</a></p>
+</dd>
+<dt><strong>mask</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">optional n_rows x n_cols (single frame) boolean mask to only compute the optical flow in selected regions.</p>
+</dd>
+<dt><strong>adaptive</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if mask is not given then specify if mask will be determined adaptively frame to frame using Otsu thresholding of pixel intensity.</p>
+</dd>
+<dt><strong>ksize</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">size of disk kernel to dilate the mask if adaptive is set to True.</p>
+</dd>
+<dt><strong>Output:</strong></dt>
+<dd></dd>
+<dt><strong>&#8212;&#8212;-</strong></dt>
+<dd></dd>
+<dt><strong>flow :</strong></dt>
+<dd><p class="first last">(n_frames-1, n_rows x n_cols x 2) numpy array giving the optical flow</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.count_point_density">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">count_point_density</code><span class="sig-paren">(</span><em>poslist</em>, <em>spixelsmap</em>, <em>min_density=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#count_point_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.count_point_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of instances coordinates in poslist falls into each superpixel region specified by spixelsmap and determine superpixel regions whose region has less than the minimum required coordinate density.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>poslist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_points x 2) numpy array with channels in image coordinate (y,x) order.</p>
+</dd>
+<dt><strong>spixelsmap</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the number of regular region of interst partitions (ROI) of the image. Each unique region is denoted with an integer from 0 to N-1 where N is the total number of regions.</p>
+</dd>
+<dt><strong>min_density</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the minimum required number of points a region should contain.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>pos_density</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">vector with number of points within each initial superpixel region.</p>
+</dd>
+<dt><strong>no_dense_regs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array (vector of int)</span><dd><p class="first last">vector of each initial superpixel region which do not have the mindensity number of points within.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.dense_tracks2array_tracks">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">dense_tracks2array_tracks</code><span class="sig-paren">(</span><em>poslist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#dense_tracks2array_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.dense_tracks2array_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>this function pads list of dense tracks to equal length tracks so all tracks can be concatenated and treated as a matrix.</p>
+<p>Default padding used is the starting position of the track, noting no removal of tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>poslist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of (y,x) coordinates of each superpixel at each frame.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>trackarray</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) array in (y,x) image convention giving the final padded tracks.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.fxn">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">fxn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#fxn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.fxn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_backward">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">prop_spixels_frame_by_frame_backward</code><span class="sig-paren">(</span><em>spixel_pos</em>, <em>optflow</em>, <em>spixel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#prop_spixels_frame_by_frame_backward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_backward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagates each superpixel centroid according to the average flow within its area from frame to frame to generate superpixel tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixel_pos</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x 2) numpy array of superpixel centroids given as (y,x)-image coordinates</p>
+</dd>
+<dt><strong>optflow</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames-1, n_rows, n_cols, 2) numpy array of frame-to-frame optical flow i.e. the output to above &lt;compute_vid_opt_flow&gt; function.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">estimated mean superpixel width assuming they are square, output to above &lt;compute_regular_spixels&gt; function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of the superpixel positions (centroids) in each frame</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_backward_dense">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">prop_spixels_frame_by_frame_backward_dense</code><span class="sig-paren">(</span><em>spixel_pos</em>, <em>optflow</em>, <em>spixel_size</em>, <em>spixelsmap</em>, <em>mindensity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#prop_spixels_frame_by_frame_backward_dense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_backward_dense" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagates each superpixel centroid according to the average flow within its area from frame to frame to generate superpixel tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixel_pos :</strong></dt>
+<dd><p class="first last">(n_superpixels x 2) numpy array of superpixel centroids given as (y,x)-image coordinates</p>
+</dd>
+<dt><strong>optflow :</strong></dt>
+<dd><p class="first last">(n_frames-1, n_rows, n_cols, 2) numpy array of frame-to-frame optical flow i.e. the output to above &lt;compute_vid_opt_flow&gt; function.</p>
+</dd>
+<dt><strong>spixel_size :</strong></dt>
+<dd><p class="first last">estimated mean superpixel width assuming they are square, output to above &lt;compute_regular_spixels&gt; function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks :</strong></dt>
+<dd><p class="first last">(n_superpixels, n_frames, 2) numpy array</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_forward">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">prop_spixels_frame_by_frame_forward</code><span class="sig-paren">(</span><em>spixel_pos</em>, <em>optflow</em>, <em>spixel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#prop_spixels_frame_by_frame_forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagates each superpixel centroid according to the average flow within its area from frame to frame to generate superpixel tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixel_pos</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x 2) numpy array of superpixel centroids given as (y,x)-image coordinates</p>
+</dd>
+<dt><strong>optflow</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames-1, n_rows, n_cols, 2) numpy array of frame-to-frame optical flow i.e. the output to above &lt;compute_vid_opt_flow&gt; function.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">estimated mean superpixel width assuming they are square, output to above <a class="reference internal" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels" title="MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels"><code class="xref py py-meth docutils literal"><span class="pre">compute_regular_spixels()</span></code></a> function</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of the superpixel positions (centroids) in each frame</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_forward_dense">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.superpixel_track.</code><code class="descname">prop_spixels_frame_by_frame_forward_dense</code><span class="sig-paren">(</span><em>spixel_pos</em>, <em>optflow</em>, <em>spixel_size</em>, <em>spixelsmap</em>, <em>mindensity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/superpixel_track.html#prop_spixels_frame_by_frame_forward_dense"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.superpixel_track.prop_spixels_frame_by_frame_forward_dense" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagates each superpixel centroid according to the average flow within its area from frame to frame to generate superpixel tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixel_pos</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x 2) numpy array of superpixel centroids given as (y,x)-image coordinates</p>
+</dd>
+<dt><strong>optflow</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames-1, n_rows, n_cols, 2) numpy array of frame-to-frame optical flow i.e. the output to above &lt;compute_vid_opt_flow&gt; function.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">estimated mean superpixel width assuming they are square, output to above <a class="reference internal" href="#MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels" title="MOSES.Optical_Flow_Tracking.superpixel_track.compute_regular_spixels"><code class="xref py py-func docutils literal"><span class="pre">compute_regular_spixels()</span></code></a> function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks :</strong></dt>
+<dd><p class="first last">(n_points, n_frames, 2) numpy array</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Track_Filtering.html" class="btn btn-neutral float-right" title="MOSES.Track_Filtering package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.html" class="btn btn-neutral" title="MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

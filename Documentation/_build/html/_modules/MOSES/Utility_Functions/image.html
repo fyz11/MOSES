@@ -1,0 +1,773 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.image &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.image</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Utility_Functions.image</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Thu Sep 27 23:01:49 2018</span>
+
+<span class="sd">@author: felix</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="c1"># check the two are identical.</span>
+<div class="viewcode-block" id="maxpool_scale"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.maxpool_scale">[docs]</a><span class="k">def</span> <span class="nf">maxpool_scale</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+    
+    <span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">MaxPooling2D</span>
+    <span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Sequential</span>
+    
+    <span class="n">im</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># pad... </span>
+    
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">),</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="pool_numpy"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.pool_numpy">[docs]</a><span class="k">def</span> <span class="nf">pool_numpy</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">):</span>
+    
+    <span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">block_reduce</span>
+    <span class="k">return</span> <span class="n">block_reduce</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="n">factor</span><span class="p">,</span><span class="n">factor</span><span class="p">),</span> <span class="n">func</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ridge_filter_hessian"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.ridge_filter_hessian">[docs]</a><span class="k">def</span> <span class="nf">ridge_filter_hessian</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Apply Hessian </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">hessian_matrix</span><span class="p">,</span> <span class="n">hessian_matrix_eigvals</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">threshold_otsu</span>
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">skeletonize</span>
+    <span class="c1">#assume you have an image img</span>
+    
+    <span class="n">hxx</span><span class="p">,</span> <span class="n">hxy</span><span class="p">,</span> <span class="n">hyy</span> <span class="o">=</span> <span class="n">hessian_matrix</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span> <span class="o">=</span> <span class="n">hessian_matrix_eigvals</span><span class="p">(</span><span class="n">hxx</span><span class="p">,</span> <span class="n">hxy</span><span class="p">,</span> <span class="n">hyy</span><span class="p">)</span>
+    
+    <span class="n">i2</span> <span class="o">=</span> <span class="n">i2</span> <span class="o">&lt;=</span> <span class="n">threshold_otsu</span><span class="p">(</span><span class="n">i2</span><span class="p">)</span>
+    <span class="n">i2</span> <span class="o">=</span> <span class="n">skeletonize</span><span class="p">(</span><span class="n">i2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">i2</span></div>
+
+<div class="viewcode-block" id="min_max_scaling"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.min_max_scaling">[docs]</a><span class="k">def</span> <span class="nf">min_max_scaling</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Min-max scaling of image intensities, same as skimage.rescale_intensity()</span>
+
+<span class="sd">    Min and Max of image are computed globally irrespective of the number of channels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        input image, any dimensionality</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img_ : numpy array</span>
+<span class="sd">        image intensity rescaled image</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+    <span class="n">img_</span> <span class="o">=</span> <span class="p">(</span><span class="n">img</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">img</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">img</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">img_</span></div>
+    
+
+<div class="viewcode-block" id="compute_centroid_binary"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.compute_centroid_binary">[docs]</a><span class="k">def</span> <span class="nf">compute_centroid_binary</span><span class="p">(</span><span class="n">binary</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the centroid coordinates of a binary mask</span>
+
+<span class="sd">    Can also use scipy.ndimage.measurements.center_of_mass</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binary : numpy bool array</span>
+<span class="sd">        2d (n_rows, n_cols) boolean image with the image region we wish to demarcate marked as True and background is False</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    centroid : numpy array</span>
+<span class="sd">        (x,y) coordinate of the positively marked area</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+    
+    <span class="n">centroid</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">binary</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">binary</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])]</span>
+    <span class="n">centroid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">centroid</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">centroid</span></div>
+
+
+<div class="viewcode-block" id="DoG"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.DoG">[docs]</a><span class="k">def</span> <span class="nf">DoG</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the different of two gaussians with widths specified by sigma. It is used to detect blob-like images and identify areas with relatively constant intensity levels in the image.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        grayscale (n_rows, n_cols) image</span>
+<span class="sd">    sigmas : list or array</span>
+<span class="sd">        the widths of the two gaussian filter in the difference computation. Specified in the form, [sigma_1, sigma_2]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dog : numpy array</span>
+<span class="sd">        grayscale image same size as input</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">gaussian</span>
+
+    <span class="n">gaussian_1</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">gaussian_2</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">dog</span> <span class="o">=</span> <span class="n">gaussian_1</span> <span class="o">-</span> <span class="n">gaussian_2</span>
+
+    <span class="k">return</span> <span class="n">dog</span></div>
+
+<div class="viewcode-block" id="entropy_img"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.entropy_img">[docs]</a><span class="k">def</span> <span class="nf">entropy_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes the Shannon Entropy of the Image.</span>
+
+<span class="sd">    The Shannon entropy highlights regions of the image with most texture. Local Regions of the filter size whose pixel intensity distribution is very different from its local surroundings will score highly.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        a float or integer valued (n_rows, n_cols) image</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    entropy_img : int</span>
+<span class="sd">        the approximate size of the image region structures one wishes to highlight</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters.rank</span> <span class="k">import</span> <span class="n">entropy</span>
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span>
+
+    <span class="n">entropy_img</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">entropy_img</span></div>
+
+<div class="viewcode-block" id="BackgroundRemoval"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.BackgroundRemoval">[docs]</a><span class="k">def</span> <span class="nf">BackgroundRemoval</span><span class="p">(</span><span class="n">im</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Removes smooth second order image artifacts such as spherical aberration by global polynomial fitting of image intensities</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    im : numpy array</span>
+<span class="sd">        (n_rows, n_cols) grayscale image. Intensity values should be floating with values [0-1]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    imgInit : numpy array</span>
+<span class="sd">        background corrected image of the same size</span>
+<span class="sd">    imgBg : numpy array</span>
+<span class="sd">        estimated background image of the same size</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">skimage.exposure</span> <span class="k">import</span> <span class="n">rescale_intensity</span>
+
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>    
+    <span class="n">N</span> <span class="o">=</span> <span class="n">nrows</span><span class="o">*</span><span class="n">ncols</span>
+    
+    <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">ncols</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nrows</span><span class="p">))</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">xx</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">yy</span> <span class="o">=</span> <span class="n">yy</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    
+    <span class="n">X</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">yy</span><span class="p">))</span> <span class="p">)</span> 
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">im</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span> <span class="c1">#X\im(:)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+
+    <span class="n">imgBg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">-</span> <span class="n">imgBg</span>
+    <span class="n">imgInit</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span><span class="n">ncols</span><span class="p">)</span>
+
+    <span class="c1"># min-max intensity rescaling of the image.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">imgInit</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">imgInit</span><span class="p">):</span>
+        <span class="n">imgInit</span> <span class="o">=</span> <span class="mf">0.0</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">imgInit</span> <span class="o">=</span> <span class="n">rescale_intensity</span><span class="p">(</span><span class="n">imgInit</span><span class="p">,</span> <span class="n">out_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># imgInit is the subtracted background (flattened image), normalised to between [0,1]</span>
+    <span class="k">return</span> <span class="n">imgInit</span><span class="p">,</span> <span class="n">imgBg</span></div>
+
+
+<div class="viewcode-block" id="perona_malik"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.perona_malik">[docs]</a><span class="k">def</span> <span class="nf">perona_malik</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.14</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">15</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Anisotropic filtering of image intensities using Perona-Malik Diffusion Method</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        input floating grayscale (n_rows, n_cols) image with intensity values [0-1]</span>
+<span class="sd">    iterations : int</span>
+<span class="sd">        Number of iterations to run the diffusion process. Higher values give greater smoothing in the output.</span>
+<span class="sd">    delta : float</span>
+<span class="sd">        This is the time step :math:`\Delta t` in the diffusion equation. </span>
+<span class="sd">    kappa : float</span>
+<span class="sd">        This regulates the sensitivity to edges in the Perona-Malik formulation.</span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    G : numpy array</span>
+<span class="sd">        Anisotropically filtered image the same size as img</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Perona, P et. al, &quot;Anisotropic diffusion.&quot; Geometry-driven diffusion in computer vision. Springer, Dordrecht, 1994. 73-92.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">misc</span><span class="p">,</span> <span class="n">ndimage</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="c1"># center pixel distances</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># 2D finite difference to estimate gradients</span>
+    <span class="n">windows</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+    <span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+        <span class="c1"># approximate gradients</span>
+        <span class="n">nabla</span> <span class="o">=</span> <span class="p">[</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">windows</span> <span class="p">]</span>
+    
+        <span class="c1"># approximate diffusion function</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nabla</span><span class="p">]</span>
+    
+        <span class="c1"># update image</span>
+        <span class="n">terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">nabla</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+        <span class="n">terms</span> <span class="o">+=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">dd</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">diff</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">nabla</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">+</span> <span class="n">delta</span><span class="o">*</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">terms</span><span class="p">))</span>
+    
+    <span class="c1"># Kernel for Gradient in x-direction</span>
+    <span class="n">Kx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+    <span class="p">)</span>
+    <span class="c1"># Kernel for Gradient in y-direction</span>
+    <span class="n">Ky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+    <span class="p">)</span>
+    <span class="c1"># Apply kernels to the image</span>
+    <span class="n">Ix</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">Kx</span><span class="p">)</span>
+    <span class="n">Iy</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">Ky</span><span class="p">)</span>
+    
+    <span class="c1"># return norm of (Ix, Iy)</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">Ix</span><span class="p">,</span> <span class="n">Iy</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">G</span></div>
+
+
+<div class="viewcode-block" id="construct_boundary_masks"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.construct_boundary_masks">[docs]</a><span class="k">def</span> <span class="nf">construct_boundary_masks</span><span class="p">(</span><span class="n">boundary_spl</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Takes the boundary_spl function and applies it to all integer y-coordinates to compute the corresponding x-coordinates of the boundary. Then returns two binary images thats marks all pixels left (y, x&lt;x-eps) and all pixels right (y, x&gt;x + eps) of the boundary line where eps is a tolerance in number of pixels.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    boundary_spl : function</span>
+<span class="sd">        a function that takes y coordinates and gives corresponding x coordinates such that all (y,x) cartesian coordinates subsample a boundary line between two sheets.</span>
+<span class="sd">    shape : 2-tuple</span>
+<span class="sd">        grayscale image shape i.e. (n_rows, n_cols) as returned by the .shape method of a numpy array</span>
+<span class="sd">    eps : int</span>
+<span class="sd">        the number of pixels tolerance to call all pixels left and right of the boundary line </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    left_mask : numpy array </span>
+<span class="sd">        0 or 1 valued array marking all pixels left of boundary line</span>
+<span class="sd">    right_mask : numpy array</span>
+<span class="sd">        0 or 1 values array marking all pixels right of boundary line</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="n">right_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+    <span class="c1"># use the y coordinate to make the points </span>
+    <span class="n">yline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">xline</span> <span class="o">=</span> <span class="n">boundary_spl</span><span class="p">(</span><span class="n">yline</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xline</span><span class="p">):</span>
+        <span class="n">left_mask</span><span class="p">[</span><span class="n">ii</span><span class="p">,:</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="n">eps</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">right_mask</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="n">eps</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># give some leeway either side of the line!.</span>
+
+    <span class="k">return</span> <span class="n">left_mask</span><span class="p">,</span> <span class="n">right_mask</span></div>
+
+
+<div class="viewcode-block" id="detect_peaks"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.detect_peaks">[docs]</a><span class="k">def</span> <span class="nf">detect_peaks</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Detect local maxima peaks in the image with minimum separation specified by the min_distance parameter</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        grayscale (n_rows, n_cols) image</span>
+<span class="sd">    min_distance : float</span>
+<span class="sd">        minimum separation distance between any two called peaks</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coords : numpy array</span>
+<span class="sd">        array of (y,x) coordinates specifying the pixel location in the image with local maxima</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">peak_local_max</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">peak_local_max</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="n">min_distance</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">coords</span></div>
+
+
+<div class="viewcode-block" id="quant_boundary_cells"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.quant_boundary_cells">[docs]</a><span class="k">def</span> <span class="nf">quant_boundary_cells</span><span class="p">(</span><span class="n">count_img</span><span class="p">,</span> <span class="n">boundary_spl</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a density image of cell counts, detect all cells as the local maxima of the image. Then count the number of cells left and right of the boundary line through image masking</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    count_img : numpy array</span>
+<span class="sd">    boundary_spl : function</span>
+<span class="sd">        a function that takes y coordinates and gives corresponding x coordinates such that all (y,x) cartesian coordinates subsample a boundary line between two sheets.  </span>
+<span class="sd">    min_distance : float</span>
+<span class="sd">        minimum separation distance between any two called peaks</span>
+<span class="sd">    eps : int</span>
+<span class="sd">        the number of pixels tolerance to call all pixels left and right of the boundary line </span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    [left_count, peaks_left] : [int, numpy array]</span>
+<span class="sd">        count of the number of peaks and its corresponding (y,x) coordinates to the left of the boundary line</span>
+<span class="sd">    [right_count, peaks_right] : [int, numpy array] </span>
+<span class="sd">        count of the number of peaks and its corresponding (y,x) coordinates to the right of the boundary line</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span> 
+    <span class="c1"># we form masks and count both sides of the boundary given a functional approximation of the boundary.</span>
+    <span class="n">cell_peaks</span> <span class="o">=</span> <span class="n">detect_peaks</span><span class="p">(</span><span class="n">count_img</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="n">min_distance</span><span class="p">)</span>
+    <span class="n">left_mask</span><span class="p">,</span> <span class="n">right_mask</span> <span class="o">=</span> <span class="n">construct_boundary_masks</span><span class="p">(</span><span class="n">boundary_spl</span><span class="p">,</span> <span class="n">count_img</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
+
+    <span class="c1"># do counts!</span>
+    <span class="n">select_left</span> <span class="o">=</span> <span class="n">left_mask</span><span class="p">[</span><span class="n">cell_peaks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="n">cell_peaks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)]</span>
+    <span class="n">select_right</span> <span class="o">=</span> <span class="n">right_mask</span><span class="p">[</span><span class="n">cell_peaks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="n">cell_peaks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)]</span>
+    
+    <span class="c1"># count this ?</span>
+    <span class="n">peaks_left</span> <span class="o">=</span> <span class="n">cell_peaks</span><span class="p">[</span><span class="n">select_left</span><span class="p">]</span>
+    <span class="n">peaks_right</span> <span class="o">=</span> <span class="n">cell_peaks</span><span class="p">[</span><span class="n">select_right</span><span class="p">]</span>
+
+    <span class="n">left_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks_left</span><span class="p">)</span>
+    <span class="n">right_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks_right</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">left_count</span><span class="p">,</span> <span class="n">right_count</span><span class="p">],</span> <span class="p">[</span><span class="n">peaks_left</span><span class="p">,</span> <span class="n">peaks_right</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="find_largest_component"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.find_largest_component">[docs]</a><span class="k">def</span> <span class="nf">find_largest_component</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">apply_thresh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a binary segmentation, perform connected component analysis and return either all regions larger than a minimum size or just the area with the largest area that is not background.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binary : numpy boolean array</span>
+<span class="sd">        (n_rows, n_cols) binary segmentation image</span>
+<span class="sd">    thresh : float </span>
+<span class="sd">        minimum area of a component to be kept. Area is a specified as a fraction of the image size</span>
+<span class="sd">    apply_thresh : bool</span>
+<span class="sd">        if True, all areas with area greater than the minimum size is kept else only the region of largest area is kept</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">label</span><span class="p">,</span> <span class="n">regionprops</span>
+    <span class="kn">from</span> <span class="nn">scipy.ndimage.morphology</span> <span class="k">import</span> <span class="n">binary_fill_holes</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># connected components analysis</span>
+    <span class="n">labelled</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+    <span class="n">regs</span> <span class="o">=</span> <span class="n">regionprops</span><span class="p">(</span><span class="n">labelled</span><span class="p">)</span>
+    <span class="c1"># 0 = background </span>
+    <span class="n">uniq_regs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labelled</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">areas</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">re</span> <span class="ow">in</span> <span class="n">regs</span><span class="p">:</span>
+        <span class="n">areas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">areas</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">areas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">areas</span><span class="p">)</span>
+        <span class="n">largest_area</span> <span class="o">=</span> <span class="n">areas</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">areas</span><span class="p">)]</span>
+            
+        <span class="k">if</span> <span class="n">apply_thresh</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">largest_area</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="o">*</span><span class="n">nrows</span><span class="o">*</span><span class="n">ncols</span><span class="p">:</span>
+                <span class="n">largest</span> <span class="o">=</span> <span class="n">labelled</span> <span class="o">==</span> <span class="n">uniq_regs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">areas</span><span class="p">)]</span>
+                <span class="k">return</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">largest</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">spixel_map</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">largest</span> <span class="o">=</span> <span class="n">labelled</span> <span class="o">==</span> <span class="n">uniq_regs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">areas</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">largest</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="train_sheet_segmentation_model"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.train_sheet_segmentation_model">[docs]</a><span class="k">def</span> <span class="nf">train_sheet_segmentation_model</span><span class="p">(</span> <span class="n">im</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">close_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;GaussianBayes&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Uses image thresholding on the entropy images to get the ground-truth segmentation of epithelial sheet on a well-strained frame. Then learns a machine learning model of how to classify pixels in subsequent frames. The particular machine learning model learnt is specified by the user.</span>
+
+<span class="sd">    Four features are computed to classify each pixel: red pixel intensity, red entropy image intensity, green pixel intensity and green entropy image intensity. The entropy image is computed on the difference of gaussian image of the respective channel image intensity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    im : numpy array</span>
+<span class="sd">        a RGB image (n_rows, n_cols, 3) with red and green epithelial sheet images</span>
+<span class="sd">    sigmas : list or array-like</span>
+<span class="sd">        the two spatial scales to use to compute difference of gaussian filter responses.</span>
+<span class="sd">    size : int</span>
+<span class="sd">        size of kernel used for computation of entropy image of difference of gaussian image</span>
+<span class="sd">    close_size : int</span>
+<span class="sd">        size of kernel used for closing holes after image thresholding</span>
+<span class="sd">    debug : bool</span>
+<span class="sd">        if True plots intermediate steps for checking</span>
+<span class="sd">    method : str</span>
+<span class="sd">        One of the following strings to denote which classifier method in scikit-learn to use.</span>
+
+<span class="sd">            * &#39;GaussianBayes&#39; : uses Gaussian based Naive Bayes classification</span>
+<span class="sd">            * &#39;SVM&#39; : trains a support vector machine </span>
+<span class="sd">            * &#39;Kneighbours&#39; : this uses K nearest neighbour classification</span>
+<span class="sd">    *args : </span>
+<span class="sd">        optional arguments to pass to the machine learning classifier function in scikit-learn</span>
+<span class="sd">    **kwargs : </span>
+<span class="sd">        optional keyword arguments to pass to the machine learning classifier function in scikit-learn</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clf : scikit-learn classifier object</span>
+<span class="sd">        a scikit-learn classifier object which computes the images to give red/green epithelial sheet segmentation of the image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">threshold_otsu</span>
+    <span class="kn">from</span> <span class="nn">scipy.ndimage.morphology</span> <span class="k">import</span> <span class="n">binary_fill_holes</span>
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">binary_closing</span><span class="p">,</span> <span class="n">disk</span><span class="p">,</span> <span class="n">binary_dilation</span>
+    <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">svm</span>
+    <span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="k">import</span> <span class="n">GaussianNB</span>
+    <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
+    <span class="kn">from</span> <span class="nn">skimage.exposure</span> <span class="k">import</span> <span class="n">rescale_intensity</span>
+    <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the label </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r_img</span> <span class="o">=</span> <span class="n">im</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">g_img</span> <span class="o">=</span> <span class="n">im</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">r_</span> <span class="o">=</span> <span class="n">DoG</span><span class="p">(</span><span class="n">r_img</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
+    <span class="n">g_</span> <span class="o">=</span> <span class="n">DoG</span><span class="p">(</span><span class="n">g_img</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
+    
+    <span class="n">r_ent</span> <span class="o">=</span> <span class="n">entropy_img</span><span class="p">(</span><span class="n">r_</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">g_ent</span> <span class="o">=</span> <span class="n">entropy_img</span><span class="p">(</span><span class="n">g_</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">r_img</span> <span class="o">&gt;=</span> <span class="n">threshold_otsu</span><span class="p">(</span><span class="n">r_img</span><span class="p">)</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">g_img</span> <span class="o">&gt;=</span> <span class="n">threshold_otsu</span><span class="p">(</span><span class="n">g_img</span><span class="p">)</span>
+    
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">y_r</span><span class="p">)</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">y_g</span><span class="p">)</span>
+    
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">binary_closing</span><span class="p">(</span><span class="n">y_r</span><span class="p">,</span> <span class="n">disk</span><span class="p">(</span><span class="n">close_size</span><span class="p">))</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">binary_closing</span><span class="p">(</span><span class="n">y_g</span><span class="p">,</span> <span class="n">disk</span><span class="p">(</span><span class="n">close_size</span><span class="p">))</span>
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">find_largest_component</span><span class="p">(</span><span class="n">y_r</span><span class="p">)</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">find_largest_component</span><span class="p">(</span><span class="n">y_g</span><span class="p">)</span>
+    
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">binary_dilation</span><span class="p">(</span><span class="n">y_r</span><span class="p">,</span> <span class="n">disk</span><span class="p">(</span><span class="n">close_size</span><span class="p">))</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">binary_dilation</span><span class="p">(</span><span class="n">y_g</span><span class="p">,</span> <span class="n">disk</span><span class="p">(</span><span class="n">close_size</span><span class="p">))</span>
+    <span class="n">y_r</span> <span class="o">=</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">y_r</span><span class="p">)</span>
+    <span class="n">y_g</span> <span class="o">=</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">y_g</span><span class="p">)</span>
+    
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">y_r</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">y_r</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">y_g</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute some textural information properties to augment. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">r_img</span><span class="p">,</span> <span class="n">r_</span><span class="p">,</span> <span class="n">r_ent</span><span class="p">,</span> <span class="n">g_img</span><span class="p">,</span> <span class="n">g_</span><span class="p">,</span> <span class="n">g_ent</span><span class="p">])</span>
+<span class="c1">#    X = np.dstack([r_img, g_img])</span>
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">nrows</span><span class="o">*</span><span class="n">ncols</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># make this from RGB into multichannel. </span>
+    
+<span class="c1">#    sc_model = StandardScaler()</span>
+<span class="c1">#    sc_model.fit(x)</span>
+<span class="c1">#    x = sc_model.transform(x)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;GaussianBayes&#39;</span><span class="p">:</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;SVM&#39;</span><span class="p">:</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># recommended kernel=&#39;linear&#39;</span>
+    <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;Kneighbours&#39;</span><span class="p">:</span>
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1"># e.g. n_neigbors=5</span>
+    <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">clf</span></div>
+    
+    
+<div class="viewcode-block" id="apply_SVM"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.apply_SVM">[docs]</a><span class="k">def</span> <span class="nf">apply_SVM</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">clf</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">multiply</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot; Convenience function to use the trained classifier returned by the MOSES.Utility_Functions.image.train_sheet_segmentation_model function given a new image.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    im : numpy array</span>
+<span class="sd">        an RGB (n_rows, n_cols, 3) image</span>
+<span class="sd">    clf : scikit-learn classifier object</span>
+<span class="sd">        This classifier object is trained and the output of :func:`train_sheet_segmentation_model`</span>
+<span class="sd">    sigmas : list or array-like</span>
+<span class="sd">        the two spatial scales used to compute difference of gaussian filter responses.</span>
+<span class="sd">    size : int</span>
+<span class="sd">        size of kernel used for computation of the entropy image of the difference of gaussian image</span>
+<span class="sd">    multiply : list or array-like</span>
+<span class="sd">        optional numerical weights to weight the contribution of green or red cell features</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fdskfasjk : </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.exposure</span> <span class="k">import</span> <span class="n">rescale_intensity</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="n">r_</span> <span class="o">=</span> <span class="n">DoG</span><span class="p">(</span><span class="n">im</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
+    <span class="n">g_</span> <span class="o">=</span> <span class="n">DoG</span><span class="p">(</span><span class="n">im</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
+    
+    <span class="n">r_ent</span> <span class="o">=</span> <span class="n">entropy_img</span><span class="p">(</span><span class="n">r_</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">g_ent</span> <span class="o">=</span> <span class="n">entropy_img</span><span class="p">(</span><span class="n">g_</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">im</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r_</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r_ent</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">im</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">g_</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">g_ent</span><span class="o">*</span><span class="n">multiply</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="c1">#    X = np.dstack([im[:,:,0]*multiply[0], im[:,:,1]*multiply[1]])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">nrows</span><span class="o">*</span><span class="n">ncols</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1">#    x = sc_model.transform(x)</span>
+    
+    <span class="n">y_out</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">y_out</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span></div>
+
+
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

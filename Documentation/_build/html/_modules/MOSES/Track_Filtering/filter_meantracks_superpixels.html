@@ -1,0 +1,972 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Track_Filtering.filter_meantracks_superpixels &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Track_Filtering.filter_meantracks_superpixels</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Track_Filtering.filter_meantracks_superpixels</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Jan 16 21:32:25 2017</span>
+
+<span class="sd">@author: felix</span>
+<span class="sd">@email: felixzhou1@gmail.com</span>
+
+<span class="sd">This script and all the code within is licensed under the Ludwig License.</span>
+
+<span class="sd">see README.md for details on usage.</span>
+
+<span class="sd">Information</span>
+<span class="sd">------------</span>
+<span class="sd">This is a specialised track cleaning module for migrating epithelial sheets</span>
+<span class="sd">currently it is framed for 2 coloured sheets, but one can easily adapt for phase contrast migrating sheets too.</span>
+
+<span class="sd">1) applied superpixel clique cleaning</span>
+<span class="sd">2) dynamic propagation with continuity enforcement to grab all the relevant tracks. </span>
+
+<span class="sd">N.B. assumes diametrically opposing epithelioid sheets. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<div class="viewcode-block" id="find_cliques_superpixels"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_superpixels">[docs]</a><span class="k">def</span> <span class="nf">find_cliques_superpixels</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">select</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; For the given selected points, link points close together in a graph.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array representing the (y,x) superpixel positions</span>
+<span class="sd">    select : numpy array</span>
+<span class="sd">        logical boolean mask of True or False indicating which superpixels to construct graph for</span>
+<span class="sd">    thresh_factor : float</span>
+<span class="sd">        the radial distance cut-off as a multiplier of the average superpixel size.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coords : numpy array</span>
+<span class="sd">        (n_superpixels, 2) array of (y,x)-coordinates of the selected superpixel points at frame 0</span>
+<span class="sd">    nearest_neighbors_refined : list</span>
+<span class="sd">        corresponding python list of numpy arrays giving the ids of superpixels that are neighbours to each superpixel. If there is no neighbours for a superpixel, the numpy array is empty. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">euclidean_distances</span>
+
+    <span class="c1"># Based on initial distances of superpixels construct neighbourhood graph.</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">select</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">meantracks</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dist_thresh</span> <span class="o">=</span> <span class="n">thresh_factor</span> <span class="o">*</span> <span class="n">spixel_size</span>
+
+    <span class="c1"># build a dist matrix</span>
+    <span class="n">dist_regions</span> <span class="o">=</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="n">dist_regions</span><span class="p">[</span><span class="n">dist_regions</span> <span class="o">&gt;</span> <span class="n">dist_thresh</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="c1">#set to ridiculously high</span>
+
+    <span class="c1"># sort the regions</span>
+    <span class="n">nearest_neighbors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist_regions</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="n">dist_regions</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># iterate and for each one, remove those that have inf.</span>
+    <span class="n">nearest_neighbors_refined</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_regions</span><span class="p">):</span>
+
+        <span class="n">good_index</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_regions</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">dist_regions</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+                <span class="n">good_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nearest_neighbors</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">nearest_neighbors_refined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">good_index</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">coords</span><span class="p">,</span> <span class="n">nearest_neighbors_refined</span></div>
+
+    
+<div class="viewcode-block" id="find_cliques_neighbour_list"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_neighbour_list">[docs]</a><span class="k">def</span> <span class="nf">find_cliques_neighbour_list</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">,</span> <span class="n">thresh_size</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; This is similar to the networkx function for finding graph components. Here we find all the isolated connected components of the neighbourhood graph. The basic idea is that the superpixels constituting the initial epithelial sheet is approximated by the largest set of interconnected superpixels. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nearest_neighbor_refined : list</span>
+<span class="sd">        python list of numpy arrays for expressing the superpixel adjacency graph.</span>
+<span class="sd">    thresh_size : int</span>
+<span class="sd">        filters which graph components to keep by specifying a minimum number of superpixels that much belong to the component. This is to reduce consideration of singletons.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    final_uniq : list</span>
+<span class="sd">        list of cliques given as a list of array of superpixel ids e.g. [(clique1), (clique2),...] </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">### Initialise the storage facilities</span>
+    <span class="c1"># now we just loop over all the nearest neighbours and create cliques.</span>
+    <span class="n">cliques</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">to_compute</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="c1">### first filter all singletons, iterating over the entire dataset.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">)):</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">nearest_neighbors_refined</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="c1"># these are not singletons.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="p">[</span><span class="n">query</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)):</span>
+                <span class="n">full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">[</span><span class="n">query</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+
+            <span class="c1"># filter the unique connections</span>
+            <span class="n">cliques</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">full</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cliques</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="c1"># thats the end of that, its a singleton.</span>
+            <span class="n">to_compute</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># do not want to bother with these any more.</span>
+
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Here we iterate through</span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">array_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nearest_neighbors_refined</span><span class="p">))</span>
+
+    <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">to_compute</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="n">array_index_compute</span> <span class="o">=</span> <span class="n">array_index</span><span class="p">[</span><span class="n">to_compute</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># now we just look through these.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array_index_compute</span><span class="p">)):</span>
+
+            <span class="n">query_index</span> <span class="o">=</span> <span class="n">array_index_compute</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">cliques</span><span class="p">[</span><span class="n">query_index</span><span class="p">]</span>
+
+            <span class="c1"># these are all not singletons.</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="p">[</span><span class="n">query</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)):</span>
+                <span class="n">full</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cliques</span><span class="p">[</span><span class="n">query</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+            <span class="n">full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+
+            <span class="n">uniq_cluster</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">full</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">uniq_cluster</span><span class="p">):</span>
+                <span class="n">to_compute</span><span class="p">[</span><span class="n">query_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cliques</span><span class="p">[</span><span class="n">query_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">uniq_cluster</span>
+
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Final Filter into unique list</span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">uniques</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">cliques</span><span class="p">:</span>
+
+        <span class="n">check</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">uniques</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+                <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">check</span><span class="p">:</span>
+            <span class="c1"># do nothing:</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">uniques</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="c1"># we thresh based on size to remove annoying singletons and too small areas that is probably spurious.</span>
+    <span class="n">final_uniq</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">uniq</span> <span class="ow">in</span> <span class="n">uniques</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">uniq</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span> <span class="o">&gt;</span> <span class="n">thresh_size</span><span class="p">:</span>
+            <span class="n">final_uniq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uniq</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_uniq</span></div>
+    
+    
+<div class="viewcode-block" id="filter_tracks_superpixel_cliques"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques">[docs]</a><span class="k">def</span> <span class="nf">filter_tracks_superpixel_cliques</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">select_tracks</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Constructs a neighbourhood graph based on initial points of tracks according to a distance cut-off for selected points specified by a binary mask. It does this twice, the second time to account for central nodes without which we would have two disconnected graph components</span>
+<span class="sd">    </span>
+<span class="sd">    Code is tested for a 4 connected graph, thresh_factor &lt;=1.2</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2) numpy array of superpixel tracks</span>
+<span class="sd">    select_tracks : numpy bool array</span>
+<span class="sd">        binary mask selecting which superpixels to construct graph for</span>
+<span class="sd">    thresh_factor : float</span>
+<span class="sd">        (float) distance cut-off specified as a multiplicative factor of the average superpixel size</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    keep_spixels : numpy bool array</span>
+<span class="sd">        a numpy vector of numbered ids of which superpixels to keep</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># attempts to clean up the tracks and eliminate those not part of the &#39;bulk&#39; for either color based on clique/graph component neighbourhood analysis. </span>
+
+    <span class="c1"># 1. first round of filtering - identify the largest collection of tracks. </span>
+    <span class="n">coords</span><span class="p">,</span> <span class="n">partners</span> <span class="o">=</span> <span class="n">find_cliques_superpixels</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">select_tracks</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">thresh_factor</span><span class="p">)</span>
+                
+    <span class="n">select_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">select_tracks</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">track_cliques</span> <span class="o">=</span> <span class="n">find_cliques_neighbour_list</span><span class="p">(</span><span class="n">partners</span><span class="p">)</span> 
+    
+    <span class="c1"># only get the largest track clique </span>
+    <span class="n">good_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">traq</span><span class="p">)</span> <span class="k">for</span> <span class="n">traq</span> <span class="ow">in</span> <span class="n">track_cliques</span><span class="p">])</span>
+    <span class="n">good_tracks</span> <span class="o">=</span> <span class="n">track_cliques</span><span class="p">[</span><span class="n">good_id</span><span class="p">]</span>
+
+    <span class="c1"># apply the filter to the tracks.</span>
+    <span class="n">filt_tracks</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">select_spixels</span><span class="p">,:,:]</span>
+    <span class="n">filt_tracks</span> <span class="o">=</span> <span class="n">filt_tracks</span><span class="p">[</span><span class="n">good_tracks</span><span class="p">]</span>
+
+    <span class="c1"># 2. second round of filtering - recalculate the neighbours this time, this time we go for the 2-links and remove all of them.., and find the cliques. </span>
+    <span class="n">coords</span><span class="p">,</span> <span class="n">partners</span> <span class="o">=</span> <span class="n">find_cliques_superpixels</span><span class="p">(</span><span class="n">filt_tracks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">good_tracks</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">),</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">thresh_factor</span><span class="p">)</span>
+                
+    <span class="n">sum_partners</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">partners</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">select_partners</span> <span class="o">=</span> <span class="n">sum_partners</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="c1"># select to retain ids that have more than 2 neighbours. </span>
+    <span class="n">filt_filt_tracks</span> <span class="o">=</span> <span class="n">filt_tracks</span><span class="p">[</span><span class="n">select_partners</span><span class="p">]</span>
+    
+    <span class="c1"># 3. final application of largest clique finding. </span>
+    <span class="n">coords</span><span class="p">,</span> <span class="n">partners</span> <span class="o">=</span> <span class="n">find_cliques_superpixels</span><span class="p">(</span><span class="n">filt_filt_tracks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">filt_filt_tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">),</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">thresh_factor</span><span class="p">)</span>
+    <span class="n">track_cliques</span> <span class="o">=</span> <span class="n">find_cliques_neighbour_list</span><span class="p">(</span><span class="n">partners</span><span class="p">)</span>
+    
+    <span class="n">good_clique_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">traq</span><span class="p">)</span> <span class="k">for</span> <span class="n">traq</span> <span class="ow">in</span> <span class="n">track_cliques</span><span class="p">])</span>
+    <span class="n">good_clique</span> <span class="o">=</span> <span class="n">track_cliques</span><span class="p">[</span><span class="n">good_clique_id</span><span class="p">]</span>
+
+    <span class="c1"># 4. Finally collate together all the filters</span>
+    <span class="n">keep_spixels</span> <span class="o">=</span> <span class="p">(</span><span class="n">select_spixels</span><span class="p">[</span><span class="n">good_tracks</span><span class="p">[</span><span class="n">select_partners</span><span class="p">]])[</span><span class="n">good_clique</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">keep_spixels</span></div>
+    
+        
+<span class="c1"># this implements the above only once... in case we only need to do it once. </span>
+<div class="viewcode-block" id="filter_tracks_superpixel_cliques_once"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques_once">[docs]</a><span class="k">def</span> <span class="nf">filter_tracks_superpixel_cliques_once</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">select_tracks</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="mf">1.1</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Constructs a neighbourhood graph based on initial points of tracks according to a distance cut-off for selected points specified by a binary mask. It does this once.</span>
+<span class="sd">    </span>
+<span class="sd">    Code is tested for a 4 connected graph, thresh_factor &lt;=1.2</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2) numpy array of superpixel tracks</span>
+<span class="sd">    select_tracks : numpy bool array</span>
+<span class="sd">        binary mask selecting which superpixels to construct graph for</span>
+<span class="sd">    thresh_factor : float</span>
+<span class="sd">        (float) distance cut-off specified as a multiplicative factor of the average superpixel size</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    keep_spixels : numpy bool array</span>
+<span class="sd">        a numpy vector of numbered ids of which superpixels to keep</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># attempts to clean up the tracks and eliminate those not part of the &#39;bulk&#39; for either color based on clique neighbourhood analysis. </span>
+    
+    <span class="c1"># 1. first round of filtering - identify the largest collection of tracks. </span>
+    <span class="n">coords</span><span class="p">,</span> <span class="n">partners</span> <span class="o">=</span> <span class="n">find_cliques_superpixels</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">select_tracks</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">thresh_factor</span><span class="p">)</span>
+                
+    <span class="n">select_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">select_tracks</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">track_cliques</span> <span class="o">=</span> <span class="n">find_cliques_neighbour_list</span><span class="p">(</span><span class="n">partners</span><span class="p">)</span>
+
+    <span class="c1"># only get the largest track clique </span>
+    <span class="n">good_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">traq</span><span class="p">)</span> <span class="k">for</span> <span class="n">traq</span> <span class="ow">in</span> <span class="n">track_cliques</span><span class="p">])</span>
+    <span class="n">good_tracks</span> <span class="o">=</span> <span class="n">track_cliques</span><span class="p">[</span><span class="n">good_id</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">select_spixels</span><span class="p">[</span><span class="n">good_tracks</span><span class="p">]</span></div>
+
+<span class="c1"># this expands the initial superpixel selection and turns it into a proper meantracks object .... </span>
+<div class="viewcode-block" id="apply_filter_tracks"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.apply_filter_tracks">[docs]</a><span class="k">def</span> <span class="nf">apply_filter_tracks</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">select_spixels</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; This is a helper function to basically turn inactive superpixels into constant tracks.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    select_pixels : numpy bool array</span>
+<span class="sd">        binary numpy mask indicating superpixels to keep, those that are False are to be set to constant tracks.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    new_meantracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), final numpy array of superpixel tracks after replacing inactivated with constant tracks.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_meantracks</span> <span class="o">=</span> <span class="n">meantracks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="n">select</span><span class="p">[</span><span class="n">select_spixels</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># do not need to modify those that are being kept.</span>
+    
+    <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    <span class="n">sel_index</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">select</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">sel_index</span><span class="p">:</span>    
+        <span class="c1"># they do not move past the initial position</span>
+        <span class="n">new_meantracks</span><span class="p">[</span><span class="n">index</span><span class="p">,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">new_meantracks</span><span class="p">[</span><span class="n">index</span><span class="p">,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">new_meantracks</span></div>
+    
+<span class="c1"># critical at the start in order to narrow the search... important for producing spixel cliques. </span>
+<div class="viewcode-block" id="find_moving_tracks"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.find_moving_tracks">[docs]</a><span class="k">def</span> <span class="nf">find_moving_tracks</span><span class="p">(</span><span class="n">forward_tracks</span><span class="p">,</span> <span class="n">frame2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">move_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Find which superpixels are moving between frame0 to frame2 assessed by if the superpixel has been displaced by computing the distance in location between the two frames.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    forward_tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of superpixel tracks from optical flow.</span>
+<span class="sd">    frame2 : int</span>
+<span class="sd">        The frame number to compare movement of frame0 to. Here defaults to the next frame i.e. 1</span>
+<span class="sd">    move_thresh : float</span>
+<span class="sd">        The minimum distance a superpixel has to have moved to be classified as &#39;moving&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    select : numpy array</span>
+<span class="sd">        (n_superpixels,) binary logical mask numpy vector</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">move</span> <span class="o">=</span> <span class="n">forward_tracks</span><span class="p">[:,</span> <span class="n">frame2</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">forward_tracks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">move</span> <span class="o">=</span> <span class="n">move</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">move</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> 
+    <span class="n">select</span> <span class="o">=</span> <span class="n">move</span> <span class="o">&gt;</span> <span class="n">move_thresh</span> 
+    
+    <span class="k">return</span> <span class="n">select</span></div>
+    
+<span class="c1"># self explanatory, plot both tracks on the same axes. </span>
+<div class="viewcode-block" id="make_plot"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.make_plot">[docs]</a><span class="k">def</span> <span class="nf">make_plot</span><span class="p">(</span><span class="n">tracks_r</span><span class="p">,</span> <span class="n">tracks_g</span><span class="p">,</span> <span class="n">ax</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convenient function within this module that co-plots both red and green coloured superpixel tracks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks_r : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of red channel superpixel tracks from optical flow.</span>
+<span class="sd">    tracks_g : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of green channel superpixel tracks from optical flow.</span>
+<span class="sd">    ax : matplotlib ax object</span>
+<span class="sd">        e.g from executing fig, ax = plt.subplots()</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        void function, nothing is returned.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_r</span> <span class="o">=</span> <span class="n">tracks_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_g</span> <span class="o">=</span> <span class="n">tracks_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_r</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tracks_r</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">tracks_r</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_g</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tracks_g</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">tracks_g</span><span class="p">[</span><span class="n">i</span><span class="p">,:,</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[]</span></div>
+    
+<span class="c1"># this raster fills missing superpixels... (allows maximum retention of information and continuity especially at the start. )</span>
+<div class="viewcode-block" id="fill_in_missing_superpixels"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.fill_in_missing_superpixels">[docs]</a><span class="k">def</span> <span class="nf">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks</span><span class="p">,</span> <span class="n">keep_spixels</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Exploiting the regularity of the initial superpixels, it allows filling in of the missing superpixels within the bulk sheet that wasn&#39;t identified as moving.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2) numpy array of superpixel tracks</span>
+<span class="sd">    keep_spixels : numpy bool array </span>
+<span class="sd">        numpy array of superpixel ids that was kept (activated).</span>
+<span class="sd">    shape : tuple</span>
+<span class="sd">        (n_rows, n_cols) tuple of image shape</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    final_spixels_keep : numpy array</span>
+<span class="sd">        a new numpy array of superpixel ids </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># just need the superpixels i have kept and the coordinates of the superpixels which ofc ... is available from the track information!. </span>
+    <span class="c1"># shape is used for the image limits. </span>
+    <span class="c1"># we do this by line fill. </span>
+    <span class="n">y_limit</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">x_limit</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">initial_coords</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:]</span> <span class="c1"># in the form (y,x)</span>
+    
+    <span class="n">n_regions</span> <span class="o">=</span> <span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">all_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_regions</span><span class="p">)</span>
+    
+    <span class="n">remain_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">all_spixels</span><span class="p">,</span> <span class="n">keep_spixels</span><span class="p">)</span> <span class="c1">#find those that remain. </span>
+    
+    <span class="c1"># grab the individual spixel locations. </span>
+    <span class="n">remain_coords</span> <span class="o">=</span> <span class="n">initial_coords</span><span class="p">[</span><span class="n">remain_spixels</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">keep_coords</span> <span class="o">=</span> <span class="n">initial_coords</span><span class="p">[</span><span class="n">keep_spixels</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="c1"># find the bounds of the kept coords.</span>
+    <span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">keep_coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">keep_coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Determine all the unique spixels  </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="c1"># from this range we can determine the direction to fill in .</span>
+    <span class="n">uniq_x_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">initial_coords</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">uniq_y_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">initial_coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">spixel_x_size</span> <span class="o">=</span> <span class="n">uniq_x_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">uniq_x_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">spixel_y_size</span> <span class="o">=</span> <span class="n">uniq_y_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">uniq_y_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Organise two lists according to the unique y_coords. (equivalent to a horizontal scan.)</span>
+    <span class="n">keep_list_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">keep_coords</span><span class="p">[</span><span class="n">keep_coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">uniq_y_coord</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">uniq_y_coord</span> <span class="ow">in</span> <span class="n">uniq_y_coords</span><span class="p">]</span>
+    <span class="n">remain_list_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">remain_coords</span><span class="p">[</span><span class="n">remain_coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">uniq_y_coord</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">uniq_y_coord</span> <span class="ow">in</span> <span class="n">uniq_y_coords</span><span class="p">]</span>
+    
+    <span class="n">remain_y_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">remain_spixels</span><span class="p">[</span><span class="n">remain_coords</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">uniq_y_coord</span><span class="p">]</span> <span class="k">for</span> <span class="n">uniq_y_coord</span> <span class="ow">in</span> <span class="n">uniq_y_coords</span><span class="p">]</span>
+<span class="c1">#    print len(remain_spixels), len(keep_spixels)</span>
+<span class="c1">#    print remain_y_ids</span>
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Determine right or left.   </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">additional_spixels</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">x_max</span> <span class="o">&lt;=</span> <span class="n">x_limit</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">spixel_x_size</span><span class="p">:</span>
+<span class="c1">#        print &#39;left&#39; </span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keep_list_y</span><span class="p">)):</span>
+            
+            <span class="n">candidate_y</span> <span class="o">=</span> <span class="n">remain_list_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">ref_y</span> <span class="o">=</span> <span class="n">keep_list_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#make sure have something to compare. </span>
+                <span class="n">additional_spixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remain_y_ids</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">candidate_y</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ref_y</span><span class="p">)])</span>
+
+    <span class="k">if</span> <span class="n">x_min</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">*</span><span class="n">spixel_x_size</span><span class="p">:</span>        
+<span class="c1">#        print &#39;right&#39;</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keep_list_y</span><span class="p">)):</span>
+            
+            <span class="n">candidate_y</span> <span class="o">=</span> <span class="n">remain_list_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">ref_y</span> <span class="o">=</span> <span class="n">keep_list_y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_y</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#make sure have something to compare. </span>
+                <span class="n">additional_spixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remain_y_ids</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">candidate_y</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ref_y</span><span class="p">)])</span>
+
+<span class="c1">#    print additional_spixels</span>
+<span class="c1">#    print np.hstack(additional_spixels)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">additional_spixels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">final_spixels_keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">keep_spixels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">additional_spixels</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">final_spixels_keep</span> <span class="o">=</span> <span class="n">keep_spixels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">final_spixels_keep</span></div>
+    
+<div class="viewcode-block" id="count_points_spixels"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.count_points_spixels">[docs]</a><span class="k">def</span> <span class="nf">count_points_spixels</span><span class="p">(</span><span class="n">spixels</span><span class="p">,</span> <span class="n">regions2count</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Checking if a superpixel centroid is in the superpixel area of another using indexing.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spixels :  numpy array  </span>
+<span class="sd">        (n_rows, n_cols) image with each distinct superpixel region assigned a unique int (output of scikit-image slic algorithm)</span>
+<span class="sd">    regions2count : numpy array</span>
+<span class="sd">        numpy array of candidate superpixel regions to check</span>
+<span class="sd">    points : numpy array</span>
+<span class="sd">        (y,x) positions of activated superpixels.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    counts : </span>
+
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># the first is superpixel map... the ids of which can be used to access the region counts. </span>
+    <span class="n">counts_all_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spixels</span><span class="p">)))</span>
+    <span class="n">counts_all_spixels</span><span class="p">[</span><span class="n">spixels</span><span class="p">[</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1"># index and add. </span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">counts_all_spixels</span><span class="p">[</span><span class="n">regions2count</span><span class="p">]</span>
+        
+    <span class="k">return</span> <span class="n">counts</span></div>
+    
+    
+<div class="viewcode-block" id="dynamic_propagation_spixels_fast"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.dynamic_propagation_spixels_fast">[docs]</a><span class="k">def</span> <span class="nf">dynamic_propagation_spixels_fast</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">start_spixels</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dynamically propagates the initial assigned superpixels to the shape of the initial sheet in order to capture the full sheet dynamics. An inactivated superpixel becomes activated if an activated superpixel comes into the superpixel area (area of influence)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks from optic flow.</span>
+<span class="sd">    start_spixels : array_like</span>
+<span class="sd">        ids of superpixels belonging to the initial epithelial sheet</span>
+<span class="sd">    shape : tuple</span>
+<span class="sd">        (n_rows, n_cols) image shape.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    meantracks_new : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), new numpy array of superpixel tracks, with inactivated superpixels replaced by constant tracks.</span>
+<span class="sd">    activated_spixels : numpy array</span>
+<span class="sd">        numpy array of superpixel ids that became activated.</span>
+<span class="sd">    running_spixels : numpy array</span>
+<span class="sd">        numpy array of all activated/kept superpixel ids</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># this function dynamically projects the initial superpixels and &#39;activates&#39; other superpixels on request. </span>
+    <span class="kn">from</span> <span class="nn">skimage.segmentation</span> <span class="k">import</span> <span class="n">slic</span><span class="p">,</span> <span class="n">relabel_sequential</span>
+    
+    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span> 
+    <span class="n">n_spixels</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tracks</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># 1. create the superpixels </span>
+    <span class="n">spixels</span> <span class="o">=</span> <span class="n">slic</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="n">n_segments</span><span class="o">=</span><span class="n">n_spixels</span><span class="p">,</span> <span class="n">compactness</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">spixels</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">relabel_sequential</span><span class="p">(</span><span class="n">spixels</span><span class="p">)</span>
+ 
+    <span class="c1"># 2. create save list.</span>
+    <span class="n">all_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_spixels</span><span class="p">)</span>
+    
+    <span class="c1"># these are the two lists we have to keep track of ... </span>
+    <span class="n">other_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">all_spixels</span><span class="p">,</span> <span class="n">start_spixels</span><span class="p">)</span>
+    <span class="n">cand_spixels</span> <span class="o">=</span> <span class="n">other_spixels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="n">running_spixels</span> <span class="o">=</span> <span class="n">start_spixels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">activated_spixels</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+    <span class="c1"># 3. propagate positions </span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span><span class="mi">1</span> <span class="p">):</span>
+        
+        
+        <span class="c1"># check first other_spixels is not simply empty ...</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_spixels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        
+            <span class="c1"># don&#39;t have to do the first frame. </span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">running_spixels</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="p">:]</span> <span class="c1">#(y,x) format. </span>
+    
+            <span class="c1"># count the number of points falling into the regions. </span>
+            <span class="n">spixel_counts</span> <span class="o">=</span> <span class="n">count_points_spixels</span><span class="p">(</span><span class="n">spixels</span><span class="p">,</span> <span class="n">other_spixels</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
+            
+            <span class="c1"># add the activated ids </span>
+            <span class="n">activated_ids</span> <span class="o">=</span> <span class="n">other_spixels</span><span class="p">[</span><span class="n">spixel_counts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">activated_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span> <span class="c1"># if not nothing. </span>
+                <span class="n">activated_spixels</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">frame</span><span class="p">,</span> <span class="n">activated_ids</span><span class="p">])</span>
+            
+                <span class="c1"># update the running spixels </span>
+                <span class="n">running_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">running_spixels</span><span class="p">,</span> <span class="n">activated_ids</span><span class="p">)</span>
+            
+                <span class="c1"># delete the activated spixels from the other spixels</span>
+                <span class="n">other_spixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">other_spixels</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">other_spixels</span><span class="p">))[</span><span class="n">spixel_counts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="c1"># no point in continuing.</span>
+            <span class="k">break</span>
+        
+    <span class="c1"># 4. Construct a new meantracks. </span>
+    <span class="n">meantracks_new</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># copy the old tracks. </span>
+    <span class="c1"># for regions that were not retained... set to their initial values.</span>
+    <span class="n">meantracks_new</span><span class="p">[</span><span class="n">cand_spixels</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">cand_spixels</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:][:,</span><span class="kc">None</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># the padding is to allow propagation  </span>
+    
+    <span class="c1"># then .... we add in the activated</span>
+    <span class="k">for</span> <span class="n">activation_data</span> <span class="ow">in</span> <span class="n">activated_spixels</span><span class="p">:</span>
+        
+        <span class="n">frame</span><span class="p">,</span> <span class="n">regions</span> <span class="o">=</span> <span class="n">activation_data</span>
+        
+        <span class="c1"># remember we checking against the recorded... </span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">regions</span><span class="p">,</span> <span class="n">frame</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">meantracks_new</span><span class="p">[</span><span class="n">regions</span><span class="p">,</span> <span class="n">frame</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">check</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">check</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        
+<span class="c1">#        print check</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">check</span> <span class="o">&lt;=</span> <span class="n">spixel_size</span> 
+        
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">check</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">meantracks_new</span><span class="p">[</span><span class="n">regions</span><span class="p">[</span><span class="n">check</span><span class="p">],</span> <span class="n">frame</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[</span><span class="n">regions</span><span class="p">[</span><span class="n">check</span><span class="p">],</span> <span class="n">frame</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1">#add this back in. </span>
+    
+    <span class="k">return</span> <span class="n">meantracks_new</span><span class="p">,</span> <span class="n">activated_spixels</span><span class="p">,</span> <span class="n">running_spixels</span></div>
+    
+    
+<div class="viewcode-block" id="check_move_all_frames"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.check_move_all_frames">[docs]</a><span class="k">def</span> <span class="nf">check_move_all_frames</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">move_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks which superpixels are now moving based on averaging the total distance moved across all frames. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    move_thresh : float</span>
+<span class="sd">        distance to be moved in pixel units for determining if a superpixel is moving.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    move_check : numpy bool array</span>
+<span class="sd">        binary mask (True/False) of which superpixels is moving.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">move_check</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">move_thresh</span>
+
+    <span class="k">return</span> <span class="n">move_check</span></div>
+    
+    
+    
+<div class="viewcode-block" id="check_overlap"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.check_overlap">[docs]</a><span class="k">def</span> <span class="nf">check_overlap</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">move_r</span><span class="p">,</span> <span class="n">move_g</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Joint filtering of superpixels based on movement in order to uniquely assign superpixels to either the red or green sheet.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks_r : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), unfiltered red tracks from optical flow superpixel tracking</span>
+<span class="sd">    meantracks_g : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), unfiltered green tracks from optical flow superpixel tracking</span>
+<span class="sd">    move_r : numpy bool array</span>
+<span class="sd">        binary mask of superpixel ids from meantracks_r that are moving</span>
+<span class="sd">    move_g : numpy bool array</span>
+<span class="sd">        binary mask of superpixel ids from meantracks_g that are moving</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    new_move_r : numpy bool array</span>
+<span class="sd">        new binary mask of superpixel ids to be kept for meantracks_r </span>
+<span class="sd">    new_move_g : numpy bool array</span>
+<span class="sd">        new binary mask of superpixel ids to be kept for meantracks_g</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">move_spixels_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meantracks_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">move_r</span><span class="p">]</span>
+    <span class="n">move_spixels_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">meantracks_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="n">move_g</span><span class="p">]</span>
+
+    <span class="n">intersect_pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">move_spixels_r</span><span class="p">,</span> <span class="n">move_spixels_g</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersect_pixels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        
+        <span class="n">move_speed_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">meantracks_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">meantracks_r</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">move_speed_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">meantracks_g</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">-</span> <span class="n">meantracks_g</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> 
+
+        <span class="c1"># compare the speeds and difference.  </span>
+        <span class="n">intersect_pixel_speed_r</span> <span class="o">=</span> <span class="n">move_speed_r</span><span class="p">[</span><span class="n">intersect_pixels</span><span class="p">]</span> 
+        <span class="n">intersect_pixel_speed_g</span> <span class="o">=</span> <span class="n">move_speed_g</span><span class="p">[</span><span class="n">intersect_pixels</span><span class="p">]</span> 
+
+        <span class="n">green_bad</span> <span class="o">=</span> <span class="n">intersect_pixels</span><span class="p">[</span><span class="n">intersect_pixel_speed_g</span> <span class="o">&lt;</span> <span class="n">intersect_pixel_speed_r</span><span class="p">]</span>
+        <span class="n">red_bad</span> <span class="o">=</span> <span class="n">intersect_pixels</span><span class="p">[</span><span class="n">intersect_pixel_speed_r</span> <span class="o">&lt;</span> <span class="n">intersect_pixel_speed_g</span><span class="p">]</span>
+
+        <span class="n">new_move_r</span> <span class="o">=</span> <span class="n">move_r</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_move_g</span> <span class="o">=</span> <span class="n">move_g</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="n">new_move_r</span><span class="p">[</span><span class="n">red_bad</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">new_move_g</span><span class="p">[</span><span class="n">green_bad</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">new_move_r</span><span class="p">,</span> <span class="n">new_move_g</span>
+
+    <span class="k">else</span><span class="p">:</span> 
+        
+        <span class="n">new_move_r</span><span class="p">,</span> <span class="n">new_move_g</span> <span class="o">=</span> <span class="n">move_r</span><span class="p">,</span> <span class="n">move_g</span>
+        
+        <span class="k">return</span> <span class="n">new_move_r</span><span class="p">,</span> <span class="n">new_move_g</span></div>
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1">#   Finally this is the all-in-all module function, that pieces together the above.</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="filter_red_green_tracks"><a class="viewcode-back" href="../../../MOSES.Track_Filtering.filter_meantracks_superpixels.html#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_red_green_tracks">[docs]</a><span class="k">def</span> <span class="nf">filter_red_green_tracks</span><span class="p">(</span><span class="n">tracks_r</span><span class="p">,</span> <span class="n">tracks_g</span><span class="p">,</span> <span class="n">img_shape</span><span class="p">,</span> <span class="n">mag_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frame2</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">spixel_neighbour_factor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">overlap_thresh</span><span class="o">=</span><span class="mf">0.7</span><span class="p">):</span>
+ 
+    <span class="sd">&quot;&quot;&quot; Filtering of superpixel tracks using the prior knowledge that red and green epithelial sheets should be separated on 2 sides and migrates towards each other. Works by constructing adjacency graphs on the superpixels that move and requires no image segmentation. </span>
+<span class="sd">    </span>
+<span class="sd">    Auto-infers which side left or right sheets are.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks_r : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), unfiltered meantracks from optical flow tracking for the red channel.</span>
+<span class="sd">    tracks_g : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), unfiltered meantracks from optical flow tracking for the green channel</span>
+<span class="sd">    img_shape : tuple </span>
+<span class="sd">        (n_rows x n_cols) pixel dimensions of each frame</span>
+<span class="sd">    mag_thresh : float</span>
+<span class="sd">        movement threshold for defining a moving superpixel in pixel units</span>
+<span class="sd">    frame2 : int</span>
+<span class="sd">        frame from frame0 for which we assess initially moving superpixel. This is a user-set cut-off that tries to balance seeing movement and before sheets touch.</span>
+<span class="sd">    spixel_neighbour_factor : float</span>
+<span class="sd">        radial cut-off for defining neighbours given as a multiplicative factor of the average superpixel size.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    meantracks_r : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), filtered final red superpixel tracks</span>
+<span class="sd">    meantracks_g : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), filtered final green superpixel tracks</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">meantracks_r</span> <span class="o">=</span> <span class="n">tracks_r</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">meantracks_g</span> <span class="o">=</span> <span class="n">tracks_g</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">img_shape</span>    
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#  Attempt Filter superpixel tracks  </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">move_select_r</span> <span class="o">=</span> <span class="n">find_moving_tracks</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">frame2</span><span class="o">=</span><span class="n">frame2</span><span class="p">)</span>
+    <span class="n">move_select_g</span> <span class="o">=</span> <span class="n">find_moving_tracks</span><span class="p">(</span><span class="n">meantracks_g</span><span class="p">,</span> <span class="n">frame2</span><span class="o">=</span><span class="n">frame2</span><span class="p">)</span>
+    
+    <span class="c1"># use this to filter the red tracks, compensating for the bleedthrough</span>
+    <span class="n">keep_spixels_r</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">move_select_r</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+    <span class="n">keep_spixels_r</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_r</span><span class="p">,</span> <span class="n">keep_spixels_r</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+    
+    <span class="n">keep_spixels_g</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques</span><span class="p">(</span><span class="n">meantracks_g</span><span class="p">,</span> <span class="n">move_select_g</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+    <span class="n">keep_spixels_g</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">keep_spixels_g</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#     If need check for overlap </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">n_spixels_r</span> <span class="o">=</span> <span class="n">meantracks_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_spixels_g</span> <span class="o">=</span> <span class="n">meantracks_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keep_spixels_r</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_spixels_r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">overlap_thresh</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">keep_spixels_g</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_spixels_g</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">overlap_thresh</span><span class="p">):</span>
+    
+        <span class="c1"># make new selections. </span>
+        <span class="n">select_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">meantracks_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">select_r</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">select_r</span><span class="p">[</span><span class="n">keep_spixels_r</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">select_g</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">select_g</span><span class="p">[</span><span class="n">keep_spixels_g</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        
+        <span class="n">move_select_r</span><span class="p">,</span> <span class="n">move_select_g</span> <span class="o">=</span> <span class="n">check_overlap</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">select_r</span><span class="p">,</span> <span class="n">select_g</span><span class="p">)</span>
+        
+        <span class="n">keep_spixels_r</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">move_select_r</span><span class="p">))[</span><span class="n">move_select_r</span><span class="p">],</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">keep_spixels_g</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">move_select_g</span><span class="p">))[</span><span class="n">move_select_g</span><span class="p">],</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+        
+        <span class="c1"># make new selections. </span>
+        <span class="n">select_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">meantracks_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">select_r</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">select_r</span><span class="p">[</span><span class="n">keep_spixels_r</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">select_g</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">select_g</span><span class="p">[</span><span class="n">keep_spixels_g</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            
+        <span class="c1"># refine the keep superpixels    </span>
+        <span class="n">keep_spixels_r</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">select_r</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+        <span class="n">keep_spixels_g</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques</span><span class="p">(</span><span class="n">meantracks_g</span><span class="p">,</span> <span class="n">select_g</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+        
+        <span class="n">keep_spixels_r</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_r</span><span class="p">,</span>  <span class="n">keep_spixels_r</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">keep_spixels_g</span> <span class="o">=</span> <span class="n">fill_in_missing_superpixels</span><span class="p">(</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">keep_spixels_g</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Dynamic Track propagation </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">tracks_r_new</span><span class="p">,</span> <span class="n">activated_r</span><span class="p">,</span> <span class="n">keep_r</span> <span class="o">=</span> <span class="n">dynamic_propagation_spixels_fast</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">keep_spixels_r</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">tracks_g_new</span><span class="p">,</span> <span class="n">activated_g</span><span class="p">,</span> <span class="n">keep_g</span> <span class="o">=</span> <span class="n">dynamic_propagation_spixels_fast</span><span class="p">(</span><span class="n">meantracks_g</span><span class="p">,</span> <span class="n">keep_spixels_g</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Recheck that regions are actually moving and clean up one more time, dynamic propagation may have picked up some non moving tracks.... hm....  </span>
+    <span class="c1">#==============================================================================</span>
+    <span class="n">still_move_r</span> <span class="o">=</span> <span class="n">check_move_all_frames</span><span class="p">(</span><span class="n">tracks_r_new</span><span class="p">,</span> <span class="n">move_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">still_move_g</span> <span class="o">=</span> <span class="n">check_move_all_frames</span><span class="p">(</span><span class="n">tracks_g_new</span><span class="p">,</span> <span class="n">move_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># refine keep_r and keep_g accordingly. </span>
+    <span class="n">keep_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">still_move_r</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)[</span><span class="n">still_move_r</span><span class="p">]</span>
+    <span class="n">keep_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">still_move_g</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)[</span><span class="n">still_move_g</span><span class="p">]</span>
+    
+    <span class="c1">#==============================================================================</span>
+    <span class="c1">#   Final Cleanup  using track_superpixels. </span>
+    <span class="c1">#==============================================================================    </span>
+    <span class="n">select_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">tracks_r_new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="n">select_r</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">select_r</span><span class="p">[</span><span class="n">keep_r</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">select_g</span> <span class="o">=</span> <span class="n">select_all</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">select_g</span><span class="p">[</span><span class="n">keep_g</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">keep_r_final</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques_once</span><span class="p">(</span><span class="n">tracks_r_new</span><span class="p">,</span> <span class="n">select_r</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+    <span class="n">final_meantracks_r</span> <span class="o">=</span> <span class="n">apply_filter_tracks</span><span class="p">(</span><span class="n">tracks_r_new</span><span class="p">,</span> <span class="n">keep_r_final</span><span class="p">)</span>
+    
+    <span class="n">keep_g_final</span> <span class="o">=</span> <span class="n">filter_tracks_superpixel_cliques_once</span><span class="p">(</span><span class="n">tracks_g_new</span><span class="p">,</span> <span class="n">select_g</span><span class="p">,</span> <span class="n">thresh_factor</span><span class="o">=</span><span class="n">spixel_neighbour_factor</span><span class="p">)</span>
+    <span class="n">final_meantracks_g</span> <span class="o">=</span> <span class="n">apply_filter_tracks</span><span class="p">(</span><span class="n">tracks_g_new</span><span class="p">,</span> <span class="n">keep_g_final</span><span class="p">)</span>
+     
+    <span class="k">return</span> <span class="n">final_meantracks_r</span><span class="p">,</span> <span class="n">final_meantracks_g</span></div>
+        
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

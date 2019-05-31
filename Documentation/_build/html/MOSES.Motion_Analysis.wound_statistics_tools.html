@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.wound_statistics_tools module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Optical_Flow_Tracking package" href="MOSES.Optical_Flow_Tracking.html" />
+    <link rel="prev" title="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module" href="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Motion_Analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Motion_Analysis.html#module-MOSES.Motion_Analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.wound_statistics_tools module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Motion_Analysis.wound_statistics_tools.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Motion_Analysis.wound_statistics_tools">
+<span id="moses-motion-analysis-wound-statistics-tools-module"></span><h1>MOSES.Motion_Analysis.wound_statistics_tools module<a class="headerlink" href="#module-MOSES.Motion_Analysis.wound_statistics_tools" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Sep 27 22:04:57 2018</p>
+<p>&#64;author: felix</p>
+<p>set of tools for describing the wound boundary of wound healing assays.</p>
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">asymmetric_fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lam</em>, <em>p</em>, <em>flip_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#asymmetric_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_density</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lam</em>, <em>p</em>, <em>radius</em>, <em>niter=10</em>, <em>N_cutoff=5</em>, <em>shape=1</em>, <em>slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of the above baseline which moves according the sign of the residual between y and z, we modify to bias towards density instead.
+suitable for use with (x,y)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_direction</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em>, <em>direction_x='right'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_direction1</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>lims</em>, <em>niter=3</em>, <em>direction_x='right'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_direction1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_roughness">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_roughness</code><span class="sig-paren">(</span><em>curves_full</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_roughness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_roughness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a boundary smoothness term. using l/l_0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_superpixel_coords_RGB</code><span class="sig-paren">(</span><em>rgb_video</em>, <em>meantracks_r</em>, <em>meantracks_g</em>, <em>movement_thresh=0.2</em>, <em>t_av_motion=3</em>, <em>robust=False</em>, <em>lenient=True</em>, <em>debug_visual=False</em>, <em>max_dist=1.5</em>, <em>y_bins=50</em>, <em>y_frac_thresh=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_superpixel_coords_RGB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_superpixel_meantracks_RGB</code><span class="sig-paren">(</span><em>rgb_video</em>, <em>meantracks_r</em>, <em>meantracks_g</em>, <em>movement_thresh=0.2</em>, <em>t_av_motion=3</em>, <em>robust=False</em>, <em>lenient=True</em>, <em>debug_visual=False</em>, <em>max_dist=1.5</em>, <em>y_bins=50</em>, <em>y_frac_thresh=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_superpixel_meantracks_RGB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.check_intersect">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">check_intersect</code><span class="sig-paren">(</span><em>ref</em>, <em>list_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#check_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.check_intersect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.curve2img">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">curve2img</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#curve2img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.curve2img" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.curve2stack">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">curve2stack</code><span class="sig-paren">(</span><em>curves</em>, <em>yline</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#curve2stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.curve2stack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.densify_boundary_line">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">densify_boundary_line</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em>, <em>axis=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#densify_boundary_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.densify_boundary_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>curves is a list or numpy array.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">detect_edges_gray</code><span class="sig-paren">(</span><em>img</em>, <em>downscale=32</em>, <em>smooth=2</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#detect_edges_gray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_rgb">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">detect_edges_rgb</code><span class="sig-paren">(</span><em>img_r</em>, <em>img_g</em>, <em>downscale=32</em>, <em>smooth=2</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#detect_edges_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_rgb" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">determine_flipping_direction</code><span class="sig-paren">(</span><em>tracks_r</em>, <em>tracks_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#determine_flipping_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.eval_boundary_coords">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">eval_boundary_coords</code><span class="sig-paren">(</span><em>spl</em>, <em>yline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#eval_boundary_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.eval_boundary_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>spl: spline model for the boundary coords.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.fetch_coordinates_sections">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fetch_coordinates_sections</code><span class="sig-paren">(</span><em>labelled</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fetch_coordinates_sections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fetch_coordinates_sections" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.fetch_skeletion_line">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fetch_skeletion_line</code><span class="sig-paren">(</span><em>img</em>, <em>fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fetch_skeletion_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fetch_skeletion_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.filter_edges">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">filter_edges</code><span class="sig-paren">(</span><em>labelled_edges</em>, <em>seed_img=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#filter_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.filter_edges" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_all_epsilon_pairs">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_all_epsilon_pairs</code><span class="sig-paren">(</span><em>dist_matrix</em>, <em>min_dist</em>, <em>max_dist</em>, <em>nearest_N=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_all_epsilon_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_all_epsilon_pairs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_boundary_lines">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_boundary_lines</code><span class="sig-paren">(</span><em>boundary_curves</em>, <em>yline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_boundary_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_boundary_lines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_stable_wound_frame">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_stable_wound_frame</code><span class="sig-paren">(</span><em>coefs_time</em>, <em>min_length=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_stable_wound_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_stable_wound_frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_uniq_merge_groups">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_uniq_merge_groups</code><span class="sig-paren">(</span><em>merge_groups</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_uniq_merge_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_uniq_merge_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fit_polyfit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>degree=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fit_polyfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.fit_spline">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fit_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>k=3</em>, <em>s=None</em>, <em>ext=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fit_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fit_spline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">generalised_sigmoid</code><span class="sig-paren">(</span><em>x</em>, <em>cutoff</em>, <em>shape=1</em>, <em>slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#generalised_sigmoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.generate_pair_distances">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">generate_pair_distances</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>inf_distance=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#generate_pair_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.generate_pair_distances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.match_labelled_regions">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">match_labelled_regions</code><span class="sig-paren">(</span><em>coord_list</em>, <em>dist_thresh=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#match_labelled_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.match_labelled_regions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.match_red_green_segs">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">match_red_green_segs</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>shape</em>, <em>min_dist=0</em>, <em>max_dist=2</em>, <em>nearest_N=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#match_red_green_segs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.match_red_green_segs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.normalize_curves_2D">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">normalize_curves_2D</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#normalize_curves_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.normalize_curves_2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>shape = (m,n) of image.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_axis">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">outlier_detect_axis</code><span class="sig-paren">(</span><em>X</em>, <em>axis=0</em>, <em>thresh=1.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#outlier_detect_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">outlier_detect_graph</code><span class="sig-paren">(</span><em>points</em>, <em>thresh=10</em>, <em>n_components=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#outlier_detect_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outlier point detection based on &#8216;communities&#8217;
+# how can this be further optimized?</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.process_curve_img_multiple">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">process_curve_img_multiple</code><span class="sig-paren">(</span><em>curve_img</em>, <em>dilation=3</em>, <em>dist_thresh=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#process_curve_img_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.process_curve_img_multiple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.remove_singletons">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">remove_singletons</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>dist_thresh</em>, <em>inf_distance=1000</em>, <em>min_no=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#remove_singletons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.remove_singletons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.return_point_density">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">return_point_density</code><span class="sig-paren">(</span><em>points</em>, <em>shape</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#return_point_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.return_point_density" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.sample_and_match_red_green_segs">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">sample_and_match_red_green_segs</code><span class="sig-paren">(</span><em>red_mask</em>, <em>green_mask</em>, <em>n_samples=1000</em>, <em>min_dist=10</em>, <em>dist_thresh=2</em>, <em>nearest_N=2</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#sample_and_match_red_green_segs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.sample_and_match_red_green_segs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.stack_curves">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">stack_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#stack_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.stack_curves" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.temporal_filter_curves">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">temporal_filter_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>max_gaps=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#temporal_filter_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.temporal_filter_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the maximum number of frame gaps and impute in the gap given a set of curves.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.test_y_density">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">test_y_density</code><span class="sig-paren">(</span><em>points</em>, <em>max_y</em>, <em>bins=10</em>, <em>frac_thresh=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#test_y_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.test_y_density" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.uniquefy_curves">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">uniquefy_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>axis=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#uniquefy_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.uniquefy_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>make curves manifold, 1-1 (x,y) mapping (not duply sampled....), where there is duplicates we use mode-seeking behaviour... ?</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Optical_Flow_Tracking.html" class="btn btn-neutral float-right" title="MOSES.Optical_Flow_Tracking package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html" class="btn btn-neutral" title="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

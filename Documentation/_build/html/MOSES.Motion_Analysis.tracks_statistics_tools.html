@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.tracks_statistics_tools module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module" href="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html" />
+    <link rel="prev" title="MOSES.Motion_Analysis.mesh_statistics_tools module" href="MOSES.Motion_Analysis.mesh_statistics_tools.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Motion_Analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Motion_Analysis.html#module-MOSES.Motion_Analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.tracks_statistics_tools module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Motion_Analysis.tracks_statistics_tools.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Motion_Analysis.tracks_statistics_tools">
+<span id="moses-motion-analysis-tracks-statistics-tools-module"></span><h1>MOSES.Motion_Analysis.tracks_statistics_tools module<a class="headerlink" href="#module-MOSES.Motion_Analysis.tracks_statistics_tools" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Sep 27 15:11:36 2018</p>
+<p>&#64;author: felix</p>
+<p>track statistics tools</p>
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">RMSD_track</code><span class="sig-paren">(</span><em>meantracks</em>, <em>ref_time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#RMSD_track"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the root mean squared displacement curve (RMSD) given a reference time.
+<span class="math">\(RSMD=\sum{|x(t)-x(t=t_0)|}\)</span> where <span class="math">\(t_0\)</span> is the reference time usually 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames x 2) centroid superpixel positions</p>
+</dd>
+<dt><strong>ref_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">reference time given as the frame number to compute displacements relative to.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>rmsd</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames) root mean squared displacement.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track_axis">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">RMSD_track_axis</code><span class="sig-paren">(</span><em>meantracks</em>, <em>ref_time=0</em>, <em>axis=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#RMSD_track_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the root mean squared displacement curve (RMSD) given a reference time.
+<span class="math">\(RSMD=\sum{|x_{axis}(t)-x_{axis}(t=t_0)|}\)</span> where <span class="math">\(t_0\)</span> is the reference time usually 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames x 2) centroid superpixel positions</p>
+</dd>
+<dt><strong>ref_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">reference time given as the frame number to compute displacements relative to.</p>
+</dd>
+<dt><strong>axis</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">0 or 1 depending on y- or x- axis velocity</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>rmsd</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames) root mean squared displacement (along the x- or y- axis)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_all_spixel_vid_seq">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">corr2d_all_spixel_vid_seq</code><span class="sig-paren">(</span><em>spixel_seqs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#corr2d_all_spixel_vid_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_all_spixel_vid_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the 2d image correlation between successive patches along a superpixel track for each superpixel track</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixel_seqs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_spixels x n_frames number of image patch sequences. (assumes all image patches are successive temporally per superpixel)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>corr_patches_superpixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames) 2d correlation values for each frame for each superpixel track.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_spixel_vid_seq">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">corr2d_spixel_vid_seq</code><span class="sig-paren">(</span><em>spixelseq</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#corr2d_spixel_vid_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_spixel_vid_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the 2d image correlation between successive patches along a superpixel track</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixelseq</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">number of image patch sequences. (assumes all image patches are successive temporally)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>corrs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames,) 2d correlation values for each frame</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.extract_spixel_patch_seq">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">extract_spixel_patch_seq</code><span class="sig-paren">(</span><em>vid</em>, <em>tracks</em>, <em>size</em>, <em>pad_mode='constant'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#extract_spixel_patch_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.extract_spixel_patch_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the image patches described by the superpixel track</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vid</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_rows, n_cols) or (n_frames, n_rows, n_cols, 3), video, single channel or multiple channel.</p>
+</dd>
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), mean coordinates of superpixel over time in (y,x) coordinates.</p>
+</dd>
+<dt><strong>size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">patch_size around the centroid point.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.find_const_tracks">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">find_const_tracks</code><span class="sig-paren">(</span><em>tracks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#find_const_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.find_const_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies all superpixels that do no move from its initial position for the whole duration of the video.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2) meantracks of superpixels</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.find_moving_spixels">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">find_moving_spixels</code><span class="sig-paren">(</span><em>meantracks</em>, <em>t_av=3</em>, <em>thresh=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#find_moving_spixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.find_moving_spixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds which superpixels are moving based on the average distance they have moved over the imaged duration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), track coordinates of superpixels in (y,x) convention</p>
+</dd>
+<dt><strong>t_av</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the window to average statistics over. This is to smooth the velocity of single frames which may be noisy.</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">this is the minimum pixel distance they must move to be called &#8216;moving&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>moving</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">(n_superpixels,) binary vector of which superpixels are moving.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.rolling_stats">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">rolling_stats</code><span class="sig-paren">(</span><em>fun</em>, <em>a</em>, <em>w</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#rolling_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.rolling_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a moving average using a specified maths function given by fun applied to series of 1d signals</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>fun</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">python function</span><dd><p class="first last">&lt;function&gt; any maths function e.g. np.mean, np.median which one wants to apply on a rolling basis</p>
+</dd>
+<dt><strong>a</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_signals x signal_length), 2d array of n signals of length signal_length</p>
+</dd>
+<dt><strong>w</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">window size should be odd.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_signals x signal_length), 2d array of n signals of length signal_length after rolling statistics filtered</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html" class="btn btn-neutral float-right" title="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Motion_Analysis.mesh_statistics_tools.html" class="btn btn-neutral" title="MOSES.Motion_Analysis.mesh_statistics_tools module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

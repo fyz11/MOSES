@@ -1,0 +1,519 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.file_io &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.file_io</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Utility_Functions.file_io</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">##########################################################################</span>
+<span class="c1"># Created on Thu Jun 29 22:49:32 2017</span>
+<span class="c1">#</span>
+<span class="c1"># @author: felix</span>
+<span class="c1"># @email: felixzhou1@gmail.com</span>
+<span class="c1">#</span>
+<span class="c1"># This script and all the code within is licensed under the Ludwig License.</span>
+<span class="c1">#</span>
+<span class="c1"># see README.md for details on usage.</span>
+<span class="c1">###########################################################################</span>
+
+<span class="c1"># read a single frame from a multi-page .tif file.</span>
+<div class="viewcode-block" id="read_PIL_frame"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.read_PIL_frame">[docs]</a><span class="k">def</span> <span class="nf">read_PIL_frame</span><span class="p">(</span><span class="n">tiffile</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; Use pillow library to read select .tif/.TIF files. (single frame)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tiffile : str</span>
+<span class="sd">        input .tif file to read, can be multipage .tif (string)</span>
+<span class="sd">    frame : int</span>
+<span class="sd">        desired frame number given as C-style 0-indexing (int)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        an image as a numpy array either (n_rows x n_cols) for grayscale or (n_rows x n_cols x 3) for RGB</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tiffile</span><span class="p">)</span>
+    <span class="n">img</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">img</span></div>
+    
+<div class="viewcode-block" id="read_multiimg_PIL"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.read_multiimg_PIL">[docs]</a><span class="k">def</span> <span class="nf">read_multiimg_PIL</span><span class="p">(</span><span class="n">tiffile</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Use pillow library to read multipage .tif/.TIF files. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tiffile : str</span>
+<span class="sd">        input .tif file to read, can be multipage .tif (string)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    imgs : numpy array</span>
+<span class="sd">        either (n_frames x n_rows x n_cols) for grayscale or (n_frames x n_rows x n_cols x 3) for RGB</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tiffile</span><span class="p">)</span>
+
+    <span class="n">imgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">read</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">read</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">img</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="c1"># select this as the image</span>
+            <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)[</span><span class="kc">None</span><span class="p">,:,:])</span>
+            <span class="n">frame</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+            <span class="c1"># Not enough frames in img</span>
+            <span class="k">break</span>
+
+    <span class="n">imgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">imgs</span></div>
+
+<div class="viewcode-block" id="read_multiimg_stack"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.read_multiimg_stack">[docs]</a><span class="k">def</span> <span class="nf">read_multiimg_stack</span><span class="p">(</span><span class="n">tiffile</span><span class="p">,</span> <span class="n">return_img</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Use the tifffile.py library through Scikit-Image to read multipage bioformat files such as .tif/.lsm files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tiffile : str</span>
+<span class="sd">        input .tif/.lsm file to read, can be multipage .tif (string)</span>
+<span class="sd">    return_img : bool</span>
+<span class="sd">        boolean True/False to specify if the image should be read as a numpy array or just the object be returned.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    img_object : Python object</span>
+<span class="sd">        A read image object containing the attributes: pages, series and micromanager_metadata.</span>
+<span class="sd">    imgs : numpy array (only if return_img=True)</span>
+<span class="sd">        an (n_frames x n_slices x n_channels x n_rows x n_cols) image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.external.tifffile</span> <span class="k">import</span> <span class="n">TiffFile</span>
+
+    <span class="n">im_object</span> <span class="o">=</span> <span class="n">TiffFile</span><span class="p">(</span><span class="n">Tiffile</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_img</span><span class="p">:</span>
+        <span class="n">imgs</span> <span class="o">=</span> <span class="n">im_object</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">im_object</span><span class="p">,</span> <span class="n">imgs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">im_object</span></div>
+    
+<div class="viewcode-block" id="mkdir"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.mkdir">[docs]</a><span class="k">def</span> <span class="nf">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; check if directory exists and create it through Python if it does not yet.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    directory : str</span>
+<span class="sd">        the directory path (absolute or relative) you wish to create (or check that it exists)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        void function, no return</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">os</span> 
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Some utility scripts to help parse experiments</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="c1"># aims to file folders containing meantrack outputs. </span>
+<div class="viewcode-block" id="detect_experiments"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.detect_experiments">[docs]</a><span class="k">def</span> <span class="nf">detect_experiments</span><span class="p">(</span> <span class="n">infolder</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;meantracks&#39;</span><span class="p">,</span> <span class="s1">&#39;optflow&#39;</span><span class="p">],</span> <span class="n">level1</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; Locates all subdirectories or subdirectories immediately within infolder</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infolder : str</span>
+<span class="sd">        top-level root folder path</span>
+<span class="sd">    exclude : list</span>
+<span class="sd">        list of keywords to skip. Do not include subfolders with names that contain these keywords.</span>
+<span class="sd">    level1 : bool</span>
+<span class="sd">        If true searches only in the immediate folder else will walk through all subdirectories within infoldere</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        nothing, void function </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="n">subdirs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">level1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">infolder</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">keep</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">exc</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
+                    <span class="n">keep</span> <span class="o">+=</span> <span class="n">exc</span> <span class="ow">in</span> <span class="n">subdir</span>
+                <span class="k">if</span> <span class="n">keep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">fulldirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">infolder</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fulldirpath</span><span class="p">):</span>
+                        <span class="n">subdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fulldirpath</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fulldirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">infolder</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fulldirpath</span><span class="p">):</span>
+                    <span class="n">subdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fulldirpath</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">dirName</span><span class="p">,</span> <span class="n">subdirList</span><span class="p">,</span> <span class="n">fileList</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">infolder</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">subdir</span> <span class="ow">in</span> <span class="n">subdirList</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">keep</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">for</span> <span class="n">exc</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
+                        <span class="n">keep</span> <span class="o">+=</span> <span class="n">exc</span> <span class="ow">in</span> <span class="n">subdir</span>
+                    <span class="k">if</span> <span class="n">keep</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">subdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subdir</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">subdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subdir</span><span class="p">)</span>
+
+    <span class="n">subdirs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">subdirs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subdirs</span></div>
+
+<span class="c1"># aims to return all RG tracks associated. </span>
+<div class="viewcode-block" id="detect_experiment_tracks_RG"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.detect_experiment_tracks_RG">[docs]</a><span class="k">def</span> <span class="nf">detect_experiment_tracks_RG</span><span class="p">(</span> <span class="n">infolder</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.mat&#39;</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="s1">&#39;filt2_&#39;</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; Locate all paired red and green tracks within infolder/meantracks</span>
+
+<span class="sd">    Assumes you have under infolder a meantracks folder</span>
+<span class="sd">    infolder</span>
+<span class="sd">        |___ meantracks</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    infolder : str</span>
+<span class="sd">        top-level folder path</span>
+<span class="sd">    ext : str  </span>
+<span class="sd">        file extension we are looking for e.g. &#39;.mat&#39;</span>
+<span class="sd">    include : str</span>
+<span class="sd">        keyword the files in the subfolder will contain for the subfolder to be relevant.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    red_files : numpy array</span>
+<span class="sd">        numpy of all matched red track filepaths</span>
+<span class="sd">    green_files : numpy array</span>
+<span class="sd">        numpy of all matched green track filepaths </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+    <span class="n">red</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">infolder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">infolder</span><span class="p">,</span> <span class="s1">&#39;meantracks&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dirName</span><span class="p">,</span> <span class="n">subdirList</span><span class="p">,</span> <span class="n">fileList</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">infolder</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;green&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_green&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="c1"># grab the digits.</span>
+                        <span class="n">green</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">index</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">include</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_green&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="c1"># grab the digits.</span>
+                            <span class="n">green</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">index</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="s1">&#39;red&#39;</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_red&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+                        <span class="n">red</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">index</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">include</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                            <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_red&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
+                            <span class="n">red</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirName</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">index</span><span class="p">))</span>
+    <span class="c1"># sorting the tuple</span>
+    <span class="k">def</span> <span class="nf">getKey</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">red</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">red</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getKey</span><span class="p">)</span>
+    <span class="n">green</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">green</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">getKey</span><span class="p">)</span>
+
+    <span class="c1"># form new vectors:</span>
+    <span class="n">red_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">red</span><span class="p">]</span>
+    <span class="n">green_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">green</span><span class="p">]</span>
+
+    <span class="n">red_files</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">red_files</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">green_files</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">green_files</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">red_files</span><span class="p">,</span> <span class="n">green_files</span></div>
+
+<div class="viewcode-block" id="detect_files"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.detect_files">[docs]</a><span class="k">def</span> <span class="nf">detect_files</span><span class="p">(</span> <span class="n">folder</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.tif&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; detects files of a given extension within a folder.</span>
+
+<span class="sd">    note: does not detect files within subfolders within the folder. One can also use glob module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    folder : str</span>
+<span class="sd">        path of folder containing desired files</span>
+<span class="sd">    ext : str (default=&#39;.tif&#39;)</span>
+<span class="sd">        name of file extension to search for e.g. &#39;.jpg&#39;, &#39;.png&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filepaths : numpy array</span>
+<span class="sd">        array of matched full filepaths of files with the desired extension</span>
+<span class="sd">    fnames : numpy array</span>
+<span class="sd">        array of matched file names</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">os</span> 
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    
+    <span class="n">filepaths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fnames</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span> 
+            <span class="n">filepaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+            <span class="n">fnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            
+    <span class="n">filepaths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">filepaths</span><span class="p">)</span>
+    <span class="n">fnames</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">fnames</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filepaths</span><span class="p">,</span> <span class="n">fnames</span></div>
+
+<div class="viewcode-block" id="save_multipage_tiff"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.file_io.html#MOSES.Utility_Functions.file_io.save_multipage_tiff">[docs]</a><span class="k">def</span> <span class="nf">save_multipage_tiff</span><span class="p">(</span><span class="n">np_array</span><span class="p">,</span> <span class="n">savename</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; save numpy array of images as a multipage .tiff file </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    np_array : numpy array</span>
+<span class="sd">        (n_frames, n_rows, n_cols, n_channels) image </span>
+<span class="sd">    savename : str</span>
+<span class="sd">        filepath to save the output .tif stack. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    void function</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="kn">from</span> <span class="nn">tifffile</span> <span class="k">import</span> <span class="n">imsave</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="k">if</span> <span class="n">np_array</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1.1</span><span class="p">:</span>
+        <span class="n">imsave</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="mi">255</span><span class="o">*</span><span class="n">np_array</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">imsave</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="n">np_array</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="p">[]</span> </div>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.tracks_statistics_tools &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.tracks_statistics_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Motion_Analysis.tracks_statistics_tools</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Thu Sep 27 15:11:36 2018</span>
+
+<span class="sd">@author: felix</span>
+
+<span class="sd">track statistics tools</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<div class="viewcode-block" id="find_const_tracks"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.find_const_tracks">[docs]</a><span class="k">def</span> <span class="nf">find_const_tracks</span><span class="p">(</span><span class="n">tracks</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Identifies all superpixels that do no move from its initial position for the whole duration of the video.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2) meantracks of superpixels</span>
+
+<span class="sd">    Results</span>
+<span class="sd">    -------</span>
+<span class="sd">    select: numpy bool array</span>
+<span class="sd">        (n_superpixels,) binary indicator of moving (False) or non-moving (True). </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">select</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+
+        <span class="n">test_y</span> <span class="o">=</span> <span class="n">track</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">track</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">test_x</span> <span class="o">=</span> <span class="n">track</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">track</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+ 
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">test_x</span><span class="p">,</span> <span class="n">test_y</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_x</span><span class="p">):</span>
+            <span class="n">select</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">select</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">select</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">select</span></div>
+    
+
+<div class="viewcode-block" id="rolling_stats"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.rolling_stats">[docs]</a><span class="k">def</span> <span class="nf">rolling_stats</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">a</span> <span class="p">,</span><span class="n">w</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes a moving average using a specified maths function given by fun applied to series of 1d signals</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fun :  python function</span>
+<span class="sd">        &lt;function&gt; any maths function e.g. np.mean, np.median which one wants to apply on a rolling basis</span>
+<span class="sd">    a : numpy array</span>
+<span class="sd">        (n_signals x signal_length), 2d array of n signals of length signal_length</span>
+<span class="sd">    w : int</span>
+<span class="sd">        window size should be odd. </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    r : numpy array</span>
+<span class="sd">        (n_signals x signal_length), 2d array of n signals of length signal_length after rolling statistics filtered</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="n">a_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">w</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)):</span>
+        <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">a_pad</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">w</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">r</span></div>
+
+    
+<div class="viewcode-block" id="find_moving_spixels"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.find_moving_spixels">[docs]</a><span class="k">def</span> <span class="nf">find_moving_spixels</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">t_av</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Finds which superpixels are moving based on the average distance they have moved over the imaged duration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2), track coordinates of superpixels in (y,x) convention </span>
+<span class="sd">    t_av : int</span>
+<span class="sd">        the window to average statistics over. This is to smooth the velocity of single frames which may be noisy.</span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        this is the minimum pixel distance they must move to be called &#39;moving&#39;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    moving : numpy bool array</span>
+<span class="sd">        (n_superpixels,) binary vector of which superpixels are moving. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">diff_pad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">diff</span><span class="p">,[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="n">t_av</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">t_av</span><span class="o">//</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]],</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;reflect&#39;</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff_pad</span><span class="p">[:,</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">t_av</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="kc">None</span><span class="p">,:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">meantracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diff</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">diff</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">moving</span> <span class="o">=</span> <span class="n">diff</span> <span class="o">&gt;=</span> <span class="n">thresh</span>
+    <span class="k">return</span> <span class="n">moving</span> </div>
+    
+    
+<div class="viewcode-block" id="extract_spixel_patch_seq"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.extract_spixel_patch_seq">[docs]</a><span class="k">def</span> <span class="nf">extract_spixel_patch_seq</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">pad_mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Extract the image patches described by the superpixel track</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vid : numpy array</span>
+<span class="sd">        (n_frames, n_rows, n_cols) or (n_frames, n_rows, n_cols, 3), video, single channel or multiple channel.</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), mean coordinates of superpixel over time in (y,x) coordinates.</span>
+<span class="sd">    size : int</span>
+<span class="sd">        patch_size around the centroid point.</span>
+
+<span class="sd">    Outputs</span>
+<span class="sd">    -------</span>
+<span class="sd">    img_seqs : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x size x size x dim) array containing img patches of superpiels over all time. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># pad the images </span>
+    <span class="n">padsize</span> <span class="o">=</span> <span class="n">size</span><span class="o">//</span><span class="mi">2</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">newvid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">padsize</span><span class="p">,</span> <span class="n">padsize</span><span class="p">),</span> <span class="p">(</span><span class="n">padsize</span><span class="p">,</span> <span class="n">padsize</span><span class="p">)],</span> <span class="n">mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">vid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>        
+        <span class="n">newvid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="n">padsize</span><span class="p">,</span> <span class="n">padsize</span><span class="p">),</span> <span class="p">(</span><span class="n">padsize</span><span class="p">,</span> <span class="n">padsize</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)],</span> <span class="n">mode</span><span class="o">=</span><span class="n">pad_mode</span><span class="p">)</span>
+    
+    <span class="n">tracks_</span> <span class="o">=</span> <span class="n">tracks</span> <span class="o">+</span> <span class="n">padsize</span>
+    <span class="n">n_superpixels</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tracks_</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="n">img_seqs</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_superpixels</span><span class="p">):</span>
+        <span class="n">img_seq</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+            <span class="c1"># box bounds.</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="n">tracks_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">padsize</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">+</span> <span class="n">size</span>
+            <span class="n">ymin</span> <span class="o">=</span> <span class="n">tracks_</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">padsize</span>
+            <span class="n">ymax</span> <span class="o">=</span> <span class="n">ymin</span> <span class="o">+</span> <span class="n">size</span>
+            
+            <span class="c1"># crop the image patch.</span>
+            <span class="n">img_seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newvid</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">ymin</span><span class="p">:</span><span class="n">ymax</span><span class="p">,</span><span class="n">xmin</span><span class="p">:</span><span class="n">xmax</span><span class="p">][</span><span class="kc">None</span><span class="p">,:])</span>
+        <span class="n">img_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">img_seq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">img_seqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_seq</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
+        
+    <span class="n">img_seqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">img_seqs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">img_seqs</span></div>
+
+    
+<div class="viewcode-block" id="corr2d_spixel_vid_seq"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_spixel_vid_seq">[docs]</a><span class="k">def</span> <span class="nf">corr2d_spixel_vid_seq</span><span class="p">(</span><span class="n">spixelseq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the 2d image correlation between successive patches along a superpixel track</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spixelseq : numpy array</span>
+<span class="sd">        number of image patch sequences. (assumes all image patches are successive temporally)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    corrs : numpy array</span>
+<span class="sd">        (n_frames,) 2d correlation values for each frame</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">match_template</span>
+    
+    <span class="n">corrs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n_imgs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spixelseq</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_imgs</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">im1</span> <span class="o">=</span> <span class="n">spixelseq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">im2</span> <span class="o">=</span> <span class="n">spixelseq</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">match_template</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">im2</span><span class="p">)</span> <span class="c1"># do we pad the input? -&gt; don&#39;t think we need?</span>
+        <span class="n">corrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">corr</span><span class="p">))</span>
+        
+    <span class="n">corrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">corrs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">corrs</span></div>
+
+<div class="viewcode-block" id="corr2d_all_spixel_vid_seq"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_all_spixel_vid_seq">[docs]</a><span class="k">def</span> <span class="nf">corr2d_all_spixel_vid_seq</span><span class="p">(</span><span class="n">spixel_seqs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the 2d image correlation between successive patches along a superpixel track for each superpixel track</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spixel_seqs : numpy array</span>
+<span class="sd">        n_spixels x n_frames number of image patch sequences. (assumes all image patches are successive temporally per superpixel)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    corr_patches_superpixels : numpy array</span>
+<span class="sd">        (n_spixels x n_frames) 2d correlation values for each frame for each superpixel track.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">corr_patches_superpixels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spixel_seqs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="c1"># output is a temporal 1d sequence.</span>
+        <span class="n">corr_patches_superpixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corr2d_spixel_vid_seq</span><span class="p">(</span><span class="n">spixel_seqs</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        
+    <span class="n">corr_patches_superpixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">corr_patches_superpixels</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">corr_patches_superpixels</span></div>
+    
+
+<div class="viewcode-block" id="RMSD_track"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track">[docs]</a><span class="k">def</span> <span class="nf">RMSD_track</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">ref_time</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the root mean squared displacement curve (RMSD) given a reference time.</span>
+<span class="sd">    :math:`RSMD=\sum{|x(t)-x(t=t_0)|}` where :math:`t_0` is the reference time usually 0.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_spixels x n_frames x 2) centroid superpixel positions</span>
+<span class="sd">    ref_time : int </span>
+<span class="sd">        reference time given as the frame number to compute displacements relative to.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rmsd : numpy array</span>
+<span class="sd">        (n_spixels x n_frames) root mean squared displacement.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="n">ref_time</span><span class="p">][:,</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="n">disps_mag</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">disps</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">disps_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">disps_mag</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">rmsd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">disps_mag</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">rmsd</span></div>
+
+
+<div class="viewcode-block" id="RMSD_track_axis"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.RMSD_track_axis">[docs]</a><span class="k">def</span> <span class="nf">RMSD_track_axis</span><span class="p">(</span><span class="n">meantracks</span><span class="p">,</span> <span class="n">ref_time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the root mean squared displacement curve (RMSD) given a reference time.</span>
+<span class="sd">    :math:`RSMD=\sum{|x_{axis}(t)-x_{axis}(t=t_0)|}` where :math:`t_0` is the reference time usually 0.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_spixels x n_frames x 2) centroid superpixel positions</span>
+<span class="sd">    ref_time : int </span>
+<span class="sd">        reference time given as the frame number to compute displacements relative to.</span>
+<span class="sd">    axis : int </span>
+<span class="sd">        0 or 1 depending on y- or x- axis velocity</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rmsd : numpy array</span>
+<span class="sd">        (n_spixels x n_frames) root mean squared displacement (along the x- or y- axis)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">disps</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="n">ref_time</span><span class="p">][:,</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="n">disps_mag</span> <span class="o">=</span> <span class="n">disps</span><span class="p">[:,:,</span><span class="n">axis</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">disps_mag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">disps_mag</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">rmsd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">disps_mag</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rmsd</span></div>
+    
+    
+<span class="c1">#==============================================================================</span>
+<span class="c1"># Visualisation for the corr sequence ? </span>
+<span class="c1">#==============================================================================</span>
+<span class="c1">#f, (ax1, ax2) = plt.subplots(2, 1, sharex=True, sharey=True)</span>
+<span class="c1">#ax1.bar(.5*(hist_bins_r[1:] + hist_bins_r[:-1]), hist_corrs_r, width=hist_bins_r[1]-hist_bins_r[0], color=&#39;r&#39;, alpha=0.4)               </span>
+<span class="c1">#ax2.bar(.5*(hist_bins_g[1:] + hist_bins_g[:-1]), hist_corrs_g, width=hist_bins_g[1]-hist_bins_g[0], color=&#39;g&#39;, alpha=0.4)               </span>
+<span class="c1">#plt.xlim([0,1])</span>
+<span class="c1">#plt.ylim([0,0.5])</span>
+<span class="c1">#ax1.set_ylabel(&#39;% of Superpixels&#39;)</span>
+<span class="c1">#ax2.set_ylabel(&#39;% of Superpixels&#39;)</span>
+<span class="c1">#plt.xlabel(&#39;Normalised Cross-Correlation&#39;)</span>
+<span class="c1">##        f.savefig(&#39;hist_correlation-&#39;+base_name, dpi=300, bbox_inches=&#39;tight&#39;, pad_inches=0)</span>
+<span class="c1">#plt.show()</span>
+<span class="c1">#</span>
+<span class="c1">#fig, ax = plt.subplots()</span>
+<span class="c1">#plt.imshow(video[0], alpha=0.5)</span>
+<span class="c1">#plt.scatter(tracks_r[:,0,1], tracks_r[:,0,0], c=meancorrs_, cmap=&#39;coolwarm&#39;, vmin=0, vmax=1)</span>
+<span class="c1">#plt.grid(&#39;off&#39;)</span>
+<span class="c1">#plt.axis(&#39;off&#39;)</span>
+<span class="c1">#plt.colorbar()</span>
+<span class="c1">#plt.show()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1103 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.mesh_statistics_tools module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Motion_Analysis.tracks_statistics_tools module" href="MOSES.Motion_Analysis.tracks_statistics_tools.html" />
+    <link rel="prev" title="MOSES.Motion_Analysis.flow_statistics_tools module" href="MOSES.Motion_Analysis.flow_statistics_tools.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Motion_Analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Motion_Analysis.html#module-MOSES.Motion_Analysis">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.mesh_statistics_tools module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Motion_Analysis.mesh_statistics_tools.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Motion_Analysis.mesh_statistics_tools">
+<span id="moses-motion-analysis-mesh-statistics-tools-module"></span><h1>MOSES.Motion_Analysis.mesh_statistics_tools module<a class="headerlink" href="#module-MOSES.Motion_Analysis.mesh_statistics_tools" title="Permalink to this headline">¶</a></h1>
+<p>Created on Fri Jun 30 01:40:16 2017</p>
+<p>&#64;author: felix
+&#64;email: <a class="reference external" href="mailto:felixzhou1&#37;&#52;&#48;gmail&#46;com">felixzhou1<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<p>This script and all the code within is licensed under the Ludwig License.</p>
+<p>see README.md for details on usage.</p>
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_stability_index">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_MOSES_mesh_stability_index</code><span class="sig-paren">(</span><em>MOSES_mesh_strain_time_r</em>, <em>MOSES_mesh_strain_time_g</em>, <em>last_frames=24</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_MOSES_mesh_stability_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_stability_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mesh stability index and return the normalised mesh strain curve for the whole video.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>MOSES_mesh_strain_time_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_superpixels), numpy array of strain of each superpixel at each frame for the red channel</p>
+</dd>
+<dt><strong>MOSES_mesh_strain_time_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_superpixels), numpy array of strain of each superpixel at each frame for the green channel</p>
+</dd>
+<dt><strong>last_frames</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">(int) the number of frames interval for averaging and computing the motion stability index.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_stability_index</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">1 - normalised gradient where gradient is computed from the average difference over the last last_frames frames.</p>
+</dd>
+<dt><strong>norm_mean_strain</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">normalised mesh strain curve, the average of the individual divided by max value over the time interval.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_strain_curve">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_MOSES_mesh_strain_curve</code><span class="sig-paren">(</span><em>mesh_strain_time</em>, <em>normalise=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_MOSES_mesh_strain_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_MOSES_mesh_strain_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the MOSES mesh strain (normalized/unnormalized) across superpixels for each time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>mesh_strain_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_superpixels), the strain of each superpixel at each frame.</p>
+</dd>
+<dt><strong>normalise</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if &#8216;true&#8217; divide the mesh strain curve by the maximum value, if false return the raw values.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>MOSES_mesh_strain_curve</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames,) numpy array vector giving the moshes mesh strain (normalised if the normalise flag is set to true)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_aggregated_stats_map">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_aggregated_stats_map</code><span class="sig-paren">(</span><em>meantracks</em>, <em>shape</em>, <em>dist_thresh=None</em>, <em>map_vals=None</em>, <em>max_frame=None</em>, <em>filt=0</em>, <em>filt_size=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_aggregated_stats_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_aggregated_stats_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>map_vals</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames), the temporal mesh strain</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows x n_cols), image shape</p>
+</dd>
+<dt><strong>max_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the final frame to which we aggregate the statistic and compute maps for.</p>
+</dd>
+<dt><strong>filt</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">(0 or 1), run over the heat map with an average filter or not. if 1, filt_size sets the kernel size for smoothing.</p>
+</dd>
+<dt><strong>filt_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float), sigma setting the standard deviation of the gaussian for kernel smoothing.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>final_saliency_map</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols), heatmap of saliency</p>
+</dd>
+<dt><strong>spatial_time_saliency_map</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_rows x n_cols), frame by frame heatmap of saliency.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_boundary_formation_index">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_boundary_formation_index</code><span class="sig-paren">(</span><em>saliency_map_r</em>, <em>saliency_map_g</em>, <em>spixel_size</em>, <em>pad_multiple=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_boundary_formation_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_boundary_formation_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified). In addition return the boundary formation index as defined in the paper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>saliency_map_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) heatmap from the red tracks</p>
+</dd>
+<dt><strong>saliency_map_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) heatmap from the green tracks</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">average superpixel width</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>boundary_formation_index</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the propensity of boundary formation between red and green sheets.</p>
+</dd>
+<dt><strong>av_saliency_map</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) averaged saliency map.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_local_point_density">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_local_point_density</code><span class="sig-paren">(</span><em>tracks</em>, <em>frame</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_local_point_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_local_point_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of neighbours within a radius for each superpixel at a given frame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">(int) video frame number for which to compute the number of neighbours.</p>
+</dd>
+<dt><strong>radius</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">radial distance, smaller than which points are considered neighbours.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>n_neighbours_regions</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">number of neighbours at distance &lt;= radius for each superpixel.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_max_vccf_cells_before_after_gap">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_max_vccf_cells_before_after_gap</code><span class="sig-paren">(</span><em>meantracks_r</em>, <em>meantracks_g</em>, <em>wound_heal_frame</em>, <em>err_frame=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_max_vccf_cells_before_after_gap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_max_vccf_cells_before_after_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute maximum velocity cross correlation index before and after gap closure as defined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks for red</p>
+</dd>
+<dt><strong>meantracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks for green</p>
+</dd>
+<dt><strong>wound_heal_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the frame number for which sheets close</p>
+</dd>
+<dt><strong>err_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">this is the margin of error to assure before and after gap closure.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>(max_vccf_index_before, vccf_all_before)</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of numpy arrays</span><dd><p class="first last">tuple where max_vccf_index_before is a float of the maximum velocity correlation index before closure, vccf_all_before is the entire correlation function.</p>
+</dd>
+<dt><strong>(max_vccf_index_after, vccf_all_after)</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple of numpy arrays</span><dd><p class="first last">tuple where max_vccf_index_after is a float of the maximum velocity correlation index after closure, vccf_all_after is the entire correlation function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_curl">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_mesh_curl</code><span class="sig-paren">(</span><em>meantracks</em>, <em>neighbors</em>, <em>filt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_mesh_curl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_curl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the spatial correlation for each superpixel using a time dependent velocity vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>disps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames-1, 2), a numpy array zof superpixel displacement vectors, n_frames here is equal to the truncated length if we choose not to use the entire duration to compute correlation.</p>
+</dd>
+<dt><strong>neighbors</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">(n_superpixels,) list of numpy array to detail which superpixel ids are the neighbours of the current superpixel index.</p>
+</dd>
+<dt><strong>filt</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">(n_superpixels,) binary mask to indicate which superpixels to take for the calculation</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_curl</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">for the given region adjacency specified by neighbours return the local cross product of the neighbour vectors relative to the central.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_order">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_mesh_order</code><span class="sig-paren">(</span><em>mesh_strain_vector</em>, <em>remove_mean=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_mesh_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the proposed mesh order presented in the paper. This is the vector order but using mesh strain vectors instead as a &#8216;velocity&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>mesh_strain_vector</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_superpixels x 2, local average mesh strain vector as returned from mesh_statistics_tools.construct_mesh_strain_vector() function.</p>
+</dd>
+<dt><strong>remove_mean</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">flag to either compute the order after removal of mean or not.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_order_curve</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames, return mesh order parameter at each frame based on the constructed mesh strain vector.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_principal_strain_angle_ellipse">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_mesh_principal_strain_angle_ellipse</code><span class="sig-paren">(</span><em>tracks</em>, <em>neighbours</em>, <em>point_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_mesh_principal_strain_angle_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_mesh_principal_strain_angle_ellipse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the principal strain ellipses at each superpixel point in the constructed mesh where the mesh connections is given in terms of a region adjacency graph (RAG) and the RAG is a neighbour list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>neighbours</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">n_superpixels neighbour list describing the neighbours of each superpixel.</p>
+</dd>
+<dt><strong>point_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float or int) threshold for detecting and masking out regions of natural high point density which may introduce artifacts such as the image borders and interfaces.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>eigenvalues_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_superpixels x 2 eigenvalue of 1st (max_strain) and 2nd (min_strain) eigenvectors.</p>
+</dd>
+<dt><strong>eigenangles_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_superpixels or principal angles in rads</p>
+</dd>
+<dt><strong>stretch_ratio_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_superpixels of the stretch ratio which is the eccentricity of an ellipse, sqrt(abs(1-(min_strain**2)/(max_strain**2)))</p>
+</dd>
+<dt><strong>select_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_superpixels, the binary mask of where the local density exceeds the threshold of high point density</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_motion_saliency_map">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_motion_saliency_map</code><span class="sig-paren">(</span><em>meantracks</em>, <em>dist_thresh</em>, <em>shape</em>, <em>max_frame=None</em>, <em>filt=0</em>, <em>filt_size=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_motion_saliency_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_motion_saliency_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the saliency map based on counting the number of neighbours in the radius of each superpixel, then binning counts over regular grid of superpixels to produce a kernel density estimate and average smooth the images (if specified)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>map_vals</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames), the temporal mesh strain</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple-like</span><dd><p class="first last">(n_rows x n_cols), image shape</p>
+</dd>
+<dt><strong>max_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the final frame to which we aggregate the statistic and compute maps for.</p>
+</dd>
+<dt><strong>filt</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">(0 or 1), run over the heat map with an average filter or not. if 1, filt_size sets the kernel size for smoothing.</p>
+</dd>
+<dt><strong>filt_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float), sigma setting the standard deviation of the gaussian for kernel smoothing.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>final_saliency_map</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols), heatmap of saliency</p>
+</dd>
+<dt><strong>spatial_time_saliency_map</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_rows x n_cols), frame by frame heatmap of saliency.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_principal_strain_angles">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_principal_strain_angles</code><span class="sig-paren">(</span><em>tracks</em>, <em>neighbourhood</em>, <em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_principal_strain_angles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_principal_strain_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the principal strain statistics of the PCA ellipses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>neighbourhood</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">n_superpixels long list of neighbours of each superpixel</p>
+</dd>
+<dt><strong>frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the frame number in which we compute the pca ellipse statistics.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>eigs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, 2) of the normalised PCA strain sorted descending by magnitude,</p>
+</dd>
+<dt><strong>angles</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels,) associated principle angle in degrees.</p>
+</dd>
+<dt><strong>mesh_quadrant_counts</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">counts in which quadrant the strain vectors fall in using the principal strain axes as the orthogonal axes. It is supposed to assess the distortion of the mesh.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_spatial_correlation</code><span class="sig-paren">(</span><em>disps</em>, <em>filt</em>, <em>neighbors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_spatial_correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the spatial correlation for each superpixel using a time dependent velocity vector.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>disps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames-1, 2), a numpy array of superpixel displacement vectors, n_frames here is equal to the truncated length if we choose not to use the entire duration to compute correlation.</p>
+</dd>
+<dt><strong>filt</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">(n_superpixels,) binary mask to indicate which superpixels to take for the calculation</p>
+</dd>
+<dt><strong>neighbors</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">(n_superpixels,) list of numpy array to detail which superpixel ids are the neighbours of the current superpixel index.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>spatial_corr_superpixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">for the given region adjacency specified by neighbours return the local spatial correlation for each superpixel.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation_function">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">compute_spatial_correlation_function</code><span class="sig-paren">(</span><em>meantracks</em>, <em>wound_heal_frame</em>, <em>wound_heal_err=5</em>, <em>dist_range=(1</em>, <em>5)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#compute_spatial_correlation_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.compute_spatial_correlation_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the superpixel tracks of all time, the gap closure frame, the error of the wound heal frame and the distance range we want to test correlation, this function returns the spatial correlation function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>wound_heal_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">(int) the frame number where the sheets are closed.</p>
+</dd>
+<dt><strong>wound_heal_err</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">we truncate tracks beyond wound_heal_frame - wound_heal_err</p>
+</dd>
+<dt><strong>dist_range</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple-like</span><dd><p class="first last">a vector of the distance to consider as a multipler given in number of superpixels away. creates a vector incrementing by 1.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.construct_MOSES_mesh">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">construct_MOSES_mesh</code><span class="sig-paren">(</span><em>tracks</em>, <em>dist_thresh</em>, <em>spixel_size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#construct_MOSES_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.construct_MOSES_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>constructs the MOSES mesh, linking neighbours defined by the initial positions of the superpixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">radial distance cut-off as a multiplier of the average superpixel width.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">average superpixel width.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>MOSES_mesh_strain_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames), specifying the average neighbourhood mesh strain of each superpixel in each frame.</p>
+</dd>
+<dt><strong>nearest_neighbors_refined</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">adjacency graph of how superpixels are connected (only found from initial points therefore is defined with the one timepoint at frame 0)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.construct_mesh_strain_vector">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">construct_mesh_strain_vector</code><span class="sig-paren">(</span><em>tracks</em>, <em>neighbours</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#construct_mesh_strain_vector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.construct_mesh_strain_vector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an arbitrary graph defined by a neighbour list, constructs the mesh strain vector for all time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>neighbours</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">list of superpixel neighbours, the neighbours for n_superpixels over n_frames. If len() of list = 1 and n_frames&gt;1 then we assume the neighbour is fixed and propagate for all time.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_strain_time_vector</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_superpixels x 2), giving the mean mesh strain vector of each superpixel relative to its neighbours at each time point.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.correlation_tracks_time">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">correlation_tracks_time</code><span class="sig-paren">(</span><em>track1</em>, <em>track2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#correlation_tracks_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.correlation_tracks_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the pearson correlation (cov(track1,track2)/sqrt(var(track1)*var(track2))) between time vectors.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>track1</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, 2) single displacement vector for a superpixel (y,x) coordinates</p>
+</dd>
+<dt><strong>track2</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, 2) single displacment vector for a superpixel (y,x) coordinates</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>av_corr</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">average correlation coefficient across the superpixels.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.count_dynamic_nn_neighbors">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">count_dynamic_nn_neighbors</code><span class="sig-paren">(</span><em>tracks</em>, <em>dist_thresh</em>, <em>limits</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#count_dynamic_nn_neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.count_dynamic_nn_neighbors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses an efficient radiusBallTree structure in sklearn to efficiently compute the number of neighbours to each superpixel efficiently for each frame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">distance cut-off to count number of neighbours for each superpixel.</p>
+</dd>
+<dt><strong>limits</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows, n_cols), image shape size, used to correct for edge artifacts.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>num_neighbours_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames) numpy array, giving the total number of counts it is near.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.count_quadrant_bins">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">count_quadrant_bins</code><span class="sig-paren">(</span><em>angles_pi</em>, <em>bin_limits_ascend</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#count_quadrant_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.count_quadrant_bins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of displacement vectors if we bin each displacement vector in the region adjacent graph if we use the principal strain to define a set of orthogonal axes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>angles_pi</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_angles), vector of angles to each displacement vector given in radians</p>
+</dd>
+<dt><strong>bin_limits_ascend</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">this is the angles at which we partition the angles in increasing angles.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>counts</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(length of bin limits), the number of displacement vectors falling into designated bins.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.find_neighbours_initial">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">find_neighbours_initial</code><span class="sig-paren">(</span><em>tracks</em>, <em>dist_thresh</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#find_neighbours_initial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.find_neighbours_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a nieghbourlist specifying the region adjacency graph according to a distance threshold given as a multiplier of the average superpixel width.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), a numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float) multiplier which is multiplied by the average superpixel distance to generate a Euclidean distance cutoff.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>nearest_neighbors_refined</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">(n_superpixels,) list specifying region adjacency of each superpixel.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.find_principal_directions">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">find_principal_directions</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#find_principal_directions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.find_principal_directions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a set of (y,x) points, use PCA to compute the average directionality that covers the variance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_points, 2) in (y,x) coordinate points giving the main displacement directions.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>s</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(2,) PCA strain largest to smallest.</p>
+</dd>
+<dt><strong>V</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(2,2) associated eigenvectors to the eigenvalues.</p>
+</dd>
+<dt><strong>angle: numpy array</strong></dt>
+<dd><p class="first last">(float [0,360]) principal angle using (min_strain, max_strain) as (x,y)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.fit_spline">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">fit_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>k=4</em>, <em>smooth_factor=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#fit_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.fit_spline" title="Permalink to this definition">¶</a></dt>
+<dd><p>General boiler function to fit a spline to (x,y)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of x values</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of desired y values</p>
+</dd>
+<dt><strong>k</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">is the order of the spline for interpolation</p>
+</dd>
+<dt><strong>smooth_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">how smooth the interpolation, essentially controls the number of knots.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>y_pred</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of predicted y values evaluated using the fitted spline at x</p>
+</dd>
+<dt><strong>spl: scipy spline fit object</strong></dt>
+<dd><p class="first last">the fitted spline function.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.from_neighbor_list_to_graph">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">from_neighbor_list_to_graph</code><span class="sig-paren">(</span><em>tracks</em>, <em>neighbourlist</em>, <em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#from_neighbor_list_to_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.from_neighbor_list_to_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the adjacency graph definition from a list of neighbours of superpixels to a networkx graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>neighbourlist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">(list of numpy arrays), giving the various neighbours to superpixels</p>
+</dd>
+<dt><strong>frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">which frame fo which to construct the graph for visualisation.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>G</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">networkx graph</span><dd><p class="first last">networkx graph representation of the neighbourhood relationships.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.powerfit">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">powerfit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#powerfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.powerfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit a form of y=Ax**b by taking logarithms of both sides.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">x-axis, a numpy vector</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">signal, a numpy vector</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>(slope, intercept, r_value)</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">tuple, output from scipy.stats.linregress</p>
+</dd>
+<dt><strong>y_pred</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">predicted y values based on the fitted relationship at the same x values.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.vccf">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">vccf</code><span class="sig-paren">(</span><em>tracks1</em>, <em>tracks2</em>, <em>mode='full'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#vccf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.vccf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the normalised velocity correlation function (-1,1) between a series of tracks1 and series of tracks2 whose lengths can vary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks1</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x length1) numpy array</p>
+</dd>
+<dt><strong>tracks2</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x length2) numpy array</p>
+</dd>
+<dt><strong>mode</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">convolutional mode of operation, refer to numpy.correlate.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vccf</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(length1+length2-1) long velocity cross-correlation vector as defined in the SI materials and methods if mode=&#8217;full&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.vector_order">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">vector_order</code><span class="sig-paren">(</span><em>vectors</em>, <em>remove_mean=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#vector_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.vector_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>also known as the polar order parameter. (with optional subtraction of the mean vector)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>vectors</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_vectors x 2, numpy array of directional (x,y) or (y,x) values</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vorder</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">scalar, return vector order parameter a.k.a normalised mean vector.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.vector_order_curve">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">vector_order_curve</code><span class="sig-paren">(</span><em>vector_field</em>, <em>remove_mean=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#vector_order_curve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.vector_order_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a temporally varying vector field, compute the averaged normalized vector as a measure of order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>vector_field</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames x n_vectors x 2, numpy array of directional (x,y) or (y,x) values over n_frames.</p>
+</dd>
+<dt><strong>remove_mean</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">flag to either compute the order after removal of mean or not.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>vorder</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_frames, return vector order parameter at each frame.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Motion_Analysis.tracks_statistics_tools.html" class="btn btn-neutral float-right" title="MOSES.Motion_Analysis.tracks_statistics_tools module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Motion_Analysis.flow_statistics_tools.html" class="btn btn-neutral" title="MOSES.Motion_Analysis.flow_statistics_tools module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+numpy
+scipy
+scikit-learn
+scikit-image
+opencv-python>=3.0,<4.0
+matplotlib
+tqdm
+tifffile

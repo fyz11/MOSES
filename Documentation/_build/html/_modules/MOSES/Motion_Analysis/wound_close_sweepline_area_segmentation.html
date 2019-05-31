@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Sat Jan 14 12:54:50 2017</span>
+
+<span class="sd">@author: felix</span>
+<span class="sd">@email: felixzhou1@gmail.com</span>
+
+<span class="sd">This script and all the code within is licensed under the Ludwig License.</span>
+
+<span class="sd">see README.md for details on usage.</span>
+<span class="sd"> </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span> 
+
+    
+<div class="viewcode-block" id="find_direction_wound"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_direction_wound">[docs]</a><span class="k">def</span> <span class="nf">find_direction_wound</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Finds the direction in which the epithelial sheet is moving in by looking at the position of the sheet points ...</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : </span>
+<span class="sd">        (y,x) numpy array of points, (n_points x 2)</span>
+<span class="sd">    limits : </span>
+<span class="sd">        (n_rows, n_cols), essentially the image dimension.</span>
+<span class="sd">    spixel_size : </span>
+<span class="sd">        (float) average superpixel width</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    direction : </span>
+<span class="sd">        a string either &#39;left&#39; or &#39;right&#39; designating the direction in which the superpixel moves. </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_limit</span><span class="p">,</span> <span class="n">x_limit</span> <span class="o">=</span> <span class="n">limits</span>
+    
+    <span class="n">all_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">all_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="n">x_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">all_x</span><span class="p">)</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">all_x</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">x_max</span> <span class="o">&lt;=</span> <span class="n">x_limit</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">spixel_size</span><span class="p">:</span>
+        <span class="c1"># this is from left </span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span>
+        <span class="k">return</span> <span class="n">direction</span>
+        
+    <span class="k">if</span> <span class="n">x_min</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;right&#39;</span>
+        <span class="k">return</span> <span class="n">direction</span></div>
+        
+    
+<div class="viewcode-block" id="find_nearest_pairs_points"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.find_nearest_pairs_points">[docs]</a><span class="k">def</span> <span class="nf">find_nearest_pairs_points</span><span class="p">(</span><span class="n">points_r</span><span class="p">,</span> <span class="n">points_g</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Match the boundary points of the red sheet, (points_r) with those of the green sheet (points_g)</span>
+<span class="sd">    </span>
+<span class="sd">    n_sweeps - the number of horizontal strips dividing the image.</span>
+<span class="sd">    n_points_to_keep - the number of points kept to approximate boundary for each strip.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points_r : </span>
+<span class="sd">        (n_points_to_keep*n_sweeps, 2) boundary points of red sheet</span>
+<span class="sd">    points_g :</span>
+<span class="sd">        (n_points_to_keep*n_sweeps, 2) boundary points of green sheet</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spixels_r : </span>
+<span class="sd">        the green ids in points_g to match each r point to.</span>
+<span class="sd">    spixels_g : </span>
+<span class="sd">        the red ids in points_r to match each g point to.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">euclidean_distances</span>
+    
+    <span class="n">n_pixels_r</span> <span class="o">=</span> <span class="n">points_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_pixels_g</span> <span class="o">=</span> <span class="n">points_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">cross_distance_r_g</span> <span class="o">=</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">points_r</span><span class="p">,</span> <span class="n">points_g</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">n_pixels_r</span> <span class="o">&lt;=</span> <span class="n">n_pixels_g</span><span class="p">:</span>
+        <span class="n">neighbours_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cross_distance_r_g</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">neighbours_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points_r</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">neighbours_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points_g</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">neighbours_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cross_distance_r_g</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">,:]</span>
+        
+    <span class="n">spixels_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_pixels_r</span><span class="p">)[</span><span class="n">neighbours_r</span><span class="p">]</span>
+    <span class="n">spixels_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_pixels_g</span><span class="p">)[</span><span class="n">neighbours_g</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">spixels_r</span><span class="p">,</span> <span class="n">spixels_g</span></div>
+    
+    
+<div class="viewcode-block" id="baseline_als"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als">[docs]</a><span class="k">def</span> <span class="nf">baseline_als</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Code adapted from https://stackoverflow.com/questions/29156532/python-baseline-correction-library. </span>
+
+<span class="sd">    Implements paper of &quot;Asymmetric Least Squares Smoothing&quot; by P. Eilers and H. Boelens in 2005.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : </span>
+<span class="sd">        numpy vector of observations to fit.</span>
+<span class="sd">    lam : float </span>
+<span class="sd">        smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    niter : int</span>
+<span class="sd">        the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : </span>
+<span class="sd">        fitted baseline, same numpy vector size as y.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="k">import</span> <span class="n">spsolve</span>
+    
+    <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">spdiags</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">W</span> <span class="o">+</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">D</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">spsolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">z</span></div>
+    
+    
+<div class="viewcode-block" id="locate_thresh"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_thresh">[docs]</a><span class="k">def</span> <span class="nf">locate_thresh</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">thresh</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Find the first entry in array (left to right) which just above a defined cutoff given by thresh  (assumes array represents a function that is approximately monotonically decreasing).</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : </span>
+<span class="sd">        a numpy array of numbers </span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        specified cutoff </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wound_close : </span>
+<span class="sd">        the position of the array for which the value is just above thresh.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wound_close</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)):</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="c1">#        print val, thresh[i]</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="n">thresh</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">wound_close</span> <span class="o">=</span> <span class="n">i</span> 
+            <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">continue</span>
+    
+    <span class="k">if</span> <span class="n">wound_close</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span> <span class="c1">#nothing found</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wound_close</span></div>
+    
+    
+<div class="viewcode-block" id="postprocess_img"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.postprocess_img">[docs]</a><span class="k">def</span> <span class="nf">postprocess_img</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">close_ksize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size_factor</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Postprocess the binary mask from kmeans clustering in order to fill holes and remove small elements to grab the main epithelial sheet.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        (n_rows x n_cols) binary image</span>
+<span class="sd">    close_ksize : int</span>
+<span class="sd">        kernel size for binary_closing with a disk kernel.</span>
+<span class="sd">    size_factor : float</span>
+<span class="sd">        0-1, the proportion of image area below which are regarded as small objects and removed from the binary mask</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filt : </span>
+<span class="sd">        (n_rows x n_cols), post-processed binary image.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">from</span> <span class="nn">scipy.ndimage.morphology</span> <span class="k">import</span> <span class="n">binary_fill_holes</span>
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">disk</span><span class="p">,</span> <span class="n">binary_closing</span><span class="p">,</span> <span class="n">remove_small_objects</span> 
+    
+    <span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="n">filt</span> <span class="o">=</span> <span class="n">binary_closing</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">disk</span><span class="p">(</span><span class="n">close_ksize</span><span class="p">))</span>
+    <span class="n">filt</span> <span class="o">=</span> <span class="n">remove_small_objects</span><span class="p">(</span><span class="n">filt</span><span class="p">,</span> <span class="n">size_factor</span><span class="o">*</span><span class="n">img_rows</span><span class="o">*</span><span class="n">img_cols</span><span class="p">)</span>        
+    <span class="n">filt</span> <span class="o">=</span> <span class="n">binary_fill_holes</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">filt</span></div>
+    
+    
+    
+<div class="viewcode-block" id="locate_boundary_points_sweepline_segmentation"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.locate_boundary_points_sweepline_segmentation">[docs]</a><span class="k">def</span> <span class="nf">locate_boundary_points_sweepline_segmentation</span><span class="p">(</span> <span class="n">areas_img</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_sweeps</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">n_points_keep</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Given the binary mask of an epithelial sheet, locate the boundary points of the sheet and infer which vertical strip and direction the sheet is moving in.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    areas_img : </span>
+<span class="sd">        (n_rows x n_cols) binary image of the epithelial sheet.</span>
+<span class="sd">    frame : </span>
+<span class="sd">        int, which frame number to compute.</span>
+<span class="sd">    spixel_size : (float) </span>
+<span class="sd">        the average superpixel width.</span>
+<span class="sd">    direction : (default None)</span>
+<span class="sd">        which direction the sheet is moving, takes &#39;left&#39; or &#39;right&#39;</span>
+<span class="sd">    n_sweeps : (int)</span>
+<span class="sd">        the number of vertical divisions of the image.</span>
+<span class="sd">    n_points_keep : (int)</span>
+<span class="sd">        for each vertical strip, the number of points to sample to approximate the sheet boundary.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    good_boundary_coords : </span>
+<span class="sd">        the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.</span>
+<span class="sd">    sweepline_seg_y : </span>
+<span class="sd">        (n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in. </span>
+<span class="sd">    direction : </span>
+<span class="sd">        &#39;left&#39; or &#39;right&#39; string, denoting the direction in which the epithelial sheet is moving in </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">areas_img</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">limits</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    
+    <span class="c1"># set up the possible points. </span>
+    <span class="n">grid_X</span><span class="p">,</span> <span class="n">grid_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+    
+    <span class="c1"># identify the points to consider. </span>
+    <span class="n">move_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">grid_Y</span><span class="p">[</span><span class="n">areas_img</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">grid_X</span><span class="p">[</span><span class="n">areas_img</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()])</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># set up the points</span>
+
+    <span class="c1"># next we define and find the direction of movements... (this can just be done by the area segmentation... )</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # Determine direction ----&gt; use the trick in the clean superpixels, result of this is left or right</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">direction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>    
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">find_direction_wound</span><span class="p">(</span><span class="n">move_points</span><span class="p">,</span> <span class="n">limits</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">)</span>
+
+    <span class="c1"># check if blank image... </span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">areas_img</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">m</span><span class="o">*</span><span class="n">n</span><span class="p">:</span>
+        <span class="c1"># initial image is totally blank and worthless. set one pixel of the boundary to 1:</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
+            <span class="n">move_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> 
+
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
+            <span class="n">move_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="mi">0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> 
+    
+<span class="c1">#    print direction</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # create the sweep lines intervals. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n_sweeps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">y_lines</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # Sweep through the column ... </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># bin the points into the bounds</span>
+    <span class="n">spixel_regions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">move_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="c1"># bin the points according the y range. </span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_bounds</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">lower_y</span> <span class="o">=</span> <span class="n">y_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">upper_y</span> <span class="o">=</span> <span class="n">y_bounds</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">spixel_regions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">choice</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">move_points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">lower_y</span><span class="p">,</span> <span class="n">move_points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">upper_y</span><span class="p">)])</span>
+        
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the points to keep ... </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kept_points</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sweepline_seg</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># go through each y_bin and find the furthest x point </span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spixel_regions</span><span class="p">)):</span>
+        <span class="n">spixel_region</span> <span class="o">=</span> <span class="n">spixel_regions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spixel_region</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">spixel_region_x</span> <span class="o">=</span> <span class="n">move_points</span><span class="p">[</span><span class="n">spixel_region</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
+                <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">spixel_region_x</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">good_x</span> <span class="o">=</span> <span class="n">spixel_region</span><span class="p">[</span><span class="n">sort_order</span><span class="p">[:</span><span class="n">n_points_keep</span><span class="p">]]</span>
+                                       
+            <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
+                <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">spixel_region_x</span><span class="p">)</span>
+                <span class="n">good_x</span> <span class="o">=</span> <span class="n">spixel_region</span><span class="p">[</span><span class="n">sort_order</span><span class="p">[:</span><span class="n">n_points_keep</span><span class="p">]]</span>
+                                     
+<span class="c1">#            print direction  </span>
+            <span class="n">kept_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">good_x</span><span class="p">)</span>
+            <span class="n">sweepline_seg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">good_x</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))</span>
+            
+    <span class="k">if</span> <span class="n">n_points_keep</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">kept_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kept_points</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="n">sweepline_seg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sweepline_seg</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">n_points_keep</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">kept_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">kept_points</span><span class="p">)</span>
+        <span class="n">sweepline_seg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">sweepline_seg</span><span class="p">)</span>
+        
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    # Filter the outlier points by statistical outlier analysis. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">good_points</span> <span class="o">=</span> <span class="n">move_points</span><span class="p">[</span><span class="n">kept_points</span><span class="p">]</span> <span class="c1"># get the goodness. </span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">good_points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">good_points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">xline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="n">meanX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">:</span>
+        <span class="n">inlier_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span> <span class="n">X</span> <span class="o">&lt;</span> <span class="n">meanX</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">X</span> <span class="o">&gt;</span> <span class="n">meanX</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inlier_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    
+    
+    <span class="c1"># return the coordinates and the sweepline...</span>
+    <span class="n">good_boundary_coords</span> <span class="o">=</span> <span class="n">good_points</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">]</span>
+    <span class="n">sweepline_seg_y</span> <span class="o">=</span> <span class="n">sweepline_seg</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">good_boundary_coords</span><span class="p">,</span> <span class="n">sweepline_seg_y</span><span class="p">,</span> <span class="n">direction</span></div>
+
+    
+
+<div class="viewcode-block" id="kmeans_cluster"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.kmeans_cluster">[docs]</a><span class="k">def</span> <span class="nf">kmeans_cluster</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">train_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Uses kmeans cluster to group the image intensities into n_clusters, sorted by image intensity, the lowest intensity pixels are grouped as 0 etc...</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : </span>
+<span class="sd">        (n_rows x n_cols), grayscale image</span>
+<span class="sd">    n_clusters : </span>
+<span class="sd">        the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.</span>
+<span class="sd">    train_split : </span>
+<span class="sd">        (0-1 float) proportion of pixels to use for fitting the kmeans cluster. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Y_new : </span>
+<span class="sd">        (n_rows x n_cols), integer image, labelled by the cluster numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+    <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+    
+    <span class="n">model</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+    
+    <span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="c1"># speed this section up by bootstrapping. </span>
+    <span class="n">choose</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">choose</span><span class="p">)</span>
+    
+    <span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">choose</span><span class="p">[:</span><span class="nb">int</span><span class="p">(</span><span class="n">train_split</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">choose</span><span class="p">))]]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">img_rows</span><span class="p">,</span> <span class="n">img_cols</span><span class="p">))</span>
+    
+    
+    <span class="n">intensity</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">image</span><span class="p">[:,:][</span><span class="n">Y</span><span class="o">==</span><span class="n">label</span><span class="p">])</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Y</span><span class="p">)]</span>
+    <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">intensity</span><span class="p">)</span>
+    
+    <span class="n">Y_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sort_order</span><span class="p">)):</span>
+        <span class="n">Y_new</span><span class="p">[</span><span class="n">Y</span><span class="o">==</span><span class="n">sort_order</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span> 
+        
+    <span class="n">Y_new</span> <span class="o">=</span> <span class="n">Y_new</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">Y_new</span></div>
+    
+
+<div class="viewcode-block" id="wound_sweep_area_segmentation"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.wound_sweep_area_segmentation">[docs]</a><span class="k">def</span> <span class="nf">wound_sweep_area_segmentation</span><span class="p">(</span><span class="n">vid_stack</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">max_frame</span><span class="p">,</span> <span class="n">n_sweeps</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">n_points_keep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">p_als</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">to_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot; Use boundary point finding and matching to find the closure point between two coloured sheets</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vid_stack : </span>
+<span class="sd">        (n_frames, n_rows, n_cols, 3),     </span>
+<span class="sd">    spixel_size : </span>
+<span class="sd">        average superpixel width (int)</span>
+<span class="sd">    max_frame :</span>
+<span class="sd">        maximum frame number to which to compute the gap closure over.</span>
+<span class="sd">    n_sweeps :</span>
+<span class="sd">        number of strips to divide vertically the image.</span>
+<span class="sd">    n_points_keep : </span>
+<span class="sd">        the number of points to keep for summarising the boundary.</span>
+<span class="sd">    n_clusters : </span>
+<span class="sd">        number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.</span>
+<span class="sd">    p_als : </span>
+<span class="sd">        this controls the assymmetry in fitting the baseline. see stackoverflow: https://stackoverflow.com/questions/29156532/python-baseline-correction-library </span>
+<span class="sd">    to_plot : </span>
+<span class="sd">        plot the diagnostic image or not to check fitting and inference.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wound_frame : </span>
+<span class="sd">        predicted frame where gap closure occurs.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters.rank</span> <span class="k">import</span> <span class="n">median</span>
+    <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span>
+    <span class="kn">from</span> <span class="nn">skimage.util</span> <span class="k">import</span> <span class="n">img_as_float</span>
+    <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">threshold_otsu</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">UnivariateSpline</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+     
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    1. read in video</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r_channel</span> <span class="o">=</span> <span class="n">vid_stack</span><span class="p">[:,:,:,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">g_channel</span> <span class="o">=</span> <span class="n">vid_stack</span><span class="p">[:,:,:,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">r_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">r_channel</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">g_channel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">g_channel</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    2. iterate over the frames and find the boundaries of segmentation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">distances_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">direction_r</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">direction_g</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_frame</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preprocess the image and segmentate ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">img_r</span> <span class="o">=</span> <span class="n">r_channel</span><span class="p">[:,:,</span><span class="n">frame</span><span class="p">]</span>
+        <span class="n">img_g</span> <span class="o">=</span> <span class="n">g_channel</span><span class="p">[:,:,</span><span class="n">frame</span><span class="p">]</span>
+
+        <span class="c1"># first do the median smoothing filter. </span>
+        <span class="n">img_r</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">img_r</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">spixel_size</span><span class="p">))</span>
+        <span class="n">img_g</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">img_g</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">spixel_size</span><span class="p">))</span>
+        
+        <span class="c1"># turn into img float.</span>
+        <span class="n">img_r</span> <span class="o">=</span> <span class="n">img_as_float</span><span class="p">(</span><span class="n">img_r</span><span class="p">)</span>
+        <span class="n">img_g</span> <span class="o">=</span> <span class="n">img_as_float</span><span class="p">(</span><span class="n">img_g</span><span class="p">)</span>
+        
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">img_r</span><span class="o">.</span><span class="n">shape</span>
+        
+        <span class="n">filt_r</span> <span class="o">=</span> <span class="n">kmeans_cluster</span><span class="p">(</span><span class="n">img_r</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+        <span class="n">filt_r</span> <span class="o">=</span> <span class="n">filt_r</span> <span class="o">&gt;</span> <span class="mi">0</span> 
+        <span class="n">filt_r</span> <span class="o">=</span> <span class="n">postprocess_img</span><span class="p">(</span><span class="n">filt_r</span><span class="p">,</span> <span class="n">close_ksize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size_factor</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>   
+        
+        <span class="n">filt_g</span> <span class="o">=</span> <span class="n">kmeans_cluster</span><span class="p">(</span><span class="n">img_g</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span>
+        <span class="n">filt_g</span> <span class="o">=</span> <span class="n">filt_g</span> <span class="o">&gt;</span> <span class="mi">0</span> 
+        <span class="n">filt_g</span> <span class="o">=</span> <span class="n">postprocess_img</span><span class="p">(</span><span class="n">filt_g</span><span class="p">,</span> <span class="n">close_ksize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size_factor</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>   
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Locate boundary points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">boundary_points_r</span><span class="p">,</span> <span class="n">sweep_cols_r</span><span class="p">,</span> <span class="n">direct_r</span> <span class="o">=</span> <span class="n">locate_boundary_points_sweepline_segmentation</span><span class="p">(</span> <span class="n">filt_r</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction_r</span><span class="p">,</span> <span class="n">n_sweeps</span><span class="o">=</span><span class="n">n_sweeps</span><span class="p">,</span> <span class="n">n_points_keep</span><span class="o">=</span><span class="n">n_points_keep</span><span class="p">)</span>
+        <span class="n">boundary_points_g</span><span class="p">,</span> <span class="n">sweep_cols_g</span><span class="p">,</span> <span class="n">direct_g</span> <span class="o">=</span> <span class="n">locate_boundary_points_sweepline_segmentation</span><span class="p">(</span> <span class="n">filt_g</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction_g</span><span class="p">,</span> <span class="n">n_sweeps</span><span class="o">=</span><span class="n">n_sweeps</span><span class="p">,</span> <span class="n">n_points_keep</span><span class="o">=</span><span class="n">n_points_keep</span><span class="p">)</span>
+    
+        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">direction_r</span> <span class="o">=</span> <span class="n">direct_r</span>
+            <span class="n">direction_g</span> <span class="o">=</span> <span class="n">direct_g</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Match boundary points along horizontal lines. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># having located the number of points now we match up the points using nearest euclidean distance</span>
+        <span class="n">ids_r</span><span class="p">,</span> <span class="n">ids_g</span> <span class="o">=</span> <span class="n">find_nearest_pairs_points</span><span class="p">(</span><span class="n">boundary_points_r</span><span class="p">,</span> <span class="n">boundary_points_g</span><span class="p">)</span>
+        
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stitch adjacent boundary points. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># now we stitch the points together... </span>
+        <span class="n">points_r</span> <span class="o">=</span> <span class="n">boundary_points_r</span><span class="p">[</span><span class="n">ids_r</span><span class="p">]</span>
+        <span class="n">points_g</span> <span class="o">=</span> <span class="n">boundary_points_g</span><span class="p">[</span><span class="n">ids_g</span><span class="p">]</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the distance and make into curve. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dist_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">points_r</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">points_g</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">points_r</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">points_g</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>        
+        <span class="n">distances_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dist_points</span><span class="p">))</span>
+        
+    <span class="n">distances_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances_time</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Spline approximation and intersection finding. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">norm_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances_time</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">distances_time</span><span class="p">)</span>
+        
+    <span class="c1"># remember to add 1... to this..</span>
+    <span class="n">x_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_frame</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">norm_dist</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">norm_dist</span><span class="p">))</span>
+    <span class="n">spl_dist</span> <span class="o">=</span> <span class="n">spl</span><span class="p">(</span><span class="n">x_dist</span><span class="p">)</span>
+    
+    <span class="n">n_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">spl_dist</span><span class="p">)</span>
+    
+    <span class="c1"># this is the normal affair ..... </span>
+    <span class="n">tailed</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="k">if</span> <span class="n">norm_dist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">norm_dist</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">tailed</span> <span class="o">=</span> <span class="kc">True</span>
+        
+    <span class="k">if</span> <span class="n">tailed</span><span class="p">:</span>        
+        <span class="n">aug_norm_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">spl_dist</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">spl_dist</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">spl_dist</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">fitted_dist</span> <span class="o">=</span> <span class="n">baseline_als</span><span class="p">(</span><span class="n">aug_norm_dist</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mi">1</span><span class="n">e2</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="n">p_als</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">fitted_dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">fitted_dist</span><span class="p">[</span><span class="n">n_length</span><span class="p">:</span><span class="o">-</span><span class="n">n_length</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">aug_norm_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">spl_dist</span><span class="p">,</span> <span class="n">spl_dist</span><span class="p">,</span> <span class="n">spl_dist</span><span class="p">])</span>
+        
+        <span class="n">fitted_dist</span> <span class="o">=</span> <span class="n">baseline_als</span><span class="p">(</span><span class="n">aug_norm_dist</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="mi">1</span><span class="n">e2</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_als</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">fitted_dist</span> <span class="o">=</span> <span class="n">fitted_dist</span><span class="p">[</span><span class="n">n_length</span><span class="p">:</span><span class="o">-</span><span class="n">n_length</span><span class="p">]</span>
+
+    <span class="n">wound_frame</span> <span class="o">=</span> <span class="n">locate_thresh</span><span class="p">(</span><span class="n">spl_dist</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="n">fitted_dist</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">fitted_dist</span><span class="p">))</span>
+    
+<span class="c1">#    print &#39;predicted wound heal time&#39;, wound_frame</span>
+    <span class="k">if</span> <span class="n">to_plot</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;predicted wound heal frame number: </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span><span class="p">(</span><span class="n">wound_frame</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">norm_dist</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;measured distances&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">spl_dist</span><span class="p">,</span> <span class="s1">&#39;g-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted linear spline&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="n">fitted_dist</span><span class="p">,</span> <span class="s1">&#39;k--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted baseline&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dist</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">fitted_dist</span><span class="p">)</span> <span class="o">+</span> <span class="n">fitted_dist</span><span class="p">,</span> <span class="s1">&#39;r--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;fitted baseline + 2 s.t.d&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wound_frame</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm_dist</span><span class="p">[</span><span class="n">wound_frame</span><span class="p">],</span> <span class="s1">&#39;b^&#39;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;predicted gap close frame&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">wound_frame</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1"># remember to add one onto... </span></div>
+    
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    
+    
+    
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

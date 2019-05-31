@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.file_io module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Utility_Functions.image module" href="MOSES.Utility_Functions.image.html" />
+    <link rel="prev" title="MOSES.Utility_Functions.color_transfer module" href="MOSES.Utility_Functions.color_transfer.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Utility_Functions.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Utility_Functions.html#module-MOSES.Utility_Functions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.file_io module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Utility_Functions.file_io.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Utility_Functions.file_io">
+<span id="moses-utility-functions-file-io-module"></span><h1>MOSES.Utility_Functions.file_io module<a class="headerlink" href="#module-MOSES.Utility_Functions.file_io" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.detect_experiment_tracks_RG">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">detect_experiment_tracks_RG</code><span class="sig-paren">(</span><em>infolder</em>, <em>ext='.mat'</em>, <em>include='filt2_'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#detect_experiment_tracks_RG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.detect_experiment_tracks_RG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locate all paired red and green tracks within infolder/meantracks</p>
+<p>Assumes you have under infolder a meantracks folder
+infolder</p>
+<blockquote>
+<div><a href="#id1"><span class="problematic" id="id2">|</span></a>___ meantracks</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>infolder</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">top-level folder path</p>
+</dd>
+<dt><strong>ext</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">file extension we are looking for e.g. &#8216;.mat&#8217;</p>
+</dd>
+<dt><strong>include</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">keyword the files in the subfolder will contain for the subfolder to be relevant.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>red_files</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy of all matched red track filepaths</p>
+</dd>
+<dt><strong>green_files</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy of all matched green track filepaths</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.detect_experiments">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">detect_experiments</code><span class="sig-paren">(</span><em>infolder, exclude=['meantracks', 'optflow'], level1=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#detect_experiments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.detect_experiments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locates all subdirectories or subdirectories immediately within infolder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>infolder</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">top-level root folder path</p>
+</dd>
+<dt><strong>exclude</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of keywords to skip. Do not include subfolders with names that contain these keywords.</p>
+</dd>
+<dt><strong>level1</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">If true searches only in the immediate folder else will walk through all subdirectories within infoldere</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>nothing, void function</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.detect_files">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">detect_files</code><span class="sig-paren">(</span><em>folder</em>, <em>ext='.tif'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#detect_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.detect_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>detects files of a given extension within a folder.</p>
+<p>note: does not detect files within subfolders within the folder. One can also use glob module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>folder</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">path of folder containing desired files</p>
+</dd>
+<dt><strong>ext</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str (default=&#8217;.tif&#8217;)</span><dd><p class="first last">name of file extension to search for e.g. &#8216;.jpg&#8217;, &#8216;.png&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>filepaths</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">array of matched full filepaths of files with the desired extension</p>
+</dd>
+<dt><strong>fnames</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">array of matched file names</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.mkdir">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">mkdir</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#mkdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>check if directory exists and create it through Python if it does not yet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>directory</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">the directory path (absolute or relative) you wish to create (or check that it exists)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>void function, no return</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.read_PIL_frame">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">read_PIL_frame</code><span class="sig-paren">(</span><em>tiffile</em>, <em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#read_PIL_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.read_PIL_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use pillow library to read select .tif/.TIF files. (single frame)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tiffile</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">input .tif file to read, can be multipage .tif (string)</p>
+</dd>
+<dt><strong>frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">desired frame number given as C-style 0-indexing (int)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an image as a numpy array either (n_rows x n_cols) for grayscale or (n_rows x n_cols x 3) for RGB</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.read_multiimg_PIL">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">read_multiimg_PIL</code><span class="sig-paren">(</span><em>tiffile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#read_multiimg_PIL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.read_multiimg_PIL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use pillow library to read multipage .tif/.TIF files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tiffile</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">input .tif file to read, can be multipage .tif (string)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>imgs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">either (n_frames x n_rows x n_cols) for grayscale or (n_frames x n_rows x n_cols x 3) for RGB</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.read_multiimg_stack">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">read_multiimg_stack</code><span class="sig-paren">(</span><em>tiffile</em>, <em>return_img=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#read_multiimg_stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.read_multiimg_stack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the tifffile.py library through Scikit-Image to read multipage bioformat files such as .tif/.lsm files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tiffile</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">input .tif/.lsm file to read, can be multipage .tif (string)</p>
+</dd>
+<dt><strong>return_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">boolean True/False to specify if the image should be read as a numpy array or just the object be returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>img_object</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">Python object</span><dd><p class="first last">A read image object containing the attributes: pages, series and micromanager_metadata.</p>
+</dd>
+<dt><strong>imgs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array (only if return_img=True)</span><dd><p class="first last">an (n_frames x n_slices x n_channels x n_rows x n_cols) image.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.file_io.save_multipage_tiff">
+<code class="descclassname">MOSES.Utility_Functions.file_io.</code><code class="descname">save_multipage_tiff</code><span class="sig-paren">(</span><em>np_array</em>, <em>savename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/file_io.html#save_multipage_tiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.file_io.save_multipage_tiff" title="Permalink to this definition">¶</a></dt>
+<dd><p>save numpy array of images as a multipage .tiff file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>np_array</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_rows, n_cols, n_channels) image</p>
+</dd>
+<dt><strong>savename</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">filepath to save the output .tif stack.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>void function</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Utility_Functions.image.html" class="btn btn-neutral float-right" title="MOSES.Utility_Functions.image module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Utility_Functions.color_transfer.html" class="btn btn-neutral" title="MOSES.Utility_Functions.color_transfer module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

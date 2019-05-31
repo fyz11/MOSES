@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Track_Filtering.filter_meantracks_superpixels module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Utility_Functions package" href="MOSES.Utility_Functions.html" />
+    <link rel="prev" title="MOSES.Track_Filtering package" href="MOSES.Track_Filtering.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Track_Filtering.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Track_Filtering.html#module-MOSES.Track_Filtering">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a> &raquo;</li>
+        
+      <li>MOSES.Track_Filtering.filter_meantracks_superpixels module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Track_Filtering.filter_meantracks_superpixels.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Track_Filtering.filter_meantracks_superpixels">
+<span id="moses-track-filtering-filter-meantracks-superpixels-module"></span><h1>MOSES.Track_Filtering.filter_meantracks_superpixels module<a class="headerlink" href="#module-MOSES.Track_Filtering.filter_meantracks_superpixels" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Jan 16 21:32:25 2017</p>
+<p>&#64;author: felix
+&#64;email: <a class="reference external" href="mailto:felixzhou1&#37;&#52;&#48;gmail&#46;com">felixzhou1<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<p>This script and all the code within is licensed under the Ludwig License.</p>
+<p>see README.md for details on usage.</p>
+<div class="section" id="information">
+<h2>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h2>
+<p>This is a specialised track cleaning module for migrating epithelial sheets
+currently it is framed for 2 coloured sheets, but one can easily adapt for phase contrast migrating sheets too.</p>
+<ol class="arabic simple">
+<li>applied superpixel clique cleaning</li>
+<li>dynamic propagation with continuity enforcement to grab all the relevant tracks.</li>
+</ol>
+<p>N.B. assumes diametrically opposing epithelioid sheets.</p>
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.apply_filter_tracks">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">apply_filter_tracks</code><span class="sig-paren">(</span><em>meantracks</em>, <em>select_spixels</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#apply_filter_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.apply_filter_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a helper function to basically turn inactive superpixels into constant tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>select_pixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary numpy mask indicating superpixels to keep, those that are False are to be set to constant tracks.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>new_meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), final numpy array of superpixel tracks after replacing inactivated with constant tracks.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.check_move_all_frames">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">check_move_all_frames</code><span class="sig-paren">(</span><em>meantracks</em>, <em>move_thresh=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#check_move_all_frames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.check_move_all_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks which superpixels are now moving based on averaging the total distance moved across all frames.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>move_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">distance to be moved in pixel units for determining if a superpixel is moving.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>move_check</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary mask (True/False) of which superpixels is moving.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.check_overlap">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">check_overlap</code><span class="sig-paren">(</span><em>meantracks_r</em>, <em>meantracks_g</em>, <em>move_r</em>, <em>move_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#check_overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.check_overlap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Joint filtering of superpixels based on movement in order to uniquely assign superpixels to either the red or green sheet.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), unfiltered red tracks from optical flow superpixel tracking</p>
+</dd>
+<dt><strong>meantracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), unfiltered green tracks from optical flow superpixel tracking</p>
+</dd>
+<dt><strong>move_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary mask of superpixel ids from meantracks_r that are moving</p>
+</dd>
+<dt><strong>move_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary mask of superpixel ids from meantracks_g that are moving</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>new_move_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">new binary mask of superpixel ids to be kept for meantracks_r</p>
+</dd>
+<dt><strong>new_move_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">new binary mask of superpixel ids to be kept for meantracks_g</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.count_points_spixels">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">count_points_spixels</code><span class="sig-paren">(</span><em>spixels</em>, <em>regions2count</em>, <em>points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#count_points_spixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.count_points_spixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking if a superpixel centroid is in the superpixel area of another using indexing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) image with each distinct superpixel region assigned a unique int (output of scikit-image slic algorithm)</p>
+</dd>
+<dt><strong>regions2count</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of candidate superpixel regions to check</p>
+</dd>
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(y,x) positions of activated superpixels.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>counts :</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.dynamic_propagation_spixels_fast">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">dynamic_propagation_spixels_fast</code><span class="sig-paren">(</span><em>tracks</em>, <em>start_spixels</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#dynamic_propagation_spixels_fast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.dynamic_propagation_spixels_fast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dynamically propagates the initial assigned superpixels to the shape of the initial sheet in order to capture the full sheet dynamics. An inactivated superpixel becomes activated if an activated superpixel comes into the superpixel area (area of influence)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks from optic flow.</p>
+</dd>
+<dt><strong>start_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array_like</span><dd><p class="first last">ids of superpixels belonging to the initial epithelial sheet</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows, n_cols) image shape.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks_new</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), new numpy array of superpixel tracks, with inactivated superpixels replaced by constant tracks.</p>
+</dd>
+<dt><strong>activated_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of superpixel ids that became activated.</p>
+</dd>
+<dt><strong>running_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of all activated/kept superpixel ids</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.fill_in_missing_superpixels">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">fill_in_missing_superpixels</code><span class="sig-paren">(</span><em>meantracks</em>, <em>keep_spixels</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#fill_in_missing_superpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.fill_in_missing_superpixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exploiting the regularity of the initial superpixels, it allows filling in of the missing superpixels within the bulk sheet that wasn&#8217;t identified as moving.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>keep_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">numpy array of superpixel ids that was kept (activated).</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows, n_cols) tuple of image shape</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>final_spixels_keep</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a new numpy array of superpixel ids</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.filter_red_green_tracks">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">filter_red_green_tracks</code><span class="sig-paren">(</span><em>tracks_r</em>, <em>tracks_g</em>, <em>img_shape</em>, <em>mag_thresh=0</em>, <em>frame2=1</em>, <em>spixel_neighbour_factor=1.2</em>, <em>overlap_thresh=0.7</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#filter_red_green_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_red_green_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filtering of superpixel tracks using the prior knowledge that red and green epithelial sheets should be separated on 2 sides and migrates towards each other. Works by constructing adjacency graphs on the superpixels that move and requires no image segmentation.</p>
+<p>Auto-infers which side left or right sheets are.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), unfiltered meantracks from optical flow tracking for the red channel.</p>
+</dd>
+<dt><strong>tracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), unfiltered meantracks from optical flow tracking for the green channel</p>
+</dd>
+<dt><strong>img_shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple</span><dd><p class="first last">(n_rows x n_cols) pixel dimensions of each frame</p>
+</dd>
+<dt><strong>mag_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">movement threshold for defining a moving superpixel in pixel units</p>
+</dd>
+<dt><strong>frame2</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">frame from frame0 for which we assess initially moving superpixel. This is a user-set cut-off that tries to balance seeing movement and before sheets touch.</p>
+</dd>
+<dt><strong>spixel_neighbour_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">radial cut-off for defining neighbours given as a multiplicative factor of the average superpixel size.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>meantracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), filtered final red superpixel tracks</p>
+</dd>
+<dt><strong>meantracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2), filtered final green superpixel tracks</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">filter_tracks_superpixel_cliques</code><span class="sig-paren">(</span><em>tracks</em>, <em>select_tracks</em>, <em>thresh_factor=1.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#filter_tracks_superpixel_cliques"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a neighbourhood graph based on initial points of tracks according to a distance cut-off for selected points specified by a binary mask. It does this twice, the second time to account for central nodes without which we would have two disconnected graph components</p>
+<p>Code is tested for a 4 connected graph, thresh_factor &lt;=1.2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2) numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>select_tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary mask selecting which superpixels to construct graph for</p>
+</dd>
+<dt><strong>thresh_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float) distance cut-off specified as a multiplicative factor of the average superpixel size</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>keep_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">a numpy vector of numbered ids of which superpixels to keep</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques_once">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">filter_tracks_superpixel_cliques_once</code><span class="sig-paren">(</span><em>tracks</em>, <em>select_tracks</em>, <em>thresh_factor=1.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#filter_tracks_superpixel_cliques_once"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.filter_tracks_superpixel_cliques_once" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a neighbourhood graph based on initial points of tracks according to a distance cut-off for selected points specified by a binary mask. It does this once.</p>
+<p>Code is tested for a 4 connected graph, thresh_factor &lt;=1.2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2) numpy array of superpixel tracks</p>
+</dd>
+<dt><strong>select_tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">binary mask selecting which superpixels to construct graph for</p>
+</dd>
+<dt><strong>thresh_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float) distance cut-off specified as a multiplicative factor of the average superpixel size</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>keep_spixels</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">a numpy vector of numbered ids of which superpixels to keep</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_neighbour_list">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">find_cliques_neighbour_list</code><span class="sig-paren">(</span><em>nearest_neighbors_refined</em>, <em>thresh_size=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#find_cliques_neighbour_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_neighbour_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is similar to the networkx function for finding graph components. Here we find all the isolated connected components of the neighbourhood graph. The basic idea is that the superpixels constituting the initial epithelial sheet is approximated by the largest set of interconnected superpixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>nearest_neighbor_refined</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">python list of numpy arrays for expressing the superpixel adjacency graph.</p>
+</dd>
+<dt><strong>thresh_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">filters which graph components to keep by specifying a minimum number of superpixels that much belong to the component. This is to reduce consideration of singletons.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>final_uniq</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of cliques given as a list of array of superpixel ids e.g. [(clique1), (clique2),...]</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_superpixels">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">find_cliques_superpixels</code><span class="sig-paren">(</span><em>meantracks</em>, <em>select</em>, <em>thresh_factor=1.2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#find_cliques_superpixels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.find_cliques_superpixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the given selected points, link points close together in a graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array representing the (y,x) superpixel positions</p>
+</dd>
+<dt><strong>select</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">logical boolean mask of True or False indicating which superpixels to construct graph for</p>
+</dd>
+<dt><strong>thresh_factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the radial distance cut-off as a multiplier of the average superpixel size.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, 2) array of (y,x)-coordinates of the selected superpixel points at frame 0</p>
+</dd>
+<dt><strong>nearest_neighbors_refined</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">corresponding python list of numpy arrays giving the ids of superpixels that are neighbours to each superpixel. If there is no neighbours for a superpixel, the numpy array is empty.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.find_moving_tracks">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">find_moving_tracks</code><span class="sig-paren">(</span><em>forward_tracks</em>, <em>frame2=1</em>, <em>move_thresh=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#find_moving_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.find_moving_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find which superpixels are moving between frame0 to frame2 assessed by if the superpixel has been displaced by computing the distance in location between the two frames.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>forward_tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of superpixel tracks from optical flow.</p>
+</dd>
+<dt><strong>frame2</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">The frame number to compare movement of frame0 to. Here defaults to the next frame i.e. 1</p>
+</dd>
+<dt><strong>move_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The minimum distance a superpixel has to have moved to be classified as &#8216;moving&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>select</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels,) binary logical mask numpy vector</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Track_Filtering.filter_meantracks_superpixels.make_plot">
+<code class="descclassname">MOSES.Track_Filtering.filter_meantracks_superpixels.</code><code class="descname">make_plot</code><span class="sig-paren">(</span><em>tracks_r</em>, <em>tracks_g</em>, <em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Track_Filtering/filter_meantracks_superpixels.html#make_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Track_Filtering.filter_meantracks_superpixels.make_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenient function within this module that co-plots both red and green coloured superpixel tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of red channel superpixel tracks from optical flow.</p>
+</dd>
+<dt><strong>tracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2) numpy array of green channel superpixel tracks from optical flow.</p>
+</dd>
+<dt><strong>ax</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib ax object</span><dd><p class="first last">e.g from executing fig, ax = plt.subplots()</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>void function, nothing is returned.</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Utility_Functions.html" class="btn btn-neutral float-right" title="MOSES.Utility_Functions package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Track_Filtering.html" class="btn btn-neutral" title="MOSES.Track_Filtering package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

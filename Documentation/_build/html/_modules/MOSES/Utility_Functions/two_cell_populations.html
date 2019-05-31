@@ -1,0 +1,561 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.two_cell_populations &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.two_cell_populations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Utility_Functions.two_cell_populations</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Oct  8 15:05:00 2018</span>
+
+<span class="sd">@author: felix</span>
+
+<span class="sd">Scripts to handle the analysis of two cell types used to primarily parse the different file names.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<div class="viewcode-block" id="fetch_uniq_combos"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.two_cell_populations.html#MOSES.Utility_Functions.two_cell_populations.fetch_uniq_combos">[docs]</a><span class="k">def</span> <span class="nf">fetch_uniq_combos</span><span class="p">(</span><span class="n">stringlist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Script to return the enumeration of all possible pairwise string combinations of the input list of strings</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stringlist : list or array of str</span>
+<span class="sd">        list or array of strings to take the combination over</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    combos : numpy array</span>
+<span class="sd">        array of all unique pairwise string combinations  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">itertools</span>
+    
+    <span class="n">combos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations_with_replacement</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stringlist</span><span class="p">)),</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">combos</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">stringlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">stringlist</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+    <span class="n">combos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">combos</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combos</span></div>
+    
+<span class="c1"># =============================================================================</span>
+<span class="c1">#   Some scripts to collate all the metadata regarding the experiments</span>
+<span class="c1"># =============================================================================</span>
+<div class="viewcode-block" id="match_combos_and_info"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.two_cell_populations.html#MOSES.Utility_Functions.two_cell_populations.match_combos_and_info">[docs]</a><span class="k">def</span> <span class="nf">match_combos_and_info</span><span class="p">(</span><span class="n">exp_info</span><span class="p">,</span> <span class="n">uniq_combos</span><span class="p">,</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; script to assign unique combination strings to parsed out table of experimental conditions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    exp_info : Pandas table</span>
+<span class="sd">        a table such as that generated by :func:`parse_exp_conditions_normal`, :func:`parse_exp_conditions_titrate` with meta information of each individual cell used in the video and their colours</span>
+<span class="sd">    uniq_combos : </span>
+<span class="sd">        the unique standard all combination between all string names of cell types as generated by :func:`fetch_uniq_combos` above</span>
+<span class="sd">    col1 : int</span>
+<span class="sd">        column index of the input exp_info table giving the named string identity of the first cell type  </span>
+<span class="sd">    col2 : int</span>
+<span class="sd">        column index of the input exp_info table giving the named string identity of the second cell type  </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    exp_info : Pandas table</span>
+<span class="sd">        an augmented table with three additional columns; &#39;CellIndex1&#39; and &#39;CellIndex2&#39; giving the position either 1 or 2 of each file name relative to the canonical naming of the combination and &#39;RefIndex&#39; which specifies which canonical naming in uniq_combos is present</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cells1</span> <span class="o">=</span> <span class="n">exp_info</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">col1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">cells2</span> <span class="o">=</span> <span class="n">exp_info</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span><span class="n">col2</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">index1</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">index2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">index_ref</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cells1</span><span class="p">)):</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">cells1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="n">c2</span><span class="o">=</span><span class="n">cells2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uniq_combos</span><span class="p">)):</span>
+            <span class="n">ref_combo</span> <span class="o">=</span> <span class="n">uniq_combos</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">rc1</span> <span class="o">=</span> <span class="n">ref_combo</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="n">rc2</span> <span class="o">=</span> <span class="n">ref_combo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">c1</span><span class="o">==</span><span class="n">rc1</span> <span class="ow">and</span> <span class="n">c2</span><span class="o">==</span><span class="n">rc2</span><span class="p">:</span>
+                <span class="n">index1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">;</span> <span class="n">index2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">c1</span><span class="o">==</span><span class="n">rc2</span> <span class="ow">and</span> <span class="n">c2</span><span class="o">==</span><span class="n">rc1</span><span class="p">:</span>
+                <span class="n">index1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">;</span> <span class="n">index2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+<span class="c1">#                print c1, c2</span>
+<span class="c1">#                index1.append(np.nan) ; index2.append(np.nan)</span>
+                <span class="k">continue</span> <span class="c1"># not this ref. </span>
+                
+            <span class="n">index_ref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+        
+<span class="c1">#    print len(index1), len(index2), len(index_ref), len(cells1)</span>
+    <span class="n">exp_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;CellIndex1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index1</span>
+    <span class="n">exp_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;CellIndex2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index2</span>
+    <span class="n">exp_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;RefIndex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">index_ref</span>
+
+    <span class="k">return</span> <span class="n">exp_info</span></div>
+
+<div class="viewcode-block" id="parse_exp_conditions_normal"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.two_cell_populations.html#MOSES.Utility_Functions.two_cell_populations.parse_exp_conditions_normal">[docs]</a><span class="k">def</span> <span class="nf">parse_exp_conditions_normal</span><span class="p">(</span><span class="n">explist</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Utility script to parse the metadata naming convention used for our normal titration videos (no EGF addition) in the original eLife paper</span>
+
+<span class="sd">    Given an example filename such as &#39;c_EPC2(G)_CP-A(R)_KSFM+RPMI_5_Fast GFP.tif_R-G.tif&#39;, this function will split the components according to the separator string used and parse out the experiment information such as cells and colour used.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    explist : list or array-like</span>
+<span class="sd">        list of string file names of each video file (not the absolute filepath)</span>
+<span class="sd">    split : str</span>
+<span class="sd">        the string separator used to separate the meta information present. In the example this is an underscore, &#39;_&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_table : Pandas Table</span>
+<span class="sd">        an output table summarising the experiment information provided by the filename namely, the media used, name of individual cell types and the respective colour channel corresponding to each cell i.e. [&#39;Condition&#39;, &#39;Cell1&#39;, &#39;Color1&#39;, &#39;Cell2&#39;, &#39;Color2&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+    <span class="c1"># we need to parse out iteratively... in a biased manner. </span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">explist</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="c1"># strip out white spaces... and then split. </span>
+        <span class="n">cell1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="p">[]</span>        
+
+        <span class="c1"># iterate over the split to extract the information... </span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;KSFM&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;RPMI&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="n">condition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;CP-A&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;EPC2&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE33&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE21&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;AGS&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cell1</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell1</span> <span class="o">=</span> <span class="n">met</span>
+                <span class="k">elif</span> <span class="n">cell2</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell2</span> <span class="o">=</span> <span class="n">met</span>
+        
+        <span class="c1"># solve the condition problem </span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">condition</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+            
+        <span class="c1"># solve the coloring issue for each cell    </span>
+        <span class="n">color1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        <span class="n">color2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        
+        <span class="n">cell1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">condition</span><span class="p">,</span> <span class="n">cell1</span><span class="p">,</span> <span class="n">color1</span><span class="p">,</span> <span class="n">cell2</span><span class="p">,</span> <span class="n">color2</span><span class="p">])</span>
+        
+    <span class="n">info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+    <span class="n">data_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell1&#39;</span><span class="p">,</span> <span class="s1">&#39;Color1&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell2&#39;</span><span class="p">,</span> <span class="s1">&#39;Color2&#39;</span><span class="p">])</span>
+        
+    <span class="k">return</span> <span class="n">data_table</span></div>
+    
+    
+<div class="viewcode-block" id="parse_exp_conditions_titrate"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.two_cell_populations.html#MOSES.Utility_Functions.two_cell_populations.parse_exp_conditions_titrate">[docs]</a><span class="k">def</span> <span class="nf">parse_exp_conditions_titrate</span><span class="p">(</span><span class="n">explist</span><span class="p">,</span> <span class="n">exproot</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Utility script to parse the metadata naming convention used for our titration videos (not no addition) in the original eLife paper</span>
+
+<span class="sd">    Given an example filename such as &#39;Tritration_EGF_KSFM_0dot5EGF_EPC2(R)_CP-A(G)_1_Fast GFP.tif_R-G..tif&#39;, this function will split the components according to the separator string used and parse out the experiment information such as cells and colour used. Unlike :func:`parse_exp_conditions_titrate_num` this version can handle &#39;dot&#39; string in the concentration e.g. &#39;0dot5EGF&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    explist : list or array-like</span>
+<span class="sd">        list of string file names of each video file (not the absolute filepath)</span>
+<span class="sd">    split : str</span>
+<span class="sd">        the string separator used to separate the meta information present. In the example this is an underscore, &#39;_&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_table : Pandas Table</span>
+<span class="sd">        an output table summarising the experiment information provided by the filename namely, the media, stimulant, concentration, concentration unit used in addition to cell name and the respective colour channel of each cell i.e. [&#39;Media&#39;, &#39;Stimulant&#39;, &#39;Condition&#39;, &#39;Units&#39;, &#39;Cell1&#39;, &#39;Color1&#39;, &#39;Cell2&#39;, &#39;Color2&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+    <span class="c1"># we need to parse out iteratively... in a biased manner. </span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">explist</span><span class="p">:</span>
+
+        <span class="n">attempt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">exproot</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">exproot</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="c1"># strip out white spaces... and then split. </span>
+        
+        <span class="nb">print</span> <span class="n">meta</span>
+        <span class="n">cell1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">media</span> <span class="o">=</span> <span class="p">[]</span>   
+        <span class="n">stimulant</span> <span class="o">=</span> <span class="p">[]</span>     
+        <span class="n">condition</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">conc_units</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># iterate over the split to extract the information... </span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="c1"># look for the media... </span>
+            <span class="k">if</span> <span class="s1">&#39;KSFM&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;RPMI&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="n">media</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+                
+            <span class="c1"># look for the cell type... this works well. </span>
+            <span class="k">if</span> <span class="s1">&#39;CP-A&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;EPC2&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE33&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE21&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;AGS&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cell1</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell1</span> <span class="o">=</span> <span class="n">met</span>
+                <span class="k">elif</span> <span class="n">cell2</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell2</span> <span class="o">=</span> <span class="n">met</span>
+                    
+             <span class="c1"># look for the stimulant.</span>
+             
+             <span class="c1"># look for the concentration. </span>
+            <span class="n">cond_markers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pg&#39;</span><span class="p">,</span> <span class="s1">&#39;ng&#39;</span><span class="p">,</span> <span class="s1">&#39;EGF&#39;</span><span class="p">,</span> <span class="s1">&#39;TFF3&#39;</span><span class="p">,</span> <span class="s1">&#39;GAST&#39;</span><span class="p">,</span> <span class="s1">&#39;FBS&#39;</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">cond</span> <span class="ow">in</span> <span class="n">cond_markers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cond</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                    <span class="n">spl</span> <span class="o">=</span> <span class="n">met</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cond</span><span class="p">)</span>
+                    
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">conc</span> <span class="o">=</span> <span class="n">spl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">conc_unit</span> <span class="o">=</span> <span class="n">cond</span>
+                            <span class="nb">print</span> <span class="n">spl</span>
+                            <span class="k">if</span> <span class="n">conc_unit</span> <span class="o">==</span> <span class="s1">&#39;pg&#39;</span> <span class="p">:</span>
+                                <span class="n">conc_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conc_unit</span><span class="p">)</span>
+                                <span class="n">stimulant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">ind</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">elif</span> <span class="n">conc_unit</span> <span class="o">==</span> <span class="s1">&#39;ng&#39;</span><span class="p">:</span>
+                                <span class="n">conc_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conc_unit</span><span class="p">)</span>
+                                <span class="n">stimulant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">ind</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">stimulant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conc_unit</span><span class="p">)</span>
+                                <span class="n">conc_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ng&#39;</span><span class="p">)</span> <span class="c1"># assume... </span>
+    
+                            <span class="k">if</span> <span class="s1">&#39;dot&#39;</span> <span class="ow">in</span> <span class="n">conc</span><span class="p">:</span>
+                                <span class="n">conc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;dot&#39;</span><span class="p">)))</span>
+                                <span class="n">condition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conc</span><span class="p">)</span>
+<span class="c1">#                                conc_units.append(conc_unit)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">conc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">conc</span><span class="p">)</span>
+                                <span class="n">condition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conc</span><span class="p">)</span>
+<span class="c1">#                                conc_units.append(conc_unit)</span>
+            <span class="n">ind</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">condition</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">])</span>
+        <span class="n">conc_units</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conc_units</span><span class="p">])</span>
+        <span class="n">stimulant</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stimulant</span><span class="p">])</span>
+        
+        <span class="c1"># solve the condition problem </span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">media</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">media</span> <span class="o">=</span> <span class="n">media</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">media</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">media</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">media</span><span class="p">)</span>
+            
+            
+        <span class="k">if</span> <span class="n">media</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">media</span> <span class="o">=</span> <span class="s1">&#39;KSFM+RPMI&#39;</span>
+            
+        <span class="k">if</span> <span class="n">stimulant</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">stimulant</span> <span class="o">=</span> <span class="s1">&#39;EGF&#39;</span>
+                      
+        <span class="c1"># solve the coloring issue for each cell    </span>
+        <span class="n">color1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        <span class="n">color2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        
+        <span class="n">cell1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">media</span><span class="p">,</span> <span class="n">stimulant</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">conc_units</span><span class="p">,</span> <span class="n">cell1</span><span class="p">,</span> <span class="n">color1</span><span class="p">,</span> <span class="n">cell2</span><span class="p">,</span> <span class="n">color2</span><span class="p">])</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+    <span class="n">data_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Media&#39;</span><span class="p">,</span> <span class="s1">&#39;Stimulant&#39;</span><span class="p">,</span> <span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="s1">&#39;Units&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell1&#39;</span><span class="p">,</span> <span class="s1">&#39;Color1&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell2&#39;</span><span class="p">,</span> <span class="s1">&#39;Color2&#39;</span><span class="p">])</span>
+        
+    <span class="k">return</span> <span class="n">data_table</span>   </div>
+    
+<div class="viewcode-block" id="parse_exp_conditions_titrate_num"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.two_cell_populations.html#MOSES.Utility_Functions.two_cell_populations.parse_exp_conditions_titrate_num">[docs]</a><span class="k">def</span> <span class="nf">parse_exp_conditions_titrate_num</span><span class="p">(</span><span class="n">explist</span><span class="p">,</span> <span class="n">exproot</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Utility script to parse the metadata naming convention used for our titration videos (not no addition) in the original eLife paper</span>
+
+<span class="sd">    Given an example filename such as &#39;Tritration_EGF_KSFM_5EGF_EPC2(R)_CP-A(G)_1_Fast GFP.tif_R-G..tif&#39;, this function will split the components according to the separator string used and parse out the experiment information such as cells and colour used. Unlike :func:`parse_exp_conditions_titrate` this version requires the concentration in front of the stimulate to be integer e.g. &#39;5EGF&#39;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    explist : list or array-like</span>
+<span class="sd">        list of string file names of each video file (not the absolute filepath)</span>
+<span class="sd">    split : str</span>
+<span class="sd">        the string separator used to separate the meta information present. In the example this is an underscore, &#39;_&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_table : Pandas Table</span>
+<span class="sd">        an output table summarising the experiment information provided by the filename namely, the media, stimulant, concentration, concentration unit used in addition to cell name and the respective colour channel of each cell i.e. [&#39;Media&#39;, &#39;Stimulant&#39;, &#39;Condition&#39;, &#39;Units&#39;, &#39;Cell1&#39;, &#39;Color1&#39;, &#39;Cell2&#39;, &#39;Color2&#39;]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+    <span class="c1"># we need to parse out iteratively... in a biased manner. </span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">explist</span><span class="p">:</span>
+
+        <span class="n">attempt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">exproot</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">(</span><span class="n">exp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">exproot</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="c1"># strip out white spaces... and then split. </span>
+        
+        <span class="nb">print</span> <span class="n">meta</span>
+        <span class="n">cell1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">media</span> <span class="o">=</span> <span class="p">[]</span>   
+        <span class="n">stimulant</span> <span class="o">=</span> <span class="p">[]</span>     
+        <span class="n">condition</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">conc_units</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># iterate over the split to extract the information... </span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="c1"># look for the media... </span>
+            <span class="k">if</span> <span class="s1">&#39;KSFM&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;RPMI&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="n">media</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+                
+            <span class="c1"># look for the cell type... this works well. </span>
+            <span class="k">if</span> <span class="s1">&#39;CP-A&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;EPC2&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE33&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;OE21&#39;</span> <span class="ow">in</span> <span class="n">met</span> <span class="ow">or</span> <span class="s1">&#39;AGS&#39;</span> <span class="ow">in</span> <span class="n">met</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cell1</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell1</span> <span class="o">=</span> <span class="n">met</span>
+                <span class="k">elif</span> <span class="n">cell2</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">cell2</span> <span class="o">=</span> <span class="n">met</span>
+                    
+             <span class="c1"># look for the concentration to find the stimulant and units. </span>
+            <span class="k">if</span> <span class="n">met</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">condition</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+                <span class="n">stimulant</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">ind</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">conc_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ng&#39;</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">condition</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">condition</span><span class="p">])</span>
+        <span class="n">conc_units</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conc_units</span><span class="p">])</span>
+        <span class="n">stimulant</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stimulant</span><span class="p">])</span>
+        
+        <span class="c1"># solve the condition problem </span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">media</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">media</span> <span class="o">=</span> <span class="n">media</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">media</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">media</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">media</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">media</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">media</span> <span class="o">=</span> <span class="s1">&#39;KSFM+RPMI&#39;</span>
+            
+        <span class="k">if</span> <span class="n">stimulant</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">stimulant</span> <span class="o">=</span> <span class="s1">&#39;EGF&#39;</span>
+                      
+        <span class="c1"># solve the coloring issue for each cell    </span>
+        <span class="n">color1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        <span class="n">color2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;()&#39;</span><span class="p">)</span>
+        
+        <span class="n">cell1</span> <span class="o">=</span> <span class="n">cell1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cell2</span> <span class="o">=</span> <span class="n">cell2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">media</span><span class="p">,</span> <span class="n">stimulant</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">conc_units</span><span class="p">,</span> <span class="n">cell1</span><span class="p">,</span> <span class="n">color1</span><span class="p">,</span> <span class="n">cell2</span><span class="p">,</span> <span class="n">color2</span><span class="p">])</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+    <span class="n">data_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Media&#39;</span><span class="p">,</span> <span class="s1">&#39;Stimulant&#39;</span><span class="p">,</span> <span class="s1">&#39;Condition&#39;</span><span class="p">,</span> <span class="s1">&#39;Units&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell1&#39;</span><span class="p">,</span> <span class="s1">&#39;Color1&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell2&#39;</span><span class="p">,</span> <span class="s1">&#39;Color2&#39;</span><span class="p">])</span>
+        
+    <span class="k">return</span> <span class="n">data_table</span>   </div>
+
+
+
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

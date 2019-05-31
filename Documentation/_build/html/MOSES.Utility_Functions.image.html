@@ -1,0 +1,654 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.image module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Utility_Functions.two_cell_populations module" href="MOSES.Utility_Functions.two_cell_populations.html" />
+    <link rel="prev" title="MOSES.Utility_Functions.file_io module" href="MOSES.Utility_Functions.file_io.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Utility_Functions.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Utility_Functions.html#module-MOSES.Utility_Functions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.image module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Utility_Functions.image.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Utility_Functions.image">
+<span id="moses-utility-functions-image-module"></span><h1>MOSES.Utility_Functions.image module<a class="headerlink" href="#module-MOSES.Utility_Functions.image" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Sep 27 23:01:49 2018</p>
+<p>&#64;author: felix</p>
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.BackgroundRemoval">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">BackgroundRemoval</code><span class="sig-paren">(</span><em>im</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#BackgroundRemoval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.BackgroundRemoval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes smooth second order image artifacts such as spherical aberration by global polynomial fitting of image intensities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>im</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) grayscale image. Intensity values should be floating with values [0-1]</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>imgInit</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">background corrected image of the same size</p>
+</dd>
+<dt><strong>imgBg</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">estimated background image of the same size</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.DoG">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">DoG</code><span class="sig-paren">(</span><em>img</em>, <em>sigmas</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#DoG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.DoG" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the different of two gaussians with widths specified by sigma. It is used to detect blob-like images and identify areas with relatively constant intensity levels in the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">grayscale (n_rows, n_cols) image</p>
+</dd>
+<dt><strong>sigmas</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array</span><dd><p class="first last">the widths of the two gaussian filter in the difference computation. Specified in the form, [sigma_1, sigma_2]</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>dog</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">grayscale image same size as input</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.apply_SVM">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">apply_SVM</code><span class="sig-paren">(</span><em>im, clf, sigmas=[1, 11], size=5, multiply=[1, 1]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#apply_SVM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.apply_SVM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenience function to use the trained classifier returned by the MOSES.Utility_Functions.image.train_sheet_segmentation_model function given a new image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>im</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an RGB (n_rows, n_cols, 3) image</p>
+</dd>
+<dt><strong>clf</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">scikit-learn classifier object</span><dd><p class="first last">This classifier object is trained and the output of <a class="reference internal" href="#MOSES.Utility_Functions.image.train_sheet_segmentation_model" title="MOSES.Utility_Functions.image.train_sheet_segmentation_model"><code class="xref py py-func docutils literal"><span class="pre">train_sheet_segmentation_model()</span></code></a></p>
+</dd>
+<dt><strong>sigmas</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array-like</span><dd><p class="first last">the two spatial scales used to compute difference of gaussian filter responses.</p>
+</dd>
+<dt><strong>size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">size of kernel used for computation of the entropy image of the difference of gaussian image</p>
+</dd>
+<dt><strong>multiply</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array-like</span><dd><p class="first last">optional numerical weights to weight the contribution of green or red cell features</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>fdskfasjk :</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.compute_centroid_binary">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">compute_centroid_binary</code><span class="sig-paren">(</span><em>binary</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#compute_centroid_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.compute_centroid_binary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the centroid coordinates of a binary mask</p>
+<p>Can also use scipy.ndimage.measurements.center_of_mass</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>binary</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">2d (n_rows, n_cols) boolean image with the image region we wish to demarcate marked as True and background is False</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>centroid</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(x,y) coordinate of the positively marked area</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.construct_boundary_masks">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">construct_boundary_masks</code><span class="sig-paren">(</span><em>boundary_spl</em>, <em>shape</em>, <em>eps=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#construct_boundary_masks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.construct_boundary_masks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the boundary_spl function and applies it to all integer y-coordinates to compute the corresponding x-coordinates of the boundary. Then returns two binary images thats marks all pixels left (y, x&lt;x-eps) and all pixels right (y, x&gt;x + eps) of the boundary line where eps is a tolerance in number of pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>boundary_spl</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">function</span><dd><p class="first last">a function that takes y coordinates and gives corresponding x coordinates such that all (y,x) cartesian coordinates subsample a boundary line between two sheets.</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">2-tuple</span><dd><p class="first last">grayscale image shape i.e. (n_rows, n_cols) as returned by the .shape method of a numpy array</p>
+</dd>
+<dt><strong>eps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of pixels tolerance to call all pixels left and right of the boundary line</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>left_mask</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">0 or 1 valued array marking all pixels left of boundary line</p>
+</dd>
+<dt><strong>right_mask</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">0 or 1 values array marking all pixels right of boundary line</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.detect_peaks">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">detect_peaks</code><span class="sig-paren">(</span><em>img</em>, <em>min_distance=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#detect_peaks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.detect_peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detect local maxima peaks in the image with minimum separation specified by the min_distance parameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">grayscale (n_rows, n_cols) image</p>
+</dd>
+<dt><strong>min_distance</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">minimum separation distance between any two called peaks</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">array of (y,x) coordinates specifying the pixel location in the image with local maxima</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.entropy_img">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">entropy_img</code><span class="sig-paren">(</span><em>img</em>, <em>size</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#entropy_img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.entropy_img" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Shannon Entropy of the Image.</p>
+<p>The Shannon entropy highlights regions of the image with most texture. Local Regions of the filter size whose pixel intensity distribution is very different from its local surroundings will score highly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a float or integer valued (n_rows, n_cols) image</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>entropy_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the approximate size of the image region structures one wishes to highlight</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.find_largest_component">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">find_largest_component</code><span class="sig-paren">(</span><em>binary</em>, <em>thresh=0.05</em>, <em>apply_thresh=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#find_largest_component"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.find_largest_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a binary segmentation, perform connected component analysis and return either all regions larger than a minimum size or just the area with the largest area that is not background.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>binary</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy boolean array</span><dd><p class="first last">(n_rows, n_cols) binary segmentation image</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">minimum area of a component to be kept. Area is a specified as a fraction of the image size</p>
+</dd>
+<dt><strong>apply_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True, all areas with area greater than the minimum size is kept else only the region of largest area is kept</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.maxpool_scale">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">maxpool_scale</code><span class="sig-paren">(</span><em>img</em>, <em>scale=32</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#maxpool_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.maxpool_scale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.min_max_scaling">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">min_max_scaling</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#min_max_scaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.min_max_scaling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Min-max scaling of image intensities, same as skimage.rescale_intensity()</p>
+<p>Min and Max of image are computed globally irrespective of the number of channels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">input image, any dimensionality</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>img_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">image intensity rescaled image</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.perona_malik">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">perona_malik</code><span class="sig-paren">(</span><em>img</em>, <em>iterations=10</em>, <em>delta=0.14</em>, <em>kappa=15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#perona_malik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.perona_malik" title="Permalink to this definition">¶</a></dt>
+<dd><p>Anisotropic filtering of image intensities using Perona-Malik Diffusion Method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">input floating grayscale (n_rows, n_cols) image with intensity values [0-1]</p>
+</dd>
+<dt><strong>iterations</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">Number of iterations to run the diffusion process. Higher values give greater smoothing in the output.</p>
+</dd>
+<dt><strong>delta</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">This is the time step <span class="math">\(\Delta t\)</span> in the diffusion equation.</p>
+</dd>
+<dt><strong>kappa</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">This regulates the sensitivity to edges in the Perona-Malik formulation.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>G</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">Anisotropically filtered image the same size as img</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r93f5f3ef5f77-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Perona, P et. al, &#8220;Anisotropic diffusion.&#8221; Geometry-driven diffusion in computer vision. Springer, Dordrecht, 1994. 73-92.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.pool_numpy">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">pool_numpy</code><span class="sig-paren">(</span><em>array</em>, <em>factor=2</em>, <em>func=&lt;function amax&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#pool_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.pool_numpy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.quant_boundary_cells">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">quant_boundary_cells</code><span class="sig-paren">(</span><em>count_img</em>, <em>boundary_spl</em>, <em>min_distance=5</em>, <em>eps=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#quant_boundary_cells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.quant_boundary_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a density image of cell counts, detect all cells as the local maxima of the image. Then count the number of cells left and right of the boundary line through image masking</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>count_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd></dd>
+<dt><strong>boundary_spl</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">function</span><dd><p class="first last">a function that takes y coordinates and gives corresponding x coordinates such that all (y,x) cartesian coordinates subsample a boundary line between two sheets.</p>
+</dd>
+<dt><strong>min_distance</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">minimum separation distance between any two called peaks</p>
+</dd>
+<dt><strong>eps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of pixels tolerance to call all pixels left and right of the boundary line</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>[left_count, peaks_left]</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[int, numpy array]</span><dd><p class="first last">count of the number of peaks and its corresponding (y,x) coordinates to the left of the boundary line</p>
+</dd>
+<dt><strong>[right_count, peaks_right]</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[int, numpy array]</span><dd><p class="first last">count of the number of peaks and its corresponding (y,x) coordinates to the right of the boundary line</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.ridge_filter_hessian">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">ridge_filter_hessian</code><span class="sig-paren">(</span><em>img</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#ridge_filter_hessian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.ridge_filter_hessian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Hessian</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Utility_Functions.image.train_sheet_segmentation_model">
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">train_sheet_segmentation_model</code><span class="sig-paren">(</span><em>im, sigmas=[1, 11], size=5, close_size=5, debug=False, method='GaussianBayes', *args, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#train_sheet_segmentation_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.train_sheet_segmentation_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses image thresholding on the entropy images to get the ground-truth segmentation of epithelial sheet on a well-strained frame. Then learns a machine learning model of how to classify pixels in subsequent frames. The particular machine learning model learnt is specified by the user.</p>
+<p>Four features are computed to classify each pixel: red pixel intensity, red entropy image intensity, green pixel intensity and green entropy image intensity. The entropy image is computed on the difference of gaussian image of the respective channel image intensity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>im</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a RGB image (n_rows, n_cols, 3) with red and green epithelial sheet images</p>
+</dd>
+<dt><strong>sigmas</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array-like</span><dd><p class="first last">the two spatial scales to use to compute difference of gaussian filter responses.</p>
+</dd>
+<dt><strong>size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">size of kernel used for computation of entropy image of difference of gaussian image</p>
+</dd>
+<dt><strong>close_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">size of kernel used for closing holes after image thresholding</p>
+</dd>
+<dt><strong>debug</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True plots intermediate steps for checking</p>
+</dd>
+<dt><strong>method</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first">One of the following strings to denote which classifier method in scikit-learn to use.</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>&#8216;GaussianBayes&#8217; : uses Gaussian based Naive Bayes classification</li>
+<li>&#8216;SVM&#8217; : trains a support vector machine</li>
+<li>&#8216;Kneighbours&#8217; : this uses K nearest neighbour classification</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt><strong>*args :</strong></dt>
+<dd><p class="first last">optional arguments to pass to the machine learning classifier function in scikit-learn</p>
+</dd>
+<dt><strong>**kwargs :</strong></dt>
+<dd><p class="first last">optional keyword arguments to pass to the machine learning classifier function in scikit-learn</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>clf</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">scikit-learn classifier object</span><dd><p class="first last">a scikit-learn classifier object which computes the images to give red/green epithelial sheet segmentation of the image.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Utility_Functions.two_cell_populations.html" class="btn btn-neutral float-right" title="MOSES.Utility_Functions.two_cell_populations module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Utility_Functions.file_io.html" class="btn btn-neutral" title="MOSES.Utility_Functions.file_io module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow module &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="next" title="MOSES.Optical_Flow_Tracking.superpixel_track module" href="MOSES.Optical_Flow_Tracking.superpixel_track.html" />
+    <link rel="prev" title="MOSES.Optical_Flow_Tracking package" href="MOSES.Optical_Flow_Tracking.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="MOSES.html">MOSES package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="MOSES.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Motion_Analysis.html">MOSES.Motion_Analysis package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MOSES.Optical_Flow_Tracking.html#module-MOSES.Optical_Flow_Tracking">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Track_Filtering.html">MOSES.Track_Filtering package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Utility_Functions.html">MOSES.Utility_Functions package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MOSES.Visualisation_Tools.html">MOSES.Visualisation_Tools package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MOSES.html#module-MOSES">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="MOSES.html">MOSES package</a> &raquo;</li>
+        
+          <li><a href="MOSES.Optical_Flow_Tracking.html">MOSES.Optical_Flow_Tracking package</a> &raquo;</li>
+        
+      <li>MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow">
+<span id="moses-optical-flow-tracking-eval-dense-optic-flow-module"></span><h1>MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow module<a class="headerlink" href="#module-MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow" title="Permalink to this headline">¶</a></h1>
+<p>Created on Thu Oct 16 15:31:11 2014</p>
+<p>&#64;author: felix
+&#64;email: <a class="reference external" href="mailto:felixzhou1&#37;&#52;&#48;gmail&#46;com">felixzhou1<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
+<p>This script and all the code within is licensed under the Ludwig License.</p>
+<p>see README.md for details on usage.</p>
+<dl class="function">
+<dt id="MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.Eval_dense_optic_flow">
+<code class="descclassname">MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.</code><code class="descname">Eval_dense_optic_flow</code><span class="sig-paren">(</span><em>prev</em>, <em>present</em>, <em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Optical_Flow_Tracking/Eval_dense_optic_flow.html#Eval_dense_optic_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Optical_Flow_Tracking.Eval_dense_optic_flow.Eval_dense_optic_flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the optical flow using Farnebacks Method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>prev</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">previous frame, m x n image</p>
+</dd>
+<dt><strong>present</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">current frame, m x n image</p>
+</dd>
+<dt><strong>params</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">Python dict</span><dd><p class="first">a dict object to pass all algorithm parameters. Fields are the same as that in the opencv documentation, <a class="reference external" href="https://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html">https://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html</a>. Our recommended starting values:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>params[&#8216;pyr_scale&#8217;] = 0.5</li>
+<li>params[&#8216;levels&#8217;] = 3</li>
+<li>params[&#8216;winsize&#8217;] = 15</li>
+<li>params[&#8216;iterations&#8217;] = 3</li>
+<li>params[&#8216;poly_n&#8217;] = 5</li>
+<li>params[&#8216;poly_sigma&#8217;] = 1.2</li>
+<li>params[&#8216;flags&#8217;] = 0</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>flow</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">finds the displacement field between frames, prev and present such that <span class="math">\(\mathrm{prev}(y,x) = \mathrm{next}(y+\mathrm{flow}(y,x)[1], x+\mathrm{flow}(y,x)[0])\)</span> where (x,y) is the cartesian coordinates of the image.</span><dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="MOSES.Optical_Flow_Tracking.superpixel_track.html" class="btn btn-neutral float-right" title="MOSES.Optical_Flow_Tracking.superpixel_track module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MOSES.Optical_Flow_Tracking.html" class="btn btn-neutral" title="MOSES.Optical_Flow_Tracking package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

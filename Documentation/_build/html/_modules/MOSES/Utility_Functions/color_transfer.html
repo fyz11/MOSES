@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MOSES.Utility_Functions.color_transfer &mdash; MOSES  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOSES
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../MOSES.html">MOSES package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MOSES</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MOSES.Utility_Functions.color_transfer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MOSES.Utility_Functions.color_transfer</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Oct  1 16:57:30 2018</span>
+
+<span class="sd">@author: felix</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<div class="viewcode-block" id="match_color"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.color_transfer.html#MOSES.Utility_Functions.color_transfer.match_color">[docs]</a><span class="k">def</span> <span class="nf">match_color</span><span class="p">(</span><span class="n">source_img</span><span class="p">,</span> <span class="n">target_img</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="n">source_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Matches the colour distribution of a target image to that of a source image using a linear transform based on matrix decomposition. </span>
+<span class="sd">    </span>
+<span class="sd">    This effectively matches the mean and convariance of the distributions. </span>
+<span class="sd">    </span>
+<span class="sd">    Images are expected to be of form (w,h,c) and can be either float in [0,1] or uint8 [0,255]</span>
+<span class="sd">    </span>
+<span class="sd">    Optionally image masks can be used to selectively bias the color transformation. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_img : numpy array</span>
+<span class="sd">        (n_rows, n_cols, 3), either float in range [0,1] or uint8 and in range [0,255]</span>
+<span class="sd">    target_img : numpy array</span>
+<span class="sd">        (n_rows, n_cols, 3), either float in range [0,1] or uint8 and in range [0,255]</span>
+<span class="sd">    mode : str (default=&#39;pca&#39;)</span>
+<span class="sd">        one of &#39;chol&#39;, &#39;pca&#39; or &#39;sym&#39; for computing the matrix inverse. The effect is slightly different in each case.</span>
+<span class="sd">    eps : float (default=1e-8)</span>
+<span class="sd">        small tolerance for numerical stability.</span>
+<span class="sd">    source_mask : numpy bool array (default=None)</span>
+<span class="sd">        (n_rows, n_cols), optional binary mask to mask out particular colours.</span>
+<span class="sd">    target_mask : numpy bool array (default=None)</span>
+<span class="sd">        (n_rows, n_cols), optional binary mask to mask out particular colours.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    matched_img : numpy array</span>
+<span class="sd">        (n_rows, n_cols, 3), transformed target_img colour matched to source_img </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">target_img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0000000001</span><span class="p">:</span>
+        <span class="c1"># ensure range in [0,1.], converts to float.  </span>
+        <span class="n">source_img</span> <span class="o">=</span> <span class="p">(</span><span class="n">source_img</span><span class="o">/</span><span class="mf">255.</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">target_img</span> <span class="o">=</span> <span class="p">(</span><span class="n">target_img</span><span class="o">/</span><span class="mf">255.</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ensure range in [0,255.]</span>
+        <span class="n">source_img</span> <span class="o">=</span> <span class="n">source_img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span> 
+        <span class="n">target_img</span> <span class="o">=</span> <span class="n">target_img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">);</span> 
+    
+  
+    <span class="c1"># 1. Compute the eigenvectors of the source color distribution (possibly masked)</span>
+    <span class="k">if</span> <span class="n">source_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mu_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">][</span><span class="n">source_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">][</span><span class="n">source_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">][</span><span class="n">source_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="k">else</span><span class="p">:</span>   
+        <span class="n">mu_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">source_img</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">])])</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">source_img</span> <span class="o">-</span> <span class="n">mu_s</span> <span class="c1"># demean</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># convert to (r,g,b), 3 x n_pixels</span>
+    
+    <span class="k">if</span> <span class="n">source_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[:,</span> <span class="n">source_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> 
+    <span class="n">Cs</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># 3x3 covariance matrix. </span>
+    
+    <span class="c1"># 2. Computes the eigenvectors of the target color distribution (possibly masked)    </span>
+    <span class="k">if</span> <span class="n">target_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mu_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">][</span><span class="n">target_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">][</span><span class="n">target_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">][</span><span class="n">target_mask</span><span class="o">==</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="k">else</span><span class="p">:</span>   
+        <span class="n">mu_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">target_img</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">])])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">target_img</span> <span class="o">-</span> <span class="n">mu_t</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>   
+    
+    <span class="k">if</span> <span class="n">target_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="p">[:,</span> <span class="n">target_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> 
+    <span class="n">Ct</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># 3x3 covariance matrix.  </span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Color match the mean and covariance of the source image. </span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;chol&#39;</span><span class="p">:</span>
+        <span class="n">chol_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">Ct</span><span class="p">)</span>
+        <span class="n">chol_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">Cs</span><span class="p">)</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">chol_s</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">chol_t</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;pca&#39;</span><span class="p">:</span>
+        <span class="n">eva_t</span><span class="p">,</span> <span class="n">eve_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Ct</span><span class="p">)</span>
+        <span class="n">Qt</span> <span class="o">=</span> <span class="n">eve_t</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eva_t</span><span class="p">)))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eve_t</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">eva_s</span><span class="p">,</span> <span class="n">eve_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Cs</span><span class="p">)</span>
+        <span class="n">Qs</span> <span class="o">=</span> <span class="n">eve_s</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eva_s</span><span class="p">)))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eve_s</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">Qs</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Qt</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;sym&#39;</span><span class="p">:</span>
+        <span class="n">eva_t</span><span class="p">,</span> <span class="n">eve_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Ct</span><span class="p">)</span>
+        <span class="n">Qt</span> <span class="o">=</span> <span class="n">eve_t</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eva_t</span><span class="p">)))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eve_t</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">Qt_Cs_Qt</span> <span class="o">=</span> <span class="n">Qt</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Cs</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Qt</span><span class="p">)</span>
+        <span class="n">eva_QtCsQt</span><span class="p">,</span> <span class="n">eve_QtCsQt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Qt_Cs_Qt</span><span class="p">)</span>
+        <span class="n">QtCsQt</span> <span class="o">=</span> <span class="n">eve_QtCsQt</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">eva_QtCsQt</span><span class="p">)))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eve_QtCsQt</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Qt</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">QtCsQt</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Qt</span><span class="p">))</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        
+        
+    <span class="c1"># recover the image shape. </span>
+    <span class="k">if</span> <span class="n">target_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">matched_img_flatten</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+        <span class="n">matched_img_flatten</span><span class="p">[:,</span><span class="n">target_mask</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">==</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">matched_img_flatten</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+    <span class="n">matched_img</span> <span class="o">=</span> <span class="n">matched_img_flatten</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">target_img</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">matched_img</span> <span class="o">+=</span> <span class="n">mu_s</span>
+    
+    <span class="k">if</span> <span class="n">target_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rgb_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">target_mask</span><span class="p">,</span> <span class="n">target_mask</span><span class="p">,</span> <span class="n">target_mask</span><span class="p">])</span>
+        <span class="n">matched_img</span><span class="p">[</span><span class="n">rgb_mask</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_img</span><span class="p">[</span><span class="n">rgb_mask</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># clip limits. </span>
+    <span class="n">matched_img</span><span class="p">[</span><span class="n">matched_img</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">matched_img</span><span class="p">[</span><span class="n">matched_img</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">return</span> <span class="n">matched_img</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Felix Y. Zhou
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: ''
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
