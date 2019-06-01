@@ -50,7 +50,7 @@ def compute_vid_opt_flow(vidstack, params, mask=None, adaptive=False, ksize=3):
     flow : 
         (n_frames-1, n_rows x n_cols x 2) numpy array giving the optical flow
     """
-    from Eval_dense_optic_flow import Eval_dense_optic_flow
+    from .Eval_dense_optic_flow import Eval_dense_optic_flow
     import numpy as np 
     from skimage.filters import threshold_otsu
     from skimage.morphology import binary_dilation, binary_closing, disk
