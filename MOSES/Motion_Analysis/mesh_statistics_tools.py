@@ -251,7 +251,7 @@ def compute_MOSES_mesh_stability_index(MOSES_mesh_strain_time_r, MOSES_mesh_stra
 #==============================================================================
 # Additional mesh implementations
 #==============================================================================
-def construct_radial_neighbour_mesh(tracks, dist_thresh, spixel_size, use_counts=False)
+def construct_radial_neighbour_mesh(tracks, dist_thresh, spixel_size, use_counts=False):
     """ constructs the radial neighbours mesh, linking a superpixel to any superpixels separated by a maximum distance < dist_thresh * spixel_size 
 
     Parameters
@@ -313,7 +313,7 @@ def construct_radial_neighbour_mesh(tracks, dist_thresh, spixel_size, use_counts
     return mesh_strain_time, nearest_neighbours_time
 
 
-def construct_knn_neighbour_mesh(tracks, k=4)
+def construct_knn_neighbour_mesh(tracks, k=4):
     """ constructs the K nearest neighbours mesh, linking a superpixel to its closest K superpixels
 
     Parameters
