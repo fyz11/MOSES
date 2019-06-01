@@ -14,6 +14,7 @@ setup(name='MOSES',
       zip_safe=False,
       install_requires=[
         "numpy",
+        "pillow",
         "opencv-python>=3.0,<4.0",
         "matplotlib",
         "scipy",
