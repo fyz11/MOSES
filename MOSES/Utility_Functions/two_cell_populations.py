@@ -178,7 +178,6 @@ def parse_exp_conditions_titrate(explist, exproot, split='_'):
         else:
             meta = (exp.split(exproot)[1].strip()).split(split) # strip out white spaces... and then split. 
         
-        print meta
         cell1 = []
         cell2 = []
         media = []   
@@ -214,7 +213,6 @@ def parse_exp_conditions_titrate(explist, exproot, split='_'):
 
                         if len(conc) > 0:
                             conc_unit = cond
-                            print spl
                             if conc_unit == 'pg' :
                                 conc_units.append(conc_unit)
                                 stimulant.append(meta[ind-1])
@@ -295,7 +293,6 @@ def parse_exp_conditions_titrate_num(explist, exproot, split='_'):
         else:
             meta = (exp.split(exproot)[1].strip()).split(split) # strip out white spaces... and then split. 
         
-        print meta
         cell1 = []
         cell2 = []
         media = []   

@@ -814,7 +814,7 @@ def boundary_superpixel_coords_RGB(rgb_video, meantracks_r, meantracks_g, moveme
     moving_r = find_moving_spixels(meantracks_r_, t_av=t_av_motion, thresh = movement_thresh)
     moving_g = find_moving_spixels(meantracks_g_, t_av=t_av_motion, thresh = movement_thresh)
     
-    print moving_r.shape
+    # print moving_r.shape
 
     # if robust==True or lenient==True:
     #     """
@@ -887,14 +887,14 @@ def boundary_superpixel_coords_RGB(rgb_video, meantracks_r, meantracks_g, moveme
                         x_filt_ALS = baseline_als_density(all_pos[:,1],all_pos[:,0], lam=1e1, p=0.5, radius=1*spixel_size, niter=10, N_cutoff=5, shape=1, slope=1)                                       
                         all_pos_filt = np.vstack([x_filt_ALS, all_pos[:,1]]).T
                     elif lenient:
-                        print('flipping')
+                        # print('flipping')
                         # # set the opposite. 
                         # if flip_state =='flip':
                         #     flip_state = 'no_flip'
                         # elif flip_state == 'no_flip':
                         #     flip_state = 'flip'
                         flip = flip_state[0]
-                        print flip 
+                        # print flip 
                         x_filt_ALS = asymmetric_fit(all_pos[:,0],all_pos[:,1], lam=1e4, p=0.01, flip_state=flip)                                            
                         all_pos_filt = np.vstack([x_filt_ALS, all_pos[:,1]]).T
                     else:
@@ -1008,11 +1008,11 @@ def boundary_superpixel_meantracks_RGB(rgb_video, meantracks_r, meantracks_g, mo
                     """
                     
                     if robust:
-                        print('robust')
+                        # print('robust')
                         x_filt_ALS = asymmetric_fit(all_pos[:,0],all_pos[:,1], lam=1e4, p=0.1, flip_state=flip_state)                                            
                         all_pos_filt = np.vstack([x_filt_ALS, all_pos[:,1]]).T
                     elif lenient:
-                        print('flipping')
+                        # print('flipping')
                         # set the opposite. 
                         if flip_state =='flip':
                             flip_state = 'no_flip'
@@ -1361,7 +1361,7 @@ def process_curve_img_multiple(curve_img, dilation=3, dist_thresh=5):
     merge_regions = match_labelled_regions(labelled_coords, dist_thresh=dist_thresh)
     
     if len(merge_regions) > 0:
-        print('merging')
+        # print('merging')
         # then we merge labelled regions. 
         labelled_new = np.zeros_like(labelled)
         regions_old = np.unique(labelled)[1:]
