@@ -466,7 +466,7 @@ def compute_motion_saliency_map(meantracks, dist_thresh, shape, max_frame=None, 
     
     spatial_time_saliency_map = []
     
-    for frame in xrange(end_frame):
+    for frame in range(end_frame):
 
         blank = np.zeros((nrows, ncols))
         posframe = meantracks[frame,:,:]
@@ -1348,7 +1348,7 @@ def compute_aggregated_stats_map(meantracks, shape, dist_thresh=None, map_vals=N
     
     spatial_time_saliency_map = []
     
-    for frame in xrange(end_frame):
+    for frame in range(end_frame):
 
         blank = np.zeros((nrows, ncols))
         posframe = meantracks[frame,:,:]
