@@ -23,6 +23,7 @@ setup(name='MOSES',
         "scikit-image",
         "scikit-learn",
         "seaborn",
+        "moviepy"
       ],
       packages=find_packages(exclude=('tests', 'docs'))
 )

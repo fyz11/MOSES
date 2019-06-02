@@ -85,7 +85,7 @@ def construct_MOSES_mesh(tracks, dist_thresh, spixel_size):
         
     MOSES_mesh_strain_time = np.vstack(avg_distance_neighbours)
             
-    return MOSES_mesh_strain_time.T, nearest_neighbors_refined
+    return MOSES_mesh_strain_time, nearest_neighbors_refined
 
 
 def construct_mesh_strain_vector(tracks, neighbours):
@@ -142,7 +142,7 @@ def compute_MOSES_mesh_strain_curve(mesh_strain_time, normalise=False):
     Parameters
     ----------
     mesh_strain_time : numpy array
-        (n_frames, n_superpixels), the strain of each superpixel at each frame.
+        (n_superpixels, n_frames), the strain of each superpixel at each frame.
     normalise : bool
         if 'true' divide the mesh strain curve by the maximum value, if false return the raw values.
     
@@ -156,12 +156,12 @@ def compute_MOSES_mesh_strain_curve(mesh_strain_time, normalise=False):
     
     if normalise:
         
-        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=-1)
+        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=0)
         return MOSES_mesh_strain_curve / np.max(MOSES_mesh_strain_curve)
         
     else:
         
-        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=-1)
+        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=0)
         return MOSES_mesh_strain_curve
     
 
