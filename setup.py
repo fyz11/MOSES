@@ -21,7 +21,7 @@ setup(name='MOSES',
         "tqdm",
         "tifffile",
         "scikit-image",
-        "scikit-learn"
+        "scikit-learn",
         "seaborn",
       ],
       packages=find_packages(exclude=('tests', 'docs'))
