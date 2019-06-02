@@ -58,7 +58,7 @@ def detect_edges_gray( img, downscale=32, smooth=2, sigma=3):
     from skimage.feature import canny 
     from skimage.measure import label 
     import numpy as np 
-    from Utility_Functions.image import maxpool_scale
+    from .Utility_Functions.image import maxpool_scale
     
     img = np.dstack([img, img])
     img = maxpool_scale(img, scale=downscale)
@@ -797,7 +797,7 @@ def boundary_superpixel_coords_RGB(rgb_video, meantracks_r, meantracks_g, moveme
     import pylab as plt
     import numpy as np
     from skimage.exposure import rescale_intensity
-    from Motion_Analysis.tracks_statistics_tools import find_moving_spixels, find_const_tracks
+    from .tracks_statistics_tools import find_moving_spixels, find_const_tracks
     
     n_frames, m, n, _ = rgb_video.shape
     spixel_size = meantracks_r[1,0,1] - meantracks_r[1,0,0] # spixel size.
@@ -947,7 +947,7 @@ def boundary_superpixel_meantracks_RGB(rgb_video, meantracks_r, meantracks_g, mo
     import pylab as plt
     import numpy as np
     from skimage.exposure import rescale_intensity
-    from Motion_Analysis.tracks_statistics_tools import find_moving_spixels, find_const_tracks
+    from .tracks_statistics_tools import find_moving_spixels, find_const_tracks
     
     n_frames, m, n, _ = rgb_video.shape
     spixel_size = meantracks_r[1,0,1] - meantracks_r[1,0,0] # spixel size.
