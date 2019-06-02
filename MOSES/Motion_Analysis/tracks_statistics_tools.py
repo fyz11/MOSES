@@ -252,7 +252,24 @@ def RMSD_track_axis(meantracks, ref_time=0, axis=1):
 
     return rmsd
     
+def average_displacement_tracks(meantracks):
+    """ computes the mean displacement vector over time of a set of tracks.
     
+    Parameters
+    ----------
+    meantracks : numpy array
+        (n_spixels x n_frames x 2) centroid superpixel positions
+
+    Returns
+    -------
+    disp : numpy array
+        (n_spixels x 2) mean (over time) displacement vector of each superpixel
+        
+    """
+    disp = traj[:,1:] - traj[:,:-1]
+    disp = np.mean(disp, axis=1)
+     
+    return disp
 #==============================================================================
 # Visualisation for the corr sequence ? 
 #==============================================================================
