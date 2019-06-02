@@ -266,7 +266,7 @@ def average_displacement_tracks(meantracks):
         (n_spixels x 2) mean (over time) displacement vector of each superpixel
         
     """
-    disp = traj[:,1:] - traj[:,:-1]
+    disp = meantracks[:,1:] - meantracks[:,:-1]
     disp = np.mean(disp, axis=1)
      
     return disp
