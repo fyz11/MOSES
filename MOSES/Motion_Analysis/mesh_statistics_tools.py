@@ -33,7 +33,7 @@ def construct_MOSES_mesh(tracks, dist_thresh, spixel_size):
     Returns
     -------
     MOSES_mesh_strain_time : numpy array
-        (n_superpixels x n_frames), specifying the average neighbourhood mesh strain of each superpixel in each frame.
+        (n_frames x n_superpixels), specifying the average neighbourhood mesh strain of each superpixel in each frame.
     nearest_neighbors_refined : list of numpy arrays
         adjacency graph of how superpixels are connected (only found from initial points therefore is defined with the one timepoint at frame 0)
     
@@ -85,7 +85,7 @@ def construct_MOSES_mesh(tracks, dist_thresh, spixel_size):
         
     MOSES_mesh_strain_time = np.vstack(avg_distance_neighbours)
             
-    return MOSES_mesh_strain_time, nearest_neighbors_refined
+    return MOSES_mesh_strain_time.T, nearest_neighbors_refined
 
 
 def construct_mesh_strain_vector(tracks, neighbours):
@@ -142,7 +142,7 @@ def compute_MOSES_mesh_strain_curve(mesh_strain_time, normalise=False):
     Parameters
     ----------
     mesh_strain_time : numpy array
-        (n_superpixels, n_frames), the strain of each superpixel at each frame.
+        (n_frames, n_superpixels), the strain of each superpixel at each frame.
     normalise : bool
         if 'true' divide the mesh strain curve by the maximum value, if false return the raw values.
     
@@ -156,12 +156,12 @@ def compute_MOSES_mesh_strain_curve(mesh_strain_time, normalise=False):
     
     if normalise:
         
-        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=0)
+        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=-1)
         return MOSES_mesh_strain_curve / np.max(MOSES_mesh_strain_curve)
         
     else:
         
-        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=0)
+        MOSES_mesh_strain_curve = np.nanmean(mesh_strain_time, axis=-1)
         return MOSES_mesh_strain_curve
     
 
@@ -268,7 +268,7 @@ def construct_radial_neighbour_mesh(tracks, dist_thresh, spixel_size, use_counts
     Returns
     -------
     mesh_strain_time : numpy array
-        (n_superpixels x n_frames) array specifying either the average neighbourhood distances of each superpixel in each frame (if use_counts=False) or the number of neighbours of each superpixel in each frame
+        (n_frames x n_superpixels) array specifying either the average neighbourhood distances of each superpixel in each frame (if use_counts=False) or the number of neighbours of each superpixel in each frame
     nearest_neighbours_time : list of list of numpy arrays
         adjacency graphs of how superpixels are connected over time
     
@@ -310,7 +310,7 @@ def construct_radial_neighbour_mesh(tracks, dist_thresh, spixel_size, use_counts
             # save counts into array.
             mesh_strain_time[:, frame] = mean_neighbour_distance
 
-    return mesh_strain_time, nearest_neighbours_time
+    return mesh_strain_time.T, nearest_neighbours_time
 
 
 def construct_knn_neighbour_mesh(tracks, k=4):
@@ -326,7 +326,7 @@ def construct_knn_neighbour_mesh(tracks, k=4):
     Returns
     -------
     mesh_strain_time : numpy array
-        (n_superpixels x n_frames) specifying the average neighbourhood distances of each superpixel at each frame
+        (n_frames x n_superpixels) specifying the average neighbourhood distances of each superpixel at each frame
     nearest_neighbours_time : list of list of numpy arrays
         adjacency graphs of how superpixels are connected over time
     
@@ -356,7 +356,7 @@ def construct_knn_neighbour_mesh(tracks, k=4):
         # save counts into array.
         mesh_strain_time[:, frame] = mean_neighbour_distance
 
-    return mesh_strain_time, nearest_neighbours_time
+    return mesh_strain_time.T, nearest_neighbours_time
 
     
 #==============================================================================
