@@ -393,7 +393,24 @@
 
     <span class="k">return</span> <span class="n">rmsd</span></div>
     
-    
+<div class="viewcode-block" id="average_displacement_tracks"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.tracks_statistics_tools.html#MOSES.Motion_Analysis.tracks_statistics_tools.average_displacement_tracks">[docs]</a><span class="k">def</span> <span class="nf">average_displacement_tracks</span><span class="p">(</span><span class="n">meantracks</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; computes the mean displacement vector over time of a set of tracks.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    meantracks : numpy array</span>
+<span class="sd">        (n_spixels x n_frames x 2) centroid superpixel positions</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    disp : numpy array</span>
+<span class="sd">        (n_spixels x 2) mean (over time) displacement vector of each superpixel</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">meantracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+     
+    <span class="k">return</span> <span class="n">disp</span></div>
 <span class="c1">#==============================================================================</span>
 <span class="c1"># Visualisation for the corr sequence ? </span>
 <span class="c1">#==============================================================================</span>

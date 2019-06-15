@@ -230,6 +230,32 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="MOSES.Motion_Analysis.tracks_statistics_tools.average_displacement_tracks">
+<code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">average_displacement_tracks</code><span class="sig-paren">(</span><em>meantracks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#average_displacement_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.average_displacement_tracks" title="Permalink to this definition">¶</a></dt>
+<dd><p>computes the mean displacement vector over time of a set of tracks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>meantracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames x 2) centroid superpixel positions</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>disp</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x 2) mean (over time) displacement vector of each superpixel</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_all_spixel_vid_seq">
 <code class="descclassname">MOSES.Motion_Analysis.tracks_statistics_tools.</code><code class="descname">corr2d_all_spixel_vid_seq</code><span class="sig-paren">(</span><em>spixel_seqs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/tracks_statistics_tools.html#corr2d_all_spixel_vid_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.tracks_statistics_tools.corr2d_all_spixel_vid_seq" title="Permalink to this definition">¶</a></dt>
 <dd><p>computes the 2d image correlation between successive patches along a superpixel track for each superpixel track</p>

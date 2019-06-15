@@ -165,101 +165,725 @@
 <span id="moses-motion-analysis-wound-statistics-tools-module"></span><h1>MOSES.Motion_Analysis.wound_statistics_tools module<a class="headerlink" href="#module-MOSES.Motion_Analysis.wound_statistics_tools" title="Permalink to this headline">¶</a></h1>
 <p>Created on Thu Sep 27 22:04:57 2018</p>
 <p>&#64;author: felix</p>
-<p>set of tools for describing the wound boundary of wound healing assays.</p>
+<p>set of tools for describing the wound boundary of wound healing assays. 
+(may be quite experimental at present)</p>
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">asymmetric_fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lam</em>, <em>p</em>, <em>flip_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#asymmetric_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Utility function that helps to determine whether to flip the residual in the <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a> according to whether an epithelial sheet is moving to the left or the right</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">1-D array of x-coordinates</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">1-D array of y-coordinates (not used)</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>flip_state</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str (default: None)</span><dd><p class="first last">either &#8216;flip&#8217; or &#8216;no_flip&#8217;. If &#8216;flip&#8217; the x-coordinates are multiplied by -1 to get -x to get negative residuals</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>xfit</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">returned 1-D array of filtered x-coordinates</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Asymmetric least squares smoothing of 1D signal to extract baseline (assumes positive residuals)
+Implements paper of &#8220;Asymmetric Least Squares Smoothing&#8221; by P. Eilers and H. Boelens (2005), [1]. 
+Code adapted from <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of observations to fit.</p>
+</dd>
+<dt><strong>lam</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>niter</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>z</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">fitted baseline, same numpy vector size as y.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r2b7816c172b7-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Eilers PH, Boelens HF. &#8220;Baseline correction with asymmetric least squares smoothing.&#8221; Leiden University Medical Centre Report. 2005 Oct 21;1(1):5.</td></tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_density</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>lam</em>, <em>p</em>, <em>radius</em>, <em>niter=10</em>, <em>N_cutoff=5</em>, <em>shape=1</em>, <em>slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instead of the above baseline which moves according the sign of the residual between y and z, we modify to bias towards density instead.
-suitable for use with (x,y)</p>
+<dd><p>Modifies the asymmetric least squares fitting procedure <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a> which moves according to the sign of the residual between y and z, to move towards density of 1d points instead. This gives improved results when filtering spatial (x,y) coordinates.</p>
+<p>point density is estimated by the number of neighbours in the given specified radius and then gated by computing a generalised sigmoid function which basically soft-binarises the concept of &#8216;not dense&#8217; and &#8216;dense&#8217;</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of x-coordinates</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of y-coordinates</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>radius</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the radial distance from each point to count the number of neighbouring points</p>
+</dd>
+<dt><strong>niter</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed.</p>
+</dd>
+<dt><strong>N_cutoff</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the cutoff value used in <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid" title="MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid"><code class="xref py py-func docutils literal"><span class="pre">generalised_sigmoid()</span></code></a></p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the shape value used in <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid" title="MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid"><code class="xref py py-func docutils literal"><span class="pre">generalised_sigmoid()</span></code></a></p>
+</dd>
+<dt><strong>slope</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the slope value used in <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid" title="MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid"><code class="xref py py-func docutils literal"><span class="pre">generalised_sigmoid()</span></code></a></p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>z</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">smoothed version of y</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_direction</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em>, <em>direction_x='right'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Asymmetric least squares smoothing of 1D signal to extract baseline given the direction &#8216;left&#8217; or &#8216;right&#8217;</p>
+<p>Modified version of the <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a> above to bias the residuals to postive or negative depending on the x-direction of movement (right or left respectively)
+This version uses the maximum or minimum &#8216;y&#8217;-value for biasing. <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1"><code class="xref py py-func docutils literal"><span class="pre">baseline_als_direction1()</span></code></a> instead uses the distance to the image boundaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of observations to fit.</p>
+</dd>
+<dt><strong>lam</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>niter</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed.</p>
+</dd>
+<dt><strong>direction_x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">either &#8216;left&#8217; or &#8216;right&#8217; to bias the asymmetry more towards moving sheet from the left or right respectively</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>z</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">smoothed version of y</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">baseline_als_direction1</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>lims</em>, <em>niter=3</em>, <em>direction_x='right'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#baseline_als_direction1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Asymmetric least squares smoothing of 1D signal to extract baseline given the direction &#8216;left&#8217; or &#8216;right&#8217;</p>
+<p>Modified version of the <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a> above to bias the residuals to postive or negative depending on the x-direction of movement (right or left respectively)
+This version uses the maximum or minimum &#8216;y&#8217;-value for biasing. <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction"><code class="xref py py-func docutils literal"><span class="pre">baseline_als_direction()</span></code></a> instead uses the distance to the image boundaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of observations to fit.</p>
+</dd>
+<dt><strong>lam</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</p>
+</dd>
+<dt><strong>lims</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">shape of the image</p>
+</dd>
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</p>
+</dd>
+<dt><strong>niter</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed.</p>
+</dd>
+<dt><strong>direction_x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">either &#8216;left&#8217; or &#8216;right&#8217; to bias the asymmetry more towards moving sheet from the left or right respectively</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>z</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">smoothed version of y</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_roughness">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_roughness</code><span class="sig-paren">(</span><em>curves_full</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_roughness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_roughness" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes a boundary smoothness term. using l/l_0</p>
+<dd><p>Computes the roughness of a boundary line for a given collective of lines (line that describes the interface between two sheets) defined as the ratio between the total length of the line and an equivalent straight line</p>
+<p>The equivalent straight line is derived from the first and last coordinate describing each line, thus each line is expected to be sorted in ascending / describe y-coordinate order (corresponding to image rows).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves_full</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">list of (x,y) coordinate array specifying the coordinates of the curve. The number in the list equals the number of curves to evaluate e.g. the number of frames in the video</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coefs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">1-D numpy array of boundary roughness, one value per input curve</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_superpixel_coords_RGB</code><span class="sig-paren">(</span><em>rgb_video</em>, <em>meantracks_r</em>, <em>meantracks_g</em>, <em>movement_thresh=0.2</em>, <em>t_av_motion=3</em>, <em>robust=False</em>, <em>lenient=True</em>, <em>debug_visual=False</em>, <em>max_dist=1.5</em>, <em>y_bins=50</em>, <em>y_frac_thresh=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_superpixel_coords_RGB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_superpixel_coords_RGB</code><span class="sig-paren">(</span><em>rgb_video</em>, <em>meantracks_r</em>, <em>meantracks_g</em>, <em>movement_thresh=0.2</em>, <em>t_av_motion=3</em>, <em>robust=True</em>, <em>lenient=True</em>, <em>debug_visual=False</em>, <em>max_dist=1.5</em>, <em>y_bins=50</em>, <em>y_frac_thresh=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_superpixel_coords_RGB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbiasedly finds and tracks the moving interface between two colour epithelial sheets from the derived superpixel tracks of each colour</p>
+<p>Compared to <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB" title="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB"><code class="xref py py-func docutils literal"><span class="pre">boundary_superpixel_meantracks_RGB()</span></code></a>, this function conducts the modified density biased asymmetric least squares algorithm which is better for (x,y) coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>rgb_video</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_rows, n_cols, 3) RGB video</p>
+</dd>
+<dt><strong>meantracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels, n_frames, 2) coordinates of superpixel centroids for red channel</p>
+</dd>
+<dt><strong>meantracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels, n_frames, 2) coordinates of superpixel centroids for green channel</p>
+</dd>
+<dt><strong>movement_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the minimum displacement between 1 frame for superpixels to be considered &#8216;moving&#8217;</p>
+</dd>
+<dt><strong>t_av_motion</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of frames to average motion over</p>
+</dd>
+<dt><strong>robust</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True utilise the density based asymmetric smoothing of <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density"><code class="xref py py-func docutils literal"><span class="pre">baseline_als_density()</span></code></a></p>
+</dd>
+<dt><strong>lenient</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True utilises flipping in the asymmetric smoothing of <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a>.</p>
+</dd>
+<dt><strong>debug_visual</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True plots intermediate results for debugging</p>
+</dd>
+<dt><strong>max_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance to be considered a match between red and green points at the boundary</p>
+</dd>
+<dt><strong>y_bins</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of bins to divide the image rows into to assess the number of points sampled of the boundary</p>
+</dd>
+<dt><strong>y_frac_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float (0-1)</span><dd><p class="first last">the minimum number of bins that should contain points for the boundary to be estimated</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>boundary_curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">list of all superpixel track positions that model the boundary</p>
+</dd>
+<dt><strong>als_curves :</strong></dt>
+<dd><p class="first last">list of all asymmetrically filtered superpixel track positions that model the boundary</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">boundary_superpixel_meantracks_RGB</code><span class="sig-paren">(</span><em>rgb_video</em>, <em>meantracks_r</em>, <em>meantracks_g</em>, <em>movement_thresh=0.2</em>, <em>t_av_motion=3</em>, <em>robust=False</em>, <em>lenient=True</em>, <em>debug_visual=False</em>, <em>max_dist=1.5</em>, <em>y_bins=50</em>, <em>y_frac_thresh=0.6</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#boundary_superpixel_meantracks_RGB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Unbiasedly finds and tracks the moving interface between two colour epithelial sheets from the derived superpixel tracks of each colour</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>rgb_video</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_rows, n_cols, 3) RGB video</p>
+</dd>
+<dt><strong>meantracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels, n_frames, 2) coordinates of superpixel centroids for red channel</p>
+</dd>
+<dt><strong>meantracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels, n_frames, 2) coordinates of superpixel centroids for green channel</p>
+</dd>
+<dt><strong>movement_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the minimum displacement between 1 frame for superpixels to be considered &#8216;moving&#8217;</p>
+</dd>
+<dt><strong>t_av_motion</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of frames to average motion over</p>
+</dd>
+<dt><strong>robust</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True increases the asymmetric penalisation in <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a></p>
+</dd>
+<dt><strong>lenient</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True utilises flipping in the asymmetric smoothing of <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a>.</p>
+</dd>
+<dt><strong>debug_visual</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True plots intermediate results for debugging</p>
+</dd>
+<dt><strong>max_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance to be considered a match between red and green points at the boundary</p>
+</dd>
+<dt><strong>y_bins</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of bins to divide the image rows into to assess the number of points sampled of the boundary</p>
+</dd>
+<dt><strong>y_frac_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float (0-1)</span><dd><p class="first last">the minimum number of bins that should contain points for the boundary to be estimated</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>boundary_curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of all spline (quadratic) fitted coefficients (functions) that model the boundary</p>
+</dd>
+<dt><strong>curves_lines</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of all spline (quadratic) interpolated x-coordinates that model the boundary</p>
+</dd>
+<dt><strong>curve_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the (n_frames, n_rows, n_cols) corresponding binary video when the coordinates are remapped into an image.</p>
+</dd>
+<dt><strong>boundary_line :</strong></dt>
+<dd><p class="first last">the (n_rows, n_cols) binary kymograph image illustrating the wound boundary evolution over time</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.check_intersect">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">check_intersect</code><span class="sig-paren">(</span><em>ref</em>, <em>list_array</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#check_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.check_intersect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>function to check whether a given list is present within a list array of other lists. Result is either &#8216;yes&#8217; or &#8216;add&#8217; meaning it should be added</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>ref</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">reference list that one wants to check if it is already in list_array</p>
+</dd>
+<dt><strong>list_array</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of 1-D arrays or list</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>intersect</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">&#8216;yes&#8217; for ref is already contained in one of the items in list_array or &#8216;add&#8217; if it isn&#8217;t and needs to be added</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.curve2img">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">curve2img</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#curve2img"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.curve2img" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given the x-coordinates of the line and its corresponding fixed y-coordinates yline and the image shape, map the line defined by the coordinates into a binary image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (nframes, n) where n is the number of sampled points to represent the line&#8217;s x-coordinates</p>
+</dd>
+<dt><strong>yline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a (n,) 1-d array specifying the temporally consistent y-coordinates at which the wound boundary was sampled at</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">a (nrows, ncols) tuple specifying the original image dimensions</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>imgs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nframes, nrows, ncols) binary image with 1 indicating the line</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.curve2stack">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">curve2stack</code><span class="sig-paren">(</span><em>curves</em>, <em>yline</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#curve2stack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.curve2stack" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given the x-coordinates of the line and its corresponding fixed y-coordinates yline and the image shape, map the line defined by the coordinates into a binary image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (nframes, n) where n is the number of sampled points to represent the line&#8217;s x-coordinates</p>
+</dd>
+<dt><strong>yline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a (n,) 1-d array specifying the temporally consistent y-coordinates at which the wound boundary was sampled at</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">a (nrows, ncols) tuple specifying the original image dimensions</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>imgs</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nframes, nrows, ncols) binary image with 1 indicating the line</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.densify_boundary_line">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">densify_boundary_line</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em>, <em>axis=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#densify_boundary_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.densify_boundary_line" title="Permalink to this definition">¶</a></dt>
-<dd><p>curves is a list or numpy array.</p>
+<dd><p>Given a set of points that lie on the boundary of the wound curve, this function uniquefies the coordinates to enable fitting of a cubic spline function which is then used to interpolate the curve at fixed y-coordinates for visualisation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">list of an array of (x,y) coordinates that sample the wound line between two epithelial sheets</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">a tuple (nrow, ncol) specifying the size of the image shape</p>
+</dd>
+<dt><strong>axis</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int (default:1)</span><dd><p class="first last">the axis to use for uniquefying the coordinates for spline fitting</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>blines</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">list of a corresponding array of (x,y) coordinates that have been reinterpolated after the cubic spline fitting</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">detect_edges_gray</code><span class="sig-paren">(</span><em>img</em>, <em>downscale=32</em>, <em>smooth=2</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#detect_edges_gray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">detect_edges_gray</code><span class="sig-paren">(</span><em>img</em>, <em>downscale=32</em>, <em>smooth=2</em>, <em>sigma=3</em>, <em>return_img=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#detect_edges_gray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detects edges of a single colour sheet by running a Canny edge detector on dowsampled images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows, ncols) grayscale image</p>
+</dd>
+<dt><strong>downscale</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">downsampling factor, resulting image will be reduced by 1./downscale times. downscale needs to divide image dimensions exactly.</p>
+</dd>
+<dt><strong>smooth</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">width of the Gaussian used to smooth downsampled images</p>
+</dd>
+<dt><strong>sigma</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">width of the Gaussian used in the Canny detector. Use larger values if too many lines detected</p>
+</dd>
+<dt><strong>return_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True, additionally return the downsampled smooth intermediate image</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>labelled</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled sheet</p>
+</dd>
+<dt><strong>img_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">if return_img is True, return the (nrows/downscale, ncols/downscale) downsampled image.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_rgb">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">detect_edges_rgb</code><span class="sig-paren">(</span><em>img_r</em>, <em>img_g</em>, <em>downscale=32</em>, <em>smooth=2</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#detect_edges_rgb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_rgb" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Detects edges of individual coloured sheets by running a Canny edge detector on dowsampled images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows, ncols) grayscale red channel image</p>
+</dd>
+<dt><strong>img_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows, ncols) grayscale green channel image</p>
+</dd>
+<dt><strong>downscale</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">downsampling factor, resulting image will be reduced by 1./downscale times. downscale needs to divide image dimensions exactly.</p>
+</dd>
+<dt><strong>smooth</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">width of the Gaussian used to smooth downsampled images</p>
+</dd>
+<dt><strong>sigma</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">width of the Gaussian used in the Canny detector. Use larger values if too many lines detected</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>labelled_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled red sheet</p>
+</dd>
+<dt><strong>labelled_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled green sheet</p>
+</dd>
+<dt><strong>img_r_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows/downscale, ncols/downscale) downsampled red sheet after gaussian smoothing</p>
+</dd>
+<dt><strong>img_g_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows/downscale, ncols/downscale) downsampled green sheet after gaussian smoothing</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">determine_flipping_direction</code><span class="sig-paren">(</span><em>tracks_r</em>, <em>tracks_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#determine_flipping_direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Determines based on the direction of the tracks of red and green channels whether the wound is moving left or right and whether the coordinates need to be flipped before passing to <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames x 2) centroid superpixel positions of red channel</p>
+</dd>
+<dt><strong>tracks_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels x n_frames x 2) centroid superpixel positions of green channel</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>flip_state</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">array of size n_frames indicating whether to &#8216;flip&#8217; or &#8216;no_flip&#8217; in each frame to be used by <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit" title="MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit"><code class="xref py py-func docutils literal"><span class="pre">asymmetric_fit()</span></code></a></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction_single">
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">determine_flipping_direction_single</code><span class="sig-paren">(</span><em>tracks</em>, <em>thresh=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#determine_flipping_direction_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines based on the direction of the tracks whether the general movement is moving left or right and whether the coordinates need to be flipped before passing to <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als" title="MOSES.Motion_Analysis.wound_statistics_tools.baseline_als"><code class="xref py py-func docutils literal"><span class="pre">baseline_als()</span></code></a> for one timepoint only</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_spixels, n_frames, 2) mean superpixel centroid coordinates over time</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the minimum fraction of superpixels whose sign points towards negative x-direction to warrant a &#8216;flip&#8217;</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>flip_state</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">either &#8216;flip&#8217; if mean velocities point towards negative x-direction or &#8216;no_flip&#8217; for the converse</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.eval_boundary_coords">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">eval_boundary_coords</code><span class="sig-paren">(</span><em>spl</em>, <em>yline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#eval_boundary_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.eval_boundary_coords" title="Permalink to this definition">¶</a></dt>
-<dd><p>spl: spline model for the boundary coords.</p>
+<dd><p>wrapper to evaluate the corresponding x-coordinates given the y-coordinates according to a learnt spline model, spl</p>
+<p>returns <span class="math">\((xline,yline)\)</span> where <span class="math">\(xline=spl(yline)\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>spl</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">SciPy spline object or equivalent</span><dd><p class="first last">spline model for the boundary coords</p>
+</dd>
+<dt><strong>yline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the array of y-coordinates (row positions) to get the corresponding x-coordinates for</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>line_coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an array of (x,y) coordinates describing the wound boundary after using the spline model to get the x-coordinate from the y-coordinate</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.fetch_coordinates_sections">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fetch_coordinates_sections</code><span class="sig-paren">(</span><em>labelled</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fetch_coordinates_sections"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fetch_coordinates_sections" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a labelled integer image such as that returned by doing connected components analysis by skimage.measure.label retrieve the coordinates belonging to each labelled region ignoring the label 0 which is assumed to refer to the background pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>labelled</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) integer array where each unique integer i &gt; 0 denotes a connected region one wants to retrieve all the image coordinates over. The integer 0 regions are treated as image background and their coordinates are not fetched</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of (x,y) coordinate numpy arrays for each unique labelled region</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.fetch_skeletion_line">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fetch_skeletion_line</code><span class="sig-paren">(</span><em>img</em>, <em>fun</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fetch_skeletion_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fetch_skeletion_line" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Binarise the given line image and return the line describing the skeleton by running through every unique image row and applying fun to aggregate the x-coordinates. Used for returning the single wound line to overlay on a kymograph</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) binary image of a line</p>
+</dd>
+<dt><strong>fun</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy function</span><dd><p class="first last">aggregation function to merge coordinate values e.g. np.median, np.mean for median and mean respectively from the numpy library</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the (x,y) coordinates of the skeleton line that pass through the &#8216;centre&#8217; of the binary image</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.filter_edges">
@@ -269,111 +893,681 @@ suitable for use with (x,y)</p>
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_all_epsilon_pairs">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_all_epsilon_pairs</code><span class="sig-paren">(</span><em>dist_matrix</em>, <em>min_dist</em>, <em>max_dist</em>, <em>nearest_N=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_all_epsilon_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_all_epsilon_pairs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a distance matrix find the maximum nearest_N neighbours of each point whose distance, d satisfies min_dist&lt;=d&lt;=max_dist</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>dist_matrix</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">precomputed distance matrix between two point sets</p>
+</dd>
+<dt><strong>min_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">lower distance threshold (in pixels or other relevant unit of the distance matrix)</p>
+</dd>
+<dt><strong>max_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance threshold (in pixels or other relevant unit of the distance matrix)</p>
+</dd>
+<dt><strong>nearest_N</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the maximum number of nearest neighbours to return</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>selected_ids</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (n_matches, 2) integer array, whose first column is the row_id and second column gives the column_id</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_boundary_lines">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_boundary_lines</code><span class="sig-paren">(</span><em>boundary_curves</em>, <em>yline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_boundary_lines"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_boundary_lines" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_stable_wound_frame">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_stable_wound_frame</code><span class="sig-paren">(</span><em>coefs_time</em>, <em>min_length=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_stable_wound_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_stable_wound_frame" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Wrapper function to eavluate a list of spline functions that capture the boundary e.g. for boundary in each frame to get the x-coordinates given the y-coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>boundary_curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of Scipy spline functions</span><dd><p class="first last">list of Scipy spline functions such that each spline function given y-coordinates gives the corresponding x-coordinates</p>
+</dd>
+<dt><strong>yline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the list of y-coordinates to evaluate each spline function at to get the corresponding x-coordinates</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>lines</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_curves x len_curve) a stacked array of all corresponding x-coordinate for each spline</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.find_uniq_merge_groups">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">find_uniq_merge_groups</code><span class="sig-paren">(</span><em>merge_groups</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#find_uniq_merge_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.find_uniq_merge_groups" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a list of items this function reduces this list into a minimal set of groups that captures their relationships. It is used for example when one has a list of pairwise relationships and wants to reduce this into a few groups that these elements belong to that would describe the relationships.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>merge_groups</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of items to merge and combine together</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>final_filt_list</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">the filtered reduced list of items. Each item should contain mutually exclusive members</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fit_polyfit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>degree=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fit_polyfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fit_polyfit</code><span class="sig-paren">(</span><em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fit_polyfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit a polynomial f such that x = f(y)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">list of x-coordinates</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">list of corresponding y-coordinates</p>
+</dd>
+<dt><strong>degree</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">degree of the polynomial to fit e.g. 2 for quadratic, 3 for cubic</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>p</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">polynomial coefficients</span><dd><p class="first last">result of calling np.polyfit, c.f. <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html">https://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html</a></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.fit_spline">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">fit_spline</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>k=3</em>, <em>s=None</em>, <em>ext=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#fit_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.fit_spline" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Fit a univariate spline function y = spl(x) to given x, y image coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">1-D array of x direction image coordinates</p>
+</dd>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">1-D array of y direction image coordinates</p>
+</dd>
+<dt><strong>k</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">order of the polynomical spline</p>
+</dd>
+<dt><strong>s :</strong></dt>
+<dd><p class="first last">Positive smoothing factor used to choose the number of knots. Number of knots will be increased until the smoothing condition is satisfied c.f. scipy.interpolate.UnivariateSpline function</p>
+</dd>
+<dt><strong>ext</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the extrapolation mode of scipy.interpolate.UnivariateSpline function</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>spl</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">scipy UnivariateSpline object</span><dd><p class="first last">fitted scipy.interpolate.UnivariateSpline object. Can be used as a function given x values to get corresponding y values e.g. y=spl(x)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">generalised_sigmoid</code><span class="sig-paren">(</span><em>x</em>, <em>cutoff</em>, <em>shape=1</em>, <em>slope=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#generalised_sigmoid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes a generalised sigmoid function based on the generalised logistic function which generalises the standard definition of a sigmoidal function to allow variations to shape and skew.</p>
+<p><span class="math">\(\mathrm{sigmoid} = \frac{1}{(1+\exp(-\mathrm{slope}(\mathrm{x}-\mathrm{cutoff})))^{1/\mathrm{shape}}}\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>x</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">input 1-D array of x values to evaluate for</p>
+</dd>
+<dt><strong>cutoff</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the shift in x value, this dictate approximately when the maximum slope is reached</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">this parameter determines the skew, affecting which asymptote the function will be biased towards</p>
+</dd>
+<dt><strong>slope</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">this parameter determines the growth rate of the slope</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>sigmoid</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">evaluated generalised sigmoid function values</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="raf1365b9fe02-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><a class="reference external" href="https://en.wikipedia.org/wiki/Generalised_logistic_function">https://en.wikipedia.org/wiki/Generalised_logistic_function</a></td></tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.generate_pair_distances">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">generate_pair_distances</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>inf_distance=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#generate_pair_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.generate_pair_distances" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given two 2-D point sets construct the pairwise distance matrix between points in each set independently without self-connections between points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_r, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</p>
+</dd>
+<dt><strong>coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_g, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</p>
+</dd>
+<dt><strong>inf_distance</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">a very large float, which serves the same role as the machine precision epsilon. The number should be bigger than any distance between a point and other points. It serves to avoid finding self-connections in subsequent analysis</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>sim_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (N_r, N_r) distance matrix between all coords_r as measured by the Euclidean distance between points</p>
+</dd>
+<dt><strong>sim_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (N_g, N_g) distance matrix between all coords_g as measured by the Euclidean distance between points</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.match_labelled_regions">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">match_labelled_regions</code><span class="sig-paren">(</span><em>coord_list</em>, <em>dist_thresh=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#match_labelled_regions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.match_labelled_regions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a coordinate list describing different image regions, merge the regions based on distance proximity given by a maximum distance threshold given by dist_thresh</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>coord_list</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy array</span><dd><p class="first last">list of (x,y) coordinate array with each describing a region of the image to consider for merging</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">maximum distance to consider for region merging</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>cands</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of region id groups after merging (not the combined coordinates)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.match_red_green_segs">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">match_red_green_segs</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>shape</em>, <em>min_dist=0</em>, <em>max_dist=2</em>, <em>nearest_N=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#match_red_green_segs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.match_red_green_segs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>exhaustively enumerate and pair red and green points given a coordinate list</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_r x d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</p>
+</dd>
+<dt><strong>coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_g x d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">tuple specifying the original image dimensions i.e. (nrows, ncols)</p>
+</dd>
+<dt><strong>min_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">lower distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</p>
+</dd>
+<dt><strong>max_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</p>
+</dd>
+<dt><strong>nearest_N</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the maximum number of nearest neighbours to consider</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>select_coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[] or numpy array</span><dd><p class="first last">if no matches are found given the settings a [] is returned else a numpy array of new coordinate positions with first colour from red channel is returned</p>
+</dd>
+<dt><strong>select_coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[] or numpy array</span><dd><p class="first last">if no matches are found given the settings a [] is returned else a numpy array of new matched coordinate positions of the second colour from green channel is returned</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.normalize_curves_2D">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">normalize_curves_2D</code><span class="sig-paren">(</span><em>curves</em>, <em>shape</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#normalize_curves_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.normalize_curves_2D" title="Permalink to this definition">¶</a></dt>
-<dd><p>shape = (m,n) of image.</p>
+<dd><p>Given a curve (list of (x,y)) coordinates and the original image shape, returns the normalised set of coordinates where the x, y coordinate values have been divided by the number of columns and rows in the original image respectively</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (N,2) array of (x,y) coordinates. First column is the x-coordinate and second column is the y-coordinate.</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">a (nrows, ncols) tuple specifying the original image dimensions</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>curve_s</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">normalised curves of the same input shape with the value of each x and y scaled to the range [0-1].</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_axis">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">outlier_detect_axis</code><span class="sig-paren">(</span><em>X</em>, <em>axis=0</em>, <em>thresh=1.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#outlier_detect_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_axis" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>detect outlier points along a particular axis.</p>
+<p>points along the designated numpy array axis are classified as outliers if they are more than a distance thresh * standard deviation of points from the median</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (N,d) array of coordinates where d is the dimensionality</p>
+</dd>
+<dt><strong>axis</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int (default: 0)</span><dd><p class="first last">which of the coordinate columns to use</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the multiple of standard deviation for which we consider points as outliers</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>inlier_vals</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy bool array</span><dd><p class="first last">a boolean array specifying which points to keep based on the selected axis</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">outlier_detect_graph</code><span class="sig-paren">(</span><em>points</em>, <em>thresh=10</em>, <em>n_components=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#outlier_detect_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Outlier point detection based on &#8216;communities&#8217;
-# how can this be further optimized?</p>
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">outlier_detect_graph</code><span class="sig-paren">(</span><em>points</em>, <em>thresh=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#outlier_detect_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outlier point detection based on constructing a graph between the points and identifying &#8216;communities&#8217;. Points belonging to the largest community is kept</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">an (N,d) coordinate list</p>
+</dd>
+<dt><strong>thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">maximum distance to consider a point as a neighbour</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>filt_points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a reduced version of points in the maximum connected graph component</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.process_curve_img_multiple">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">process_curve_img_multiple</code><span class="sig-paren">(</span><em>curve_img</em>, <em>dilation=3</em>, <em>dist_thresh=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#process_curve_img_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.process_curve_img_multiple" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given a kymograph curve_img as a result of applying superpixel boundary tracking, <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB" title="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB"><code class="xref py py-func docutils literal"><span class="pre">boundary_superpixel_meantracks_RGB()</span></code></a> automatically identify if there exist the unique boundary curves present returning them as a list of (x,y) coordinate list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curve_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows, ncols) numpy image of the boundary line between two populations with time as the image row and x- as the image columns as returned by <a class="reference internal" href="#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB" title="MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB"><code class="xref py py-func docutils literal"><span class="pre">boundary_superpixel_meantracks_RGB()</span></code></a></p>
+</dd>
+<dt><strong>dilation</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the size of the disk kernel used to dilate the binary curve_img to close small gaps between very close disconnected regions of the same line</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the maximum distance to consider two regions to be neighbours and merged</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>b_lines</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">list of (x,y) coordinates describing each line found</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.remove_singletons">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">remove_singletons</code><span class="sig-paren">(</span><em>coords_r</em>, <em>coords_g</em>, <em>dist_thresh</em>, <em>inf_distance=1000</em>, <em>min_no=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#remove_singletons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.remove_singletons" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Given two sets of coordinates, cleans them by removing points in each set which have less than the min_no of neighbours where a neighbour is defined as another point whose Euclidean distance is &lt;= dist_thresh (disregarding the point itself)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_r, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</p>
+</dd>
+<dt><strong>coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N_g, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance threshold (in pixels or other relevant unit of the distance matrix) for a point to be considered a neighbour</p>
+</dd>
+<dt><strong>inf_distance</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">a very large float, which serves the same role as the machine precision epsilon. The number should be bigger than any distance between a point and other points. It serves to avoid finding self-connections in subsequent analysis</p>
+</dd>
+<dt><strong>min_no</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the minimum number of neighbours a point should have to be retained</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>clean_coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the filtered &#8216;red&#8217; coordinate set</p>
+</dd>
+<dt><strong>clean_coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the filtered &#8216;green&#8217; coordinate set</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.return_point_density">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">return_point_density</code><span class="sig-paren">(</span><em>points</em>, <em>shape</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#return_point_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.return_point_density" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generates a spatial density map of the coordinates by mapping the points back into the image and applying a Gaussian filter of width sigma</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(x,y) array of coordinates</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">shape of the original single-channel image</p>
+</dd>
+<dt><strong>sigma</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">width of the sigma in the Gaussian used to smooth the point density to generate a continuous heatmap.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>density</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy array of size given by shape showing a heatmap of the coordinate density</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.sample_and_match_red_green_segs">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">sample_and_match_red_green_segs</code><span class="sig-paren">(</span><em>red_mask</em>, <em>green_mask</em>, <em>n_samples=1000</em>, <em>min_dist=10</em>, <em>dist_thresh=2</em>, <em>nearest_N=2</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#sample_and_match_red_green_segs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.sample_and_match_red_green_segs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>sample the red and green points in the red and green segmentation masks respectively and attempt to pair red and green points together based on spatial proximity to find points that lie at the boundary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>red_mask</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows x ncols) binary segmentation mask based on the red (first) colour channel</p>
+</dd>
+<dt><strong>green_mask</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(nrows x ncols) binary segmentation mask based on the green (second) colour channel</p>
+</dd>
+<dt><strong>n_samples</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of points to sample from the red and green mask</p>
+</dd>
+<dt><strong>min_dist</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">lower distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">upper distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</p>
+</dd>
+<dt><strong>nearest_N</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the maximum number of nearest neighbours to consider</p>
+</dd>
+<dt><strong>debug</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True, plots the found points for visual checking</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>select_coords_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[] or numpy array</span><dd><p class="first last">if no matches are found given the settings a [] is returned else a numpy array of new coordinate positions with first colour from red channel is returned</p>
+</dd>
+<dt><strong>select_coords_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">[] or numpy array</span><dd><p class="first last">if no matches are found given the settings a [] is returned else a numpy array of new matched coordinate positions of the second colour from green channel is returned</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.stack_curves">
-<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">stack_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#stack_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.stack_curves" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">stack_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>n_samples=100</em>, <em>shape=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#stack_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.stack_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of variable length curves (2-dimension coordinate list) compile these into the same length array. The output array will be of dimensions (n_curves x min_len x d) where min_len is the minimum number of points of all curves and d is the dimensionality of the coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">list of 2-dimension coordinates (len_curve x d) where len_curve is the size of the curve and d is the dimensionality of coordinates e.g. 2 for 2-D images.</p>
+</dd>
+<dt><strong>n_samples</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">length of each curve if no valid curve (length=0) found</p>
+</dd>
+<dt><strong>shape</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">tuple or None (default: None)</span><dd><p class="first last">shape of each curve (n x d) where n is the number of points per curve</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>lines</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_curves x shape[0] x shape[1]) or  (n_curves x min_len x 2) stacked array of line coordinates or else a (n_curves x n_samples x 2) array of NaN&#8217;s</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.temporal_filter_curves">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">temporal_filter_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>max_gaps=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#temporal_filter_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.temporal_filter_curves" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the maximum number of frame gaps and impute in the gap given a set of curves.</p>
+<dd><p>Given a temporal numpy array of equal length x-coordinates, find the frames with missing predictions and linearly impute the x-values based on the available data either side of the temporal gap as long as the temporal gap is smaller than that given by max_gaps</p>
+<p>In essence this function aims to ensure temporal consistency for frame by frame predicted wound coordinates (which treat frames independently)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, len_curve) array of (x-) coordinate values or (y-) coordinate values if the x coordinates were the ones fixed over time</p>
+</dd>
+<dt><strong>max_gaps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the maximum number of missing frames for linear imputation to be conducted over</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>curves_</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">same array as input but with missing temporal frames &lt; max_gaps imputed for a more continuous evolution</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.test_y_density">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">test_y_density</code><span class="sig-paren">(</span><em>points</em>, <em>max_y</em>, <em>bins=10</em>, <em>frac_thresh=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#test_y_density"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.test_y_density" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>compute the number of points when we divide the partition the image rows (y-coordinates) into a number of equal sized strips or bins where the number is given by bins. Points are considered dense if the fraction of occupied bins is greater than a fraction threshold given by frac_thresh.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(x,y) array of coordinates</p>
+</dd>
+<dt><strong>max_y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">maximum number of image rows</p>
+</dd>
+<dt><strong>bins</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of &#8216;bins&#8217; to divide the y-range [0,max_y] into</p>
+</dd>
+<dt><strong>frac_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float (0-1)</span><dd><p class="first last">the fraction of bins occupied for each strip</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>y_dense</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">whether the occupied fraction of bins is greater than the threshold frac_thresh</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Motion_Analysis.wound_statistics_tools.uniquefy_curves">
 <code class="descclassname">MOSES.Motion_Analysis.wound_statistics_tools.</code><code class="descname">uniquefy_curves</code><span class="sig-paren">(</span><em>curves</em>, <em>axis=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_statistics_tools.html#uniquefy_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_statistics_tools.uniquefy_curves" title="Permalink to this definition">¶</a></dt>
-<dd><p>make curves manifold, 1-1 (x,y) mapping (not duply sampled....), where there is duplicates we use mode-seeking behaviour... ?</p>
+<dd><p>Given a (x,y) list of coordinates that describe (sample) a single curve, this function returns the reduced set of unique (x,y) points that describe the wound such each unique point along the given axis e.g. x corresponds to only one possible value y</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>curves</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(N,2) array of (x,y) coordinates describing the wound</p>
+</dd>
+<dt><strong>axis</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the column to uniquefy values over, default = 1 corresponding to y-values in (x,y)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>curve_s</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">reduced array of (x,y) coordinates where the appropriate axis x (axis=0) or y (axis=1) is unique.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

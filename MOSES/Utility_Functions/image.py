@@ -7,35 +7,65 @@ Created on Thu Sep 27 23:01:49 2018
 
 import numpy as np 
 
-# check the two are identical.
-def maxpool_scale(img, scale=32):
+# # check the two are identical.
+# def maxpool_scale(img, scale=32):
     
-    from keras.layers import MaxPooling2D
-    from keras.models import Sequential
+#     from keras.layers import MaxPooling2D
+#     from keras.models import Sequential
     
-    im = img[None,:] # pad... 
+#     im = img[None,:] # pad... 
     
-    mod = Sequential()
-    mod.add(MaxPooling2D(pool_size=(scale, scale), input_shape=img.shape))
-    out = mod.predict(im)
+#     mod = Sequential()
+#     mod.add(MaxPooling2D(pool_size=(scale, scale), input_shape=img.shape))
+#     out = mod.predict(im)
     
-    return out[0]
+#     return out[0]
 
+def pool_numpy(array, factor, func=np.max):
+    """ Downscale the given array by the given factor by the method specified by func.
 
-def pool_numpy(array, factor=2, func=np.max):
-    
+    N.B the array dimensions needs to be fully divisible by the specified factor along each array dimension
+
+    Parameters
+    ----------
+    array : numpy array 
+        any sized numpy array
+    factor : numpy array
+        a (n,) sized list or array specifying the integer size to pool each of the n array dimensions by, the array dimension along the corresponding axis must be able to be fully divided by the specified factor e.g. for an (m,n) array which we wish to downsample by 2 the factor=(2,2). For a (m,n,3) array we can use factor=(2,2,1) to downscale only the spatial dimensions by a factor of 2
+    func : python/numpy function
+        the function to use for pooling e.g. np.mean for taking the mean, np.median for taking the median 
+
+    Returns
+    -------
+    reduced_array : numpy array
+        the output downscaled array with each dimension shrunk by the given factor amount along each respective array dimension
+
+    """
     from skimage.measure import block_reduce
-    return block_reduce(array, (factor,factor), func)
+    reduced_array = block_reduce(array, (factor,factor), func)
+    return reduced_array
 
 
 def ridge_filter_hessian(img, sigma=3):
-    """ Apply Hessian 
+    """ Apply Hessian filtering to enhance vessel-like structures
+
+    Parameters
+    ----------
+    img : numpy array
+        (n_rows, n_cols) grayscale input image
+    sigma : int 
+        width of the Gaussian used for smoothing gradients
+
+    Returns
+    -------
+    i2 : numpy array
+        image same size image showing enhanced ridge like structures
+
     """
     from skimage.feature import hessian_matrix, hessian_matrix_eigvals
     from skimage.filters import threshold_otsu
     from skimage.morphology import skeletonize
-    #assume you have an image img
-    
+
     hxx, hxy, hyy = hessian_matrix(img, sigma=sigma)
     i1, i2 = hessian_matrix_eigvals(hxx, hxy, hyy)
     

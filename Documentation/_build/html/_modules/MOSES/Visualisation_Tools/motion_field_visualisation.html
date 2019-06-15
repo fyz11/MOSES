@@ -153,17 +153,18 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="view_ang_flow"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.motion_field_visualisation.html#MOSES.Visualisation_Tools.motion_field_visualisation.view_ang_flow">[docs]</a><span class="k">def</span> <span class="nf">view_ang_flow</span><span class="p">(</span><span class="n">motion_field</span><span class="p">,</span> <span class="n">ang_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the angular flow from the optical flow field and visualise using HSV colouring.</span>
+    <span class="sd">&quot;&quot;&quot; Create the angular flow from the computed optical flow or motion field and visualise it using HSV colour scheme.</span>
 <span class="sd">    </span>
-<span class="sd">    Inputs:</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    motion_field : numpy array</span>
+<span class="sd">        n_rows x n_cols x 2 numpy array where the two dimensions are assumed to be (x,y) giving the computed vector displacements</span>
+<span class="sd">    ang_only : bool</span>
+<span class="sd">        if True, the intensity of the colours will be fixed to the maximum brightness and not be correlated with the speed of motion</span>
+
+<span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    motion_field: n_rows x n_cols x 2 numpy array where the two dimensions are assumed to be (x,y) </span>
-<span class="sd">    </span>
-<span class="sd">    Outputs:</span>
-<span class="sd">    --------</span>
-<span class="sd">        nothing, it is a void function.</span>
+<span class="sd">    None, it is a void function.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">cv2</span>

@@ -12,22 +12,26 @@ see README.md for details on usage.
 """
 
 def plot_tracks(tracks, ax, color=None, lw=1., alpha=1):
-    
-    """
-    Input:
-    ------
-    tracks: (n_superpixels x n_frames x 2) numpy array, giving the meantracks
-    ax: matplotlib ax object
-    color: color of the plotted lines given either named or as (r,g,b) value.   
-    lw: linewidth, c.f. matplotlib
-    alpha: transparency of the plotted lines, c.f. matplotlib
+    """ plots tracks onto a given matplotlib axis 
+
+    Parameters
+    ----------
+    tracks : numpy array
+        (n_superpixels x n_frames x 2) numpy array, giving the centroid positions of superpixels over time
+    ax : matplotlib ax object
+        a matplotlib axis instance such as that returned from fig, ax = plt.subplots()
+    color : str
+        colour of the plotted lines given either named or as (r,g,b) value.   
+    lw : float
+        linewidth, c.f. matplotlib
+    alpha : float
+        transparency of the plotted lines, c.f. matplotlib value between 0-1 with 0 being fully transparent and 1 being solid
         
-    Output:
+    Returns
     -------
     None, void function
     
     """
-    
     n_spixels = tracks.shape[0]
 
     for i in range(n_spixels):

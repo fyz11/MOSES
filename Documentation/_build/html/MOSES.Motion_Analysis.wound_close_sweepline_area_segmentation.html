@@ -172,14 +172,14 @@
 <dt id="MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als">
 <code class="descclassname">MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.</code><code class="descname">baseline_als</code><span class="sig-paren">(</span><em>y</em>, <em>lam</em>, <em>p</em>, <em>niter=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/wound_close_sweepline_area_segmentation.html#baseline_als"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als" title="Permalink to this definition">¶</a></dt>
 <dd><p>Code adapted from <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a>.</p>
-<p>Implements paper of &#8220;Asymmetric Least Squares Smoothing&#8221; by P. Eilers and H. Boelens in 2005.</p>
+<p>Implements paper of &#8220;Asymmetric Least Squares Smoothing&#8221; by P. Eilers and H. Boelens (2005), [1].</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>y :</strong></dt>
-<dd><p class="first last">numpy vector of observations to fit.</p>
+<dt><strong>y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">numpy vector of observations to fit.</p>
 </dd>
 <dt><strong>lam</strong></dt>
  <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</p>
@@ -194,12 +194,19 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>z :</strong></dt>
-<dd><p class="first last">fitted baseline, same numpy vector size as y.</p>
+<dt><strong>z</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">fitted baseline, same numpy vector size as y.</p>
 </dd>
 </dl>
 </td>
 </tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="reda6148cf453-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Eilers PH, Boelens HF. &#8220;Baseline correction with asymmetric least squares smoothing.&#8221; Leiden University Medical Centre Report. 2005 Oct 21;1(1):5.</td></tr>
 </tbody>
 </table>
 </dd></dl>
@@ -213,21 +220,21 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>points :</strong></dt>
-<dd><p class="first last">(y,x) numpy array of points, (n_points x 2)</p>
+<dt><strong>points</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(y,x) numpy array of points, (n_points x 2)</p>
 </dd>
-<dt><strong>limits :</strong></dt>
-<dd><p class="first last">(n_rows, n_cols), essentially the image dimension.</p>
+<dt><strong>limits</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array-like</span><dd><p class="first last">(n_rows, n_cols), essentially the image dimension.</p>
 </dd>
-<dt><strong>spixel_size :</strong></dt>
-<dd><p class="first last">(float) average superpixel width</p>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(float) average superpixel width</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>direction :</strong></dt>
-<dd><p class="first last">a string either &#8216;left&#8217; or &#8216;right&#8217; designating the direction in which the superpixel moves.</p>
+<dt><strong>direction</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">a string either &#8216;left&#8217; or &#8216;right&#8217; designating the direction in which the superpixel moves.</p>
 </dd>
 </dl>
 </td>
@@ -247,21 +254,21 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>points_r :</strong></dt>
-<dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of red sheet</p>
+<dt><strong>points_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of red sheet</p>
 </dd>
-<dt><strong>points_g :</strong></dt>
-<dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of green sheet</p>
+<dt><strong>points_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_points_to_keep*n_sweeps, 2) boundary points of green sheet</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>spixels_r :</strong></dt>
-<dd><p class="first last">the green ids in points_g to match each r point to.</p>
+<dt><strong>spixels_r</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the green ids in points_g to match each r point to.</p>
 </dd>
-<dt><strong>spixels_g :</strong></dt>
-<dd><p class="first last">the red ids in points_r to match each g point to.</p>
+<dt><strong>spixels_g</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the red ids in points_r to match each g point to.</p>
 </dd>
 </dl>
 </td>
@@ -279,21 +286,21 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>image :</strong></dt>
-<dd><p class="first last">(n_rows x n_cols), grayscale image</p>
+<dt><strong>image</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols), grayscale image</p>
 </dd>
-<dt><strong>n_clusters :</strong></dt>
-<dd><p class="first last">the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.</p>
+<dt><strong>n_clusters</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.</p>
 </dd>
-<dt><strong>train_split :</strong></dt>
-<dd><p class="first last">(0-1 float) proportion of pixels to use for fitting the kmeans cluster.</p>
+<dt><strong>train_split</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">(0-1 float) proportion of pixels to use for fitting the kmeans cluster.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>Y_new :</strong></dt>
-<dd><p class="first last">(n_rows x n_cols), integer image, labelled by the cluster numbers.</p>
+<dt><strong>Y_new</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols), integer image, labelled by the cluster numbers.</p>
 </dd>
 </dl>
 </td>
@@ -311,36 +318,36 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>areas_img :</strong></dt>
-<dd><p class="first last">(n_rows x n_cols) binary image of the epithelial sheet.</p>
+<dt><strong>areas_img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols) binary image of the epithelial sheet.</p>
 </dd>
-<dt><strong>frame :</strong></dt>
-<dd><p class="first last">int, which frame number to compute.</p>
+<dt><strong>frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">int, which frame number to compute.</p>
 </dd>
 <dt><strong>spixel_size</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">(float)</span><dd><p class="first last">the average superpixel width.</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">the average superpixel width.</p>
 </dd>
 <dt><strong>direction</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">(default None)</span><dd><p class="first last">which direction the sheet is moving, takes &#8216;left&#8217; or &#8216;right&#8217;</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str (default: None)</span><dd><p class="first last">which direction the sheet is moving, takes &#8216;left&#8217; or &#8216;right&#8217;</p>
 </dd>
 <dt><strong>n_sweeps</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">(int)</span><dd><p class="first last">the number of vertical divisions of the image.</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of vertical divisions of the image.</p>
 </dd>
 <dt><strong>n_points_keep</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">(int)</span><dd><p class="first last">for each vertical strip, the number of points to sample to approximate the sheet boundary.</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">for each vertical strip, the number of points to sample to approximate the sheet boundary.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>good_boundary_coords :</strong></dt>
-<dd><p class="first last">the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.</p>
+<dt><strong>good_boundary_coords</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.</p>
 </dd>
-<dt><strong>sweepline_seg_y :</strong></dt>
-<dd><p class="first last">(n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in.</p>
+<dt><strong>sweepline_seg_y</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in.</p>
 </dd>
-<dt><strong>direction :</strong></dt>
-<dd><p class="first last">&#8216;left&#8217; or &#8216;right&#8217; string, denoting the direction in which the epithelial sheet is moving in</p>
+<dt><strong>direction</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">&#8216;left&#8217; or &#8216;right&#8217; string, denoting the direction in which the epithelial sheet is moving in</p>
 </dd>
 </dl>
 </td>
@@ -358,8 +365,8 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>array :</strong></dt>
-<dd><p class="first last">a numpy array of numbers</p>
+<dt><strong>array</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a numpy array of numbers</p>
 </dd>
 <dt><strong>thresh</strong></dt>
  <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">specified cutoff</p>
@@ -368,8 +375,8 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>wound_close :</strong></dt>
-<dd><p class="first last">the position of the array for which the value is just above thresh.</p>
+<dt><strong>wound_close</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the position of the array for which the value is just above thresh.</p>
 </dd>
 </dl>
 </td>
@@ -400,8 +407,8 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>filt :</strong></dt>
-<dd><p class="first last">(n_rows x n_cols), post-processed binary image.</p>
+<dt><strong>filt</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows x n_cols), post-processed binary image.</p>
 </dd>
 </dl>
 </td>
@@ -419,36 +426,36 @@ n_points_to_keep - the number of points kept to approximate boundary for each st
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>vid_stack :</strong></dt>
-<dd><p class="first last">(n_frames, n_rows, n_cols, 3),</p>
+<dt><strong>vid_stack</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames, n_rows, n_cols, 3) RGB video</p>
 </dd>
-<dt><strong>spixel_size :</strong></dt>
-<dd><p class="first last">average superpixel width (int)</p>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">average superpixel width (int)</p>
 </dd>
-<dt><strong>max_frame :</strong></dt>
-<dd><p class="first last">maximum frame number to which to compute the gap closure over.</p>
+<dt><strong>max_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">maximum frame number to which to compute the gap closure over.</p>
 </dd>
-<dt><strong>n_sweeps :</strong></dt>
-<dd><p class="first last">number of strips to divide vertically the image.</p>
+<dt><strong>n_sweeps</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of strips to divide vertically the image.</p>
 </dd>
-<dt><strong>n_points_keep :</strong></dt>
-<dd><p class="first last">the number of points to keep for summarising the boundary.</p>
+<dt><strong>n_points_keep</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of points to keep for summarising the boundary.</p>
 </dd>
-<dt><strong>n_clusters :</strong></dt>
-<dd><p class="first last">number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.</p>
+<dt><strong>n_clusters</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.</p>
 </dd>
-<dt><strong>p_als :</strong></dt>
-<dd><p class="first last">this controls the assymmetry in fitting the baseline. see stackoverflow: <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a></p>
+<dt><strong>p_als</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">this controls the assymmetry in fitting the baseline. see stackoverflow: <a class="reference external" href="https://stackoverflow.com/questions/29156532/python-baseline-correction-library">https://stackoverflow.com/questions/29156532/python-baseline-correction-library</a></p>
 </dd>
-<dt><strong>to_plot :</strong></dt>
-<dd><p class="first last">plot the diagnostic image or not to check fitting and inference.</p>
+<dt><strong>to_plot</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">plot the diagnostic image or not to check fitting and inference.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>wound_frame :</strong></dt>
-<dd><p class="first last">predicted frame where gap closure occurs.</p>
+<dt><strong>wound_frame</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">predicted frame where gap closure occurs.</p>
 </dd>
 </dl>
 </td>

@@ -146,6 +146,7 @@
 <span class="sd">@author: felix</span>
 
 <span class="sd">set of tools for describing the wound boundary of wound healing assays. </span>
+<span class="sd">(may be quite experimental at present)</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
@@ -156,8 +157,32 @@
 <span class="c1"># =============================================================================</span>
 <span class="c1"># option 1: detect boundary edges by image segmentation. </span>
 <div class="viewcode-block" id="detect_edges_rgb"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_rgb">[docs]</a><span class="k">def</span> <span class="nf">detect_edges_rgb</span><span class="p">(</span> <span class="n">img_r</span><span class="p">,</span> <span class="n">img_g</span><span class="p">,</span> <span class="n">downscale</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot; </span>
+    <span class="sd">&quot;&quot;&quot; Detects edges of individual coloured sheets by running a Canny edge detector on dowsampled images.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img_r : numpy array</span>
+<span class="sd">        (nrows, ncols) grayscale red channel image</span>
+<span class="sd">    img_g : numpy array</span>
+<span class="sd">        (nrows, ncols) grayscale green channel image</span>
+<span class="sd">    downscale : int</span>
+<span class="sd">        downsampling factor, resulting image will be reduced by 1./downscale times. downscale needs to divide image dimensions exactly.</span>
+<span class="sd">    smooth : float</span>
+<span class="sd">        width of the Gaussian used to smooth downsampled images</span>
+<span class="sd">    sigma : float </span>
+<span class="sd">        width of the Gaussian used in the Canny detector. Use larger values if too many lines detected</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    labelled_r : numpy array</span>
+<span class="sd">        (nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled red sheet</span>
+<span class="sd">    labelled_g : numpy array</span>
+<span class="sd">        (nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled green sheet</span>
+<span class="sd">    img_r_ : numpy array</span>
+<span class="sd">        (nrows/downscale, ncols/downscale) downsampled red sheet after gaussian smoothing</span>
+<span class="sd">    img_g_ : numpy array</span>
+<span class="sd">        (nrows/downscale, ncols/downscale) downsampled green sheet after gaussian smoothing</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">gaussian</span> 
     <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">canny</span> 
@@ -166,9 +191,10 @@
     <span class="kn">from</span> <span class="nn">skimage.filters.rank</span> <span class="k">import</span> <span class="n">median</span>
     <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="kn">from</span> <span class="nn">.Utility_Functions.image</span> <span class="k">import</span> <span class="n">pool_numpy</span>
     
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">img_r</span><span class="p">,</span> <span class="n">img_g</span><span class="p">])</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">maxpool_scale</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">downscale</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">pool_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="p">(</span><span class="n">downscale</span><span class="p">,</span> <span class="n">downscale</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
     
     <span class="n">img_r</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">255.</span> <span class="p">;</span> <span class="n">img_g</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">255.</span>
     <span class="n">img_r</span> <span class="o">=</span> <span class="n">rescale_intensity</span><span class="p">(</span><span class="n">img_r</span><span class="p">)</span>
@@ -191,25 +217,48 @@
     <span class="k">return</span> <span class="n">labelled_r</span><span class="p">,</span> <span class="n">labelled_g</span><span class="p">,</span> <span class="n">img_r_</span><span class="p">,</span> <span class="n">img_g_</span></div>
     
 
-<div class="viewcode-block" id="detect_edges_gray"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray">[docs]</a><span class="k">def</span> <span class="nf">detect_edges_gray</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">downscale</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="detect_edges_gray"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.detect_edges_gray">[docs]</a><span class="k">def</span> <span class="nf">detect_edges_gray</span><span class="p">(</span> <span class="n">img</span><span class="p">,</span> <span class="n">downscale</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">smooth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">return_img</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Detects edges of a single colour sheet by running a Canny edge detector on dowsampled images.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        (nrows, ncols) grayscale image</span>
+<span class="sd">    downscale : int</span>
+<span class="sd">        downsampling factor, resulting image will be reduced by 1./downscale times. downscale needs to divide image dimensions exactly.</span>
+<span class="sd">    smooth : float</span>
+<span class="sd">        width of the Gaussian used to smooth downsampled images</span>
+<span class="sd">    sigma : float </span>
+<span class="sd">        width of the Gaussian used in the Canny detector. Use larger values if too many lines detected</span>
+<span class="sd">    return_img : bool</span>
+<span class="sd">        if True, additionally return the downsampled smooth intermediate image</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    labelled : numpy array</span>
+<span class="sd">        (nrows/downscale, ncols/downscale) integer array image giving the edge of the downsampled sheet</span>
+<span class="sd">    img_ : numpy array</span>
+<span class="sd">        if return_img is True, return the (nrows/downscale, ncols/downscale) downsampled image.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">gaussian</span> 
     <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">canny</span> 
     <span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">label</span> 
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
-    <span class="kn">from</span> <span class="nn">Utility_Functions.image</span> <span class="k">import</span> <span class="n">maxpool_scale</span>
+    <span class="kn">from</span> <span class="nn">.Utility_Functions.image</span> <span class="k">import</span> <span class="n">pool_numpy</span>
     
     <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="n">img</span><span class="p">,</span> <span class="n">img</span><span class="p">])</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">maxpool_scale</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">downscale</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">pool_numpy</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="p">(</span><span class="n">downscale</span><span class="p">,</span> <span class="n">downscale</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
     
-    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">255.</span> 
-    <span class="n">img</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">smooth</span><span class="p">)</span> 
-    <span class="n">edges</span> <span class="o">=</span> <span class="n">canny</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span> 
-    <span class="n">labelled</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="c1"># technically should rescale back... </span>
+    <span class="n">img_</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">255.</span> 
+    <span class="n">img_</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">img_</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">smooth</span><span class="p">)</span> 
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">canny</span><span class="p">(</span><span class="n">img_</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span> 
+    <span class="n">labelled</span> <span class="o">=</span> <span class="n">label</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>  
     
-    <span class="k">return</span> <span class="n">labelled</span></div>
+    <span class="k">if</span> <span class="n">return_img</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">labelled</span><span class="p">,</span> <span class="n">img_</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">labelled</span></div>
     
 <span class="c1"># use this function to preserve continuity in the detected wound boundary edges!.  </span>
 <div class="viewcode-block" id="filter_edges"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.filter_edges">[docs]</a><span class="k">def</span> <span class="nf">filter_edges</span><span class="p">(</span><span class="n">labelled_edges</span><span class="p">,</span> <span class="n">seed_img</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -249,7 +298,24 @@
         
 <span class="c1"># utility function to match the nearest neighbour pairs between spixel points. </span>
 <div class="viewcode-block" id="find_all_epsilon_pairs"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.find_all_epsilon_pairs">[docs]</a><span class="k">def</span> <span class="nf">find_all_epsilon_pairs</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">,</span> <span class="n">min_dist</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">,</span> <span class="n">nearest_N</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Given a distance matrix find the maximum nearest_N neighbours of each point whose distance, d satisfies min_dist&lt;=d&lt;=max_dist</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dist_matrix : numpy array</span>
+<span class="sd">        precomputed distance matrix between two point sets</span>
+<span class="sd">    min_dist : float</span>
+<span class="sd">        lower distance threshold (in pixels or other relevant unit of the distance matrix)</span>
+<span class="sd">    max_dist : float</span>
+<span class="sd">        upper distance threshold (in pixels or other relevant unit of the distance matrix) </span>
+<span class="sd">    nearest_N : int</span>
+<span class="sd">        the maximum number of nearest neighbours to return</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    selected_ids : numpy array</span>
+<span class="sd">        an (n_matches, 2) integer array, whose first column is the row_id and second column gives the column_id</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="n">select2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dist_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
@@ -270,7 +336,24 @@
     
     
 <div class="viewcode-block" id="generate_pair_distances"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.generate_pair_distances">[docs]</a><span class="k">def</span> <span class="nf">generate_pair_distances</span><span class="p">(</span><span class="n">coords_r</span><span class="p">,</span> <span class="n">coords_g</span><span class="p">,</span> <span class="n">inf_distance</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Given two 2-D point sets construct the pairwise distance matrix between points in each set independently without self-connections between points. </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coords_r : numpy array</span>
+<span class="sd">        (N_r, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</span>
+<span class="sd">    coords_g : numpy array</span>
+<span class="sd">        (N_g, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</span>
+<span class="sd">    inf_distance : float</span>
+<span class="sd">        a very large float, which serves the same role as the machine precision epsilon. The number should be bigger than any distance between a point and other points. It serves to avoid finding self-connections in subsequent analysis</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sim_r : numpy array</span>
+<span class="sd">        an (N_r, N_r) distance matrix between all coords_r as measured by the Euclidean distance between points</span>
+<span class="sd">    sim_g : numpy array</span>
+<span class="sd">        an (N_g, N_g) distance matrix between all coords_g as measured by the Euclidean distance between points</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -286,21 +369,68 @@
     
     
 <div class="viewcode-block" id="remove_singletons"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.remove_singletons">[docs]</a><span class="k">def</span> <span class="nf">remove_singletons</span><span class="p">(</span><span class="n">coords_r</span><span class="p">,</span> <span class="n">coords_g</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">inf_distance</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">min_no</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Given two sets of coordinates, cleans them by removing points in each set which have less than the min_no of neighbours where a neighbour is defined as another point whose Euclidean distance is &lt;= dist_thresh (disregarding the point itself)</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coords_r : numpy array</span>
+<span class="sd">        (N_r, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</span>
+<span class="sd">    coords_g : numpy array </span>
+<span class="sd">        (N_g, d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</span>
+<span class="sd">    dist_thresh : float </span>
+<span class="sd">        upper distance threshold (in pixels or other relevant unit of the distance matrix) for a point to be considered a neighbour</span>
+<span class="sd">    inf_distance : float</span>
+<span class="sd">        a very large float, which serves the same role as the machine precision epsilon. The number should be bigger than any distance between a point and other points. It serves to avoid finding self-connections in subsequent analysis</span>
+<span class="sd">    min_no : int </span>
+<span class="sd">        the minimum number of neighbours a point should have to be retained</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    clean_coords_r : numpy array </span>
+<span class="sd">        the filtered &#39;red&#39; coordinate set</span>
+<span class="sd">    clean_coords_g : numpy array</span>
+<span class="sd">        the filtered &#39;green&#39; coordinate set</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
-    <span class="n">p_r</span><span class="p">,</span> <span class="n">p_g</span> <span class="o">=</span> <span class="n">generate_pair_distances</span><span class="p">(</span><span class="n">coords_r</span><span class="p">,</span> <span class="n">coords_g</span><span class="p">,</span> <span class="n">inf_distance</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-    
-<span class="c1">#    select_r = np.min(p_r, axis=1) &lt;= dist_thresh</span>
-<span class="c1">#    select_g = np.min(p_g, axis=1) &lt;= dist_thresh</span>
+    <span class="n">p_r</span><span class="p">,</span> <span class="n">p_g</span> <span class="o">=</span> <span class="n">generate_pair_distances</span><span class="p">(</span><span class="n">coords_r</span><span class="p">,</span> <span class="n">coords_g</span><span class="p">,</span> <span class="n">inf_distance</span><span class="o">=</span><span class="n">inf_distance</span><span class="p">)</span>
+
     <span class="n">select_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p_r</span><span class="o">&lt;=</span><span class="n">dist_thresh</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_no</span>
     <span class="n">select_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">p_g</span><span class="o">&lt;=</span><span class="n">dist_thresh</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">min_no</span>
 
-    <span class="k">return</span> <span class="n">coords_r</span><span class="p">[</span><span class="n">select_r</span><span class="p">],</span> <span class="n">coords_g</span><span class="p">[</span><span class="n">select_g</span><span class="p">]</span></div>
+    <span class="n">clean_coords_r</span> <span class="o">=</span> <span class="n">coords_r</span><span class="p">[</span><span class="n">select_r</span><span class="p">]</span>
+    <span class="n">clean_coords_g</span> <span class="o">=</span> <span class="n">coords_g</span><span class="p">[</span><span class="n">select_g</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">clean_coords_r</span><span class="p">,</span> <span class="n">clean_coords_g</span></div>
     
     
 <div class="viewcode-block" id="sample_and_match_red_green_segs"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.sample_and_match_red_green_segs">[docs]</a><span class="k">def</span> <span class="nf">sample_and_match_red_green_segs</span><span class="p">(</span><span class="n">red_mask</span><span class="p">,</span> <span class="n">green_mask</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nearest_N</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; sample the red and green points in the red and green segmentation masks respectively and attempt to pair red and green points together based on spatial proximity to find points that lie at the boundary.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    red_mask : numpy array</span>
+<span class="sd">        (nrows x ncols) binary segmentation mask based on the red (first) colour channel</span>
+<span class="sd">    green_mask : numpy array</span>
+<span class="sd">        (nrows x ncols) binary segmentation mask based on the green (second) colour channel</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        number of points to sample from the red and green mask</span>
+<span class="sd">    min_dist : float</span>
+<span class="sd">        lower distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        upper distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</span>
+<span class="sd">    nearest_N : int</span>
+<span class="sd">        the maximum number of nearest neighbours to consider</span>
+<span class="sd">    debug : bool</span>
+<span class="sd">        if True, plots the found points for visual checking</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    select_coords_r : [] or numpy array</span>
+<span class="sd">        if no matches are found given the settings a [] is returned else a numpy array of new coordinate positions with first colour from red channel is returned</span>
+<span class="sd">    select_coords_g : [] or numpy array</span>
+<span class="sd">        if no matches are found given the settings a [] is returned else a numpy array of new matched coordinate positions of the second colour from green channel is returned</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
@@ -362,14 +492,42 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="n">nrows</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">ncols</span><span class="p">])</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="n">select_coords_r</span> <span class="o">=</span> <span class="n">coords_r</span><span class="p">[</span><span class="n">unique_r</span><span class="p">]</span>
+        <span class="n">select_coords_g</span> <span class="o">=</span> <span class="n">coords_g</span><span class="p">[</span><span class="n">unique_g</span><span class="p">]</span>
             
-        <span class="k">return</span> <span class="n">coords_r</span><span class="p">[</span><span class="n">unique_r</span><span class="p">],</span> <span class="n">coords_g</span><span class="p">[</span><span class="n">unique_g</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">select_coords_r</span><span class="p">,</span> <span class="n">select_coords_g</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[],</span> <span class="p">[]</span></div>
+        <span class="n">select_coords_r</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">select_coords_g</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">select_coords_r</span><span class="p">,</span> <span class="n">select_coords_g</span></div>
 
 
 <div class="viewcode-block" id="match_red_green_segs"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.match_red_green_segs">[docs]</a><span class="k">def</span> <span class="nf">match_red_green_segs</span><span class="p">(</span><span class="n">coords_r</span><span class="p">,</span> <span class="n">coords_g</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">min_dist</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nearest_N</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; exhaustively enumerate and pair red and green points given a coordinate list</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coords_r : numpy array</span>
+<span class="sd">        (N_r x d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_r the number of points</span>
+<span class="sd">    coords_g : numpy array</span>
+<span class="sd">        (N_g x d) array of points where d is the dimensionality e.g. 2 for 2-D points and N_g the number of points</span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        tuple specifying the original image dimensions i.e. (nrows, ncols)</span>
+<span class="sd">    min_dist : float</span>
+<span class="sd">        lower distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</span>
+<span class="sd">    max_dist : float</span>
+<span class="sd">        upper distance threshold (in pixels or other relevant unit of the distance matrix) for a positive neighbour</span>
+<span class="sd">    nearest_N : int</span>
+<span class="sd">        the maximum number of nearest neighbours to consider</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    select_coords_r : [] or numpy array</span>
+<span class="sd">        if no matches are found given the settings a [] is returned else a numpy array of new coordinate positions with first colour from red channel is returned</span>
+<span class="sd">    select_coords_g : [] or numpy array</span>
+<span class="sd">        if no matches are found given the settings a [] is returned else a numpy array of new matched coordinate positions of the second colour from green channel is returned</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
@@ -391,60 +549,87 @@
 
 
 <div class="viewcode-block" id="eval_boundary_coords"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.eval_boundary_coords">[docs]</a><span class="k">def</span> <span class="nf">eval_boundary_coords</span><span class="p">(</span><span class="n">spl</span><span class="p">,</span> <span class="n">yline</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    spl: spline model for the boundary coords. </span>
+    <span class="sd">&quot;&quot;&quot; wrapper to evaluate the corresponding x-coordinates given the y-coordinates according to a learnt spline model, spl</span>
+
+<span class="sd">    returns :math:`(xline,yline)` where :math:`xline=spl(yline)`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spl : SciPy spline object or equivalent</span>
+<span class="sd">        spline model for the boundary coords</span>
+<span class="sd">    yline : numpy array</span>
+<span class="sd">        the array of y-coordinates (row positions) to get the corresponding x-coordinates for</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    line_coords : numpy array</span>
+<span class="sd">        an array of (x,y) coordinates describing the wound boundary after using the spline model to get the x-coordinate from the y-coordinate</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
     <span class="n">xline</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">spl</span><span class="p">,</span> <span class="n">yline</span><span class="p">)</span>
+    <span class="n">line_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">xline</span><span class="p">,</span> <span class="n">yline</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
     
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">xline</span><span class="p">,</span> <span class="n">yline</span><span class="p">])</span><span class="o">.</span><span class="n">T</span></div>
+    <span class="k">return</span> <span class="n">line_coords</span></div>
     
-    
-<span class="c1"># not actually sure what this does? </span>
-<div class="viewcode-block" id="find_stable_wound_frame"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.find_stable_wound_frame">[docs]</a><span class="k">def</span> <span class="nf">find_stable_wound_frame</span><span class="p">(</span><span class="n">coefs_time</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
-    <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coefs_time</span><span class="p">))</span>
-    <span class="n">curve_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">coefs_time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="c1"># def find_stable_wound_frame(coefs_time, min_length=10):</span>
+<span class="c1">#     &quot;&quot;&quot; </span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     import numpy as np </span>
+<span class="c1">#     select = np.arange(len(coefs_time))</span>
+<span class="c1">#     curve_valid = np.hstack(coefs_time) &gt; 0</span>
 
-    <span class="n">all_good_times</span> <span class="o">=</span> <span class="n">select</span><span class="p">[</span><span class="n">curve_valid</span><span class="p">]</span>
+<span class="c1">#     all_good_times = select[curve_valid]</span>
 
-    <span class="n">stretches</span> <span class="o">=</span> <span class="p">[]</span> 
-    <span class="c1"># group into consecutive regions. </span>
-    <span class="n">stretch</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_good_times</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># add this in already. </span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_good_times</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">time0</span> <span class="o">=</span> <span class="n">all_good_times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">time1</span> <span class="o">=</span> <span class="n">all_good_times</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1">#     stretches = [] </span>
+<span class="c1">#     # group into consecutive regions. </span>
+<span class="c1">#     stretch = [all_good_times[0]] # add this in already. </span>
+<span class="c1">#     for i in range(len(all_good_times)-1):</span>
+<span class="c1">#         time0 = all_good_times[i]</span>
+<span class="c1">#         time1 = all_good_times[i+1]</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">time1</span> <span class="o">-</span> <span class="n">time0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">stretch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time1</span><span class="p">)</span>
-            <span class="c1"># last time whatever happens we append. </span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_good_times</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">stretches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stretch</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">stretches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stretch</span><span class="p">)</span>
-            <span class="n">stretch</span><span class="o">=</span><span class="p">[]</span>
+<span class="c1">#         if (time1 - time0) == 1:</span>
+<span class="c1">#             stretch.append(time1)</span>
+<span class="c1">#             # last time whatever happens we append. </span>
+<span class="c1">#             if i == len(all_good_times) - 2:</span>
+<span class="c1">#                 stretches.append(stretch)</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             stretches.append(stretch)</span>
+<span class="c1">#             stretch=[]</span>
 
-    <span class="c1"># count the lengths and if satisfies min length criteria take the first frame.</span>
-    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stretches</span><span class="p">:</span>
-        <span class="n">len_stretch</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">len_stretch</span> <span class="o">&gt;=</span> <span class="n">min_length</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">continue</span></div>
+<span class="c1">#     # count the lengths and if satisfies min length criteria take the first frame.</span>
+<span class="c1">#     for s in stretches:</span>
+<span class="c1">#         len_stretch = len(s)</span>
+<span class="c1">#         if len_stretch &gt;= min_length:</span>
+<span class="c1">#             return s[0]</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             continue</span>
 
+<div class="viewcode-block" id="stack_curves"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.stack_curves">[docs]</a><span class="k">def</span> <span class="nf">stack_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a list of variable length curves (2-dimension coordinate list) compile these into the same length array. The output array will be of dimensions (n_curves x min_len x d) where min_len is the minimum number of points of all curves and d is the dimensionality of the coordinates.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : list of numpy arrays</span>
+<span class="sd">        list of 2-dimension coordinates (len_curve x d) where len_curve is the size of the curve and d is the dimensionality of coordinates e.g. 2 for 2-D images.</span>
+<span class="sd">    n_samples : int </span>
+<span class="sd">        length of each curve if no valid curve (length=0) found</span>
+<span class="sd">    shape : tuple or None (default: None)</span>
+<span class="sd">        shape of each curve (n x d) where n is the number of points per curve</span>
 
-<div class="viewcode-block" id="stack_curves"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.stack_curves">[docs]</a><span class="k">def</span> <span class="nf">stack_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lines : numpy array</span>
+<span class="sd">        (n_curves x shape[0] x shape[1]) or  (n_curves x min_len x 2) stacked array of line coordinates or else a (n_curves x n_samples x 2) array of NaN&#39;s</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">lens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curves</span><span class="p">])</span>
     <span class="n">select</span> <span class="o">=</span> <span class="n">lens</span><span class="p">[</span><span class="n">lens</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">select</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
         <span class="c1"># there is nothing.</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">curves</span><span class="p">),</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">curves</span><span class="p">),</span> <span class="n">n_samples</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
         <span class="n">lines</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="c1"># nothing. </span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">min_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">lens</span><span class="p">[</span><span class="n">lens</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])</span>
@@ -460,12 +645,26 @@
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">[:</span><span class="n">min_len</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">lines</span></div>
 
 
 <div class="viewcode-block" id="find_boundary_lines"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.find_boundary_lines">[docs]</a><span class="k">def</span> <span class="nf">find_boundary_lines</span><span class="p">(</span><span class="n">boundary_curves</span><span class="p">,</span> <span class="n">yline</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper function to eavluate a list of spline functions that capture the boundary e.g. for boundary in each frame to get the x-coordinates given the y-coordinates</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    boundary_curves : list of Scipy spline functions</span>
+<span class="sd">        list of Scipy spline functions such that each spline function given y-coordinates gives the corresponding x-coordinates</span>
+<span class="sd">    yline : numpy array</span>
+<span class="sd">        the list of y-coordinates to evaluate each spline function at to get the corresponding x-coordinates</span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    lines : numpy array</span>
+<span class="sd">        (n_curves x len_curve) a stacked array of all corresponding x-coordinate for each spline </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
@@ -478,16 +677,33 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">b_curve</span> <span class="o">=</span> <span class="n">eval_boundary_coords</span><span class="p">(</span><span class="n">spl_curve</span><span class="p">,</span> <span class="n">yline</span><span class="p">)</span>
             <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b_curve</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># only store the x coordinates. </span>
-            
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lines</span></div>
 
 <span class="c1">#==============================================================================</span>
 <span class="c1">#   Cleaning up tools.</span>
 <span class="c1">#==============================================================================</span>
 <div class="viewcode-block" id="outlier_detect_axis"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_axis">[docs]</a><span class="k">def</span> <span class="nf">outlier_detect_axis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">1.5</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; detect outlier points along a particular axis. </span>
+
+<span class="sd">    points along the designated numpy array axis are classified as outliers if they are more than a distance thresh * standard deviation of points from the median</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy array</span>
+<span class="sd">        an (N,d) array of coordinates where d is the dimensionality</span>
+<span class="sd">    axis : int (default: 0)</span>
+<span class="sd">        which of the coordinate columns to use</span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        the multiple of standard deviation for which we consider points as outliers</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    inlier_vals : numpy bool array</span>
+<span class="sd">        a boolean array specifying which points to keep based on the selected axis</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-<span class="c1">#    from scipy.stats import iqr</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span><span class="n">axis</span><span class="p">]</span> <span class="c1"># which of the coordinates will we use?</span>
 
@@ -498,10 +714,21 @@
     <span class="k">return</span> <span class="n">inlier_vals</span></div>
             
     
-<div class="viewcode-block" id="outlier_detect_graph"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph">[docs]</a><span class="k">def</span> <span class="nf">outlier_detect_graph</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Outlier point detection based on &#39;communities&#39;</span>
-<span class="sd">    # how can this be further optimized? </span>
+<div class="viewcode-block" id="outlier_detect_graph"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.outlier_detect_graph">[docs]</a><span class="k">def</span> <span class="nf">outlier_detect_graph</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Outlier point detection based on constructing a graph between the points and identifying &#39;communities&#39;. Points belonging to the largest community is kept</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : numpy array</span>
+<span class="sd">        an (N,d) coordinate list </span>
+<span class="sd">    thresh : float</span>
+<span class="sd">        maximum distance to consider a point as a neighbour</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filt_points : numpy array</span>
+<span class="sd">        a reduced version of points in the maximum connected graph component</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span> 
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
@@ -513,7 +740,8 @@
     <span class="c1"># get the connected components and sort by the largest connected... </span>
     <span class="n">cnn</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_components</span><span class="p">(</span><span class="n">nx_graph</span><span class="p">),</span> <span class="n">key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># largest first.</span>
 
-    <span class="k">return</span> <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cnn</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span></div>
+    <span class="n">filt_points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cnn</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">filt_points</span></div>
 
 <span class="c1"># test with weighted polyfit?</span>
 <span class="c1"># this was initially a test to see if we can play with the number of points but meh...    </span>
@@ -541,7 +769,22 @@
 <span class="c1">#    return p</span>
     
 <div class="viewcode-block" id="fit_polyfit"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.fit_polyfit">[docs]</a><span class="k">def</span> <span class="nf">fit_polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; fit a polynomial f such that x = f(y)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array </span>
+<span class="sd">        list of x-coordinates</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        list of corresponding y-coordinates</span>
+<span class="sd">    degree : int </span>
+<span class="sd">        degree of the polynomial to fit e.g. 2 for quadratic, 3 for cubic</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : polynomial coefficients</span>
+<span class="sd">        result of calling np.polyfit, c.f. https://docs.scipy.org/doc/numpy/reference/generated/numpy.polyfit.html</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
@@ -551,46 +794,101 @@
 
 
 <div class="viewcode-block" id="test_y_density"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.test_y_density">[docs]</a><span class="k">def</span> <span class="nf">test_y_density</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">frac_thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">   &quot;&quot;&quot;</span>
-   <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
-   <span class="n">y_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">bins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-   
-   <span class="n">y_pos</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
-   <span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="sd">&quot;&quot;&quot; compute the number of points when we divide the partition the image rows (y-coordinates) into a number of equal sized strips or bins where the number is given by bins. Points are considered dense if the fraction of occupied bins is greater than a fraction threshold given by frac_thresh.</span>
+<span class="sd">   </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : numpy array</span>
+<span class="sd">        (x,y) array of coordinates</span>
+<span class="sd">    max_y : int</span>
+<span class="sd">        maximum number of image rows</span>
+<span class="sd">    bins : int</span>
+<span class="sd">        number of &#39;bins&#39; to divide the y-range [0,max_y] into</span>
+<span class="sd">    frac_thresh : float (0-1)</span>
+<span class="sd">        the fraction of bins occupied for each strip </span>
 
-   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_bins</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-       <span class="n">y1</span> <span class="o">=</span> <span class="n">y_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-       <span class="n">y2</span> <span class="o">=</span> <span class="n">y_bins</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    y_dense : bool</span>
+<span class="sd">        whether the occupied fraction of bins is greater than the threshold frac_thresh</span>
 
-       <span class="n">select_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">y_pos</span><span class="o">&gt;=</span><span class="n">y1</span><span class="p">,</span> <span class="n">y_pos</span><span class="o">&lt;</span><span class="n">y2</span><span class="p">)</span>
-       <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">select_</span><span class="p">)</span>
-       <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-       
-   <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
-   <span class="n">y_frac_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">counts</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">))</span>
-       
-   <span class="k">return</span> <span class="n">y_frac_</span> <span class="o">&gt;</span> <span class="n">frac_thresh</span></div>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="n">y_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_y</span><span class="p">,</span> <span class="n">bins</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
     
-<span class="c1"># do we have duplicates here of this function?</span>
+    <span class="n">y_pos</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_bins</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y_bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">y_bins</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">select_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">y_pos</span><span class="o">&gt;=</span><span class="n">y1</span><span class="p">,</span> <span class="n">y_pos</span><span class="o">&lt;</span><span class="n">y2</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">select_</span><span class="p">)</span>
+        <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+       
+    <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+    <span class="n">y_frac_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">counts</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">))</span>
+       
+    <span class="n">y_dense</span> <span class="o">=</span> <span class="n">y_frac_</span> <span class="o">&gt;</span> <span class="n">frac_thresh</span>
+    <span class="k">return</span> <span class="n">y_dense</span></div>
+    
+
 <div class="viewcode-block" id="return_point_density"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.return_point_density">[docs]</a><span class="k">def</span> <span class="nf">return_point_density</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Generates a spatial density map of the coordinates by mapping the points back into the image and applying a Gaussian filter of width sigma </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points : numpy array</span>
+<span class="sd">        (x,y) array of coordinates</span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        shape of the original single-channel image</span>
+<span class="sd">    sigma : int</span>
+<span class="sd">        width of the sigma in the Gaussian used to smooth the point density to generate a continuous heatmap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    density : numpy array</span>
+<span class="sd">        numpy array of size given by shape showing a heatmap of the coordinate density</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">gaussian</span>
     
-    <span class="n">blank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">blank</span><span class="p">[</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">blank</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">blank</span> <span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">density</span><span class="p">[</span><span class="n">points</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">density</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">density</span> <span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">blank</span> </div>
+    <span class="k">return</span> <span class="n">density</span> </div>
     
-
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Where best to use the baseline_als?</span>
+<span class="sd">Asymmetric least squares fitting tools</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="baseline_als"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als">[docs]</a><span class="k">def</span> <span class="nf">baseline_als</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Asymmetric least squares smoothing of 1D signal to extract baseline (assumes positive residuals)</span>
+<span class="sd">    Implements paper of &quot;Asymmetric Least Squares Smoothing&quot; by P. Eilers and H. Boelens (2005), [1]. </span>
+<span class="sd">    Code adapted from https://stackoverflow.com/questions/29156532/python-baseline-correction-library.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        numpy vector of observations to fit.</span>
+<span class="sd">    lam : float </span>
+<span class="sd">        smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    niter : int</span>
+<span class="sd">        the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : numpy array</span>
+<span class="sd">        fitted baseline, same numpy vector size as y.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Eilers PH, Boelens HF. &quot;Baseline correction with asymmetric least squares smoothing.&quot; Leiden University Medical Centre Report. 2005 Oct 21;1(1):5.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
     <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">linalg</span>
@@ -604,10 +902,31 @@
         <span class="n">z</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">z</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">z</span></div>
-
-<span class="c1"># distance based baseline fitting. </span>
+ 
 <div class="viewcode-block" id="baseline_als_direction"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction">[docs]</a><span class="k">def</span> <span class="nf">baseline_als_direction</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Asymmetric least squares smoothing of 1D signal to extract baseline given the direction &#39;left&#39; or &#39;right&#39;</span>
+
+<span class="sd">    Modified version of the :func:`baseline_als` above to bias the residuals to postive or negative depending on the x-direction of movement (right or left respectively)</span>
+<span class="sd">    This version uses the maximum or minimum &#39;y&#39;-value for biasing. :func:`baseline_als_direction1` instead uses the distance to the image boundaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        numpy vector of observations to fit.</span>
+<span class="sd">    lam : float </span>
+<span class="sd">        smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    niter : int</span>
+<span class="sd">        the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed. </span>
+<span class="sd">    direction_x : str </span>
+<span class="sd">        either &#39;left&#39; or &#39;right&#39; to bias the asymmetry more towards moving sheet from the left or right respectively</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : numpy array</span>
+<span class="sd">        smoothed version of y</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
     <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">linalg</span>
@@ -635,20 +954,35 @@
     <span class="k">return</span> <span class="n">z</span></div>
 
 <div class="viewcode-block" id="baseline_als_direction1"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_direction1">[docs]</a><span class="k">def</span> <span class="nf">baseline_als_direction1</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">lims</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Asymmetric least squares smoothing of 1D signal to extract baseline given the direction &#39;left&#39; or &#39;right&#39;</span>
+
+<span class="sd">    Modified version of the :func:`baseline_als` above to bias the residuals to postive or negative depending on the x-direction of movement (right or left respectively)</span>
+<span class="sd">    This version uses the maximum or minimum &#39;y&#39;-value for biasing. :func:`baseline_als_direction` instead uses the distance to the image boundaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        numpy vector of observations to fit.</span>
+<span class="sd">    lam : float </span>
+<span class="sd">        smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</span>
+<span class="sd">    lims : array-like</span>
+<span class="sd">        shape of the image</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    niter : int</span>
+<span class="sd">        the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed. </span>
+<span class="sd">    direction_x : str </span>
+<span class="sd">        either &#39;left&#39; or &#39;right&#39; to bias the asymmetry more towards moving sheet from the left or right respectively</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : numpy array</span>
+<span class="sd">        smoothed version of y</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
     <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">linalg</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-    <span class="c1"># # for each y compute the difference</span>
-    <span class="c1"># if direction_x == &#39;right&#39;:</span>
-    <span class="c1">#     dist = np.abs(lims[1] - y) # pull everything this way. </span>
-    <span class="c1"># if direction_x == &#39;left&#39;:</span>
-    <span class="c1">#     dist = np.abs( y - lims[0]) # pull everything to the left.    </span>
-    
-    <span class="c1"># plt.figure()</span>
-    <span class="c1"># plt.plot(y, &#39;o&#39;)</span>
 
     <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
@@ -657,35 +991,76 @@
         <span class="n">W</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">spdiags</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">W</span> <span class="o">+</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">D</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
         <span class="n">z</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">spsolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
-        <span class="c1"># mid_z = np.mean(z)</span>
+
         <span class="k">if</span> <span class="n">direction_x</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
             <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">lims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
-            <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dists</span><span class="p">))</span>
-<span class="c1">#                                print(dists)</span>
-<span class="c1">#                                w = p * (z &gt; mid_z) + (1-p) * (z &lt; mid_z) # how much to weight this? or just use the median? </span>
+            <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dists</span><span class="p">))</span> 
             <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">*</span><span class="n">dists</span> 
+
         <span class="k">if</span> <span class="n">direction_x</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
-<span class="c1">#                                mid_z = np.min(y)</span>
             <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">lims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="n">dists</span> <span class="o">=</span> <span class="n">dists</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dists</span><span class="p">))</span>
-<span class="c1">#                                print(dists)</span>
-<span class="c1">#                                w = p * (z &lt; mid_z) + (1-p) * (z&gt;mid_z)</span>
             <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">dists</span>
-            
-        <span class="c1"># plt.plot(z, &#39;.&#39;, alpha=0.5)</span>
     <span class="k">return</span> <span class="n">z</span></div>
 
 <div class="viewcode-block" id="generalised_sigmoid"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.generalised_sigmoid">[docs]</a><span class="k">def</span> <span class="nf">generalised_sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Computes a generalised sigmoid function based on the generalised logistic function which generalises the standard definition of a sigmoidal function to allow variations to shape and skew.</span>
+
+<span class="sd">    :math:`\mathrm{sigmoid} = \\frac{1}{(1+\exp(-\\mathrm{slope}(\mathrm{x}-\mathrm{cutoff})))^{1/\mathrm{shape}}}`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array</span>
+<span class="sd">        input 1-D array of x values to evaluate for</span>
+<span class="sd">    cutoff : float</span>
+<span class="sd">        the shift in x value, this dictate approximately when the maximum slope is reached</span>
+<span class="sd">    shape : float</span>
+<span class="sd">        this parameter determines the skew, affecting which asymptote the function will be biased towards</span>
+<span class="sd">    slope : float</span>
+<span class="sd">        this parameter determines the growth rate of the slope</span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    sigmoid : numpy array</span>
+<span class="sd">        evaluated generalised sigmoid function values</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] https://en.wikipedia.org/wiki/Generalised_logistic_function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sigmoid</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">slope</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">cutoff</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">shape</span><span class="p">)</span>
                 
     <span class="k">return</span> <span class="n">sigmoid</span></div>
 
 <div class="viewcode-block" id="baseline_als_density"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.baseline_als_density">[docs]</a><span class="k">def</span> <span class="nf">baseline_als_density</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">N_cutoff</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Instead of the above baseline which moves according the sign of the residual between y and z, we modify to bias towards density instead.</span>
-<span class="sd">    suitable for use with (x,y)</span>
+    <span class="sd">&quot;&quot;&quot; Modifies the asymmetric least squares fitting procedure :func:`baseline_als` which moves according to the sign of the residual between y and z, to move towards density of 1d points instead. This gives improved results when filtering spatial (x,y) coordinates.</span>
+<span class="sd">    </span>
+<span class="sd">    point density is estimated by the number of neighbours in the given specified radius and then gated by computing a generalised sigmoid function which basically soft-binarises the concept of &#39;not dense&#39; and &#39;dense&#39;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array </span>
+<span class="sd">        numpy vector of x-coordinates</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        numpy vector of y-coordinates</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        the radial distance from each point to count the number of neighbouring points</span>
+<span class="sd">    niter : int</span>
+<span class="sd">        the number of iterations to run the iterative fitting algorithm, the longer you run this, the more flat the baseline. Only a few iterations is needed. </span>
+<span class="sd">    N_cutoff : int</span>
+<span class="sd">        the cutoff value used in :func:`generalised_sigmoid`</span>
+<span class="sd">    shape : float</span>
+<span class="sd">        the shape value used in :func:`generalised_sigmoid`</span>
+<span class="sd">    slope : float</span>
+<span class="sd">        the slope value used in :func:`generalised_sigmoid`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : numpy array</span>
+<span class="sd">        smoothed version of y</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
     <span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">linalg</span>
@@ -744,32 +1119,78 @@
             
             
 <div class="viewcode-block" id="asymmetric_fit"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.asymmetric_fit">[docs]</a><span class="k">def</span> <span class="nf">asymmetric_fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">flip_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Utility function that helps to determine whether to flip the residual in the :func:`baseline_als` according to whether an epithelial sheet is moving to the left or the right</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array </span>
+<span class="sd">        1-D array of x-coordinates</span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        1-D array of y-coordinates (not used)</span>
+<span class="sd">    p : float</span>
+<span class="sd">        asymmetry parameter, the higher this is the more asymmetric we consider the fitting errors, paper recommends 0.001 ≤ p ≤ 0.1 for positive peaks.</span>
+<span class="sd">    flip_state : str (default: None)</span>
+<span class="sd">        either &#39;flip&#39; or &#39;no_flip&#39;. If &#39;flip&#39; the x-coordinates are multiplied by -1 to get -x to get negative residuals</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xfit : numpy array</span>
+<span class="sd">        returned 1-D array of filtered x-coordinates</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># determine whether to flip the estimation based on which lies more on either side. </span>
     <span class="k">if</span> <span class="n">flip_state</span> <span class="o">==</span> <span class="s1">&#39;flip&#39;</span><span class="p">:</span>
-<span class="c1">#        print &#39;flipping: %d/%d&#39; %(n_less, n_greater)</span>
         <span class="n">xfit</span> <span class="o">=</span> <span class="n">baseline_als</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-        <span class="k">return</span> <span class="o">-</span><span class="n">xfit</span>
+        <span class="n">xfit</span> <span class="o">=</span> <span class="o">-</span><span class="n">xfit</span>
+        <span class="k">return</span> <span class="n">xfit</span>
     <span class="k">elif</span> <span class="n">flip_state</span> <span class="o">==</span><span class="s1">&#39;no_flip&#39;</span><span class="p">:</span>
         <span class="n">xfit</span> <span class="o">=</span> <span class="n">baseline_als</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">xfit</span></div>
+                
+<div class="viewcode-block" id="determine_flipping_direction_single"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction_single">[docs]</a><span class="k">def</span> <span class="nf">determine_flipping_direction_single</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Determines based on the direction of the tracks whether the general movement is moving left or right and whether the coordinates need to be flipped before passing to :func:`baseline_als` for one timepoint only</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_spixels, n_frames, 2) mean superpixel centroid coordinates over time</span>
+<span class="sd">    thresh : float </span>
+<span class="sd">        the minimum fraction of superpixels whose sign points towards negative x-direction to warrant a &#39;flip&#39;</span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    flip_state : str</span>
+<span class="sd">        either &#39;flip&#39; if mean velocities point towards negative x-direction or &#39;no_flip&#39; for the converse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># derive the average movement vector. </span>
     
-            
-<span class="c1"># def determine_flipping_direction(tracks, thresh=0.5):</span>
+    <span class="n">x_direction_signs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">diff</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
     
-<span class="c1">#     import numpy as np </span>
-<span class="c1">#     diff = tracks[:,1:] - tracks[:,:-1]</span>
-<span class="c1">#     diff = np.mean(diff, axis=0) # derive the average movement vector. </span>
-    
-<span class="c1">#     x_direction_signs = np.sign(diff[:,1])</span>
-    
-<span class="c1">#     if np.sum(x_direction_signs&lt;0) / float(len(x_direction_signs)) &gt; thresh:</span>
-<span class="c1">#         return &#39;flip&#39;</span>
-<span class="c1">#     else:</span>
-<span class="c1">#         return &#39;no_flip&#39;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_direction_signs</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_direction_signs</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">:</span>
+        <span class="n">flip_state</span>  <span class="o">=</span> <span class="s1">&#39;flip&#39;</span>
+        <span class="k">return</span> <span class="n">flip_state</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flip_state</span> <span class="o">=</span> <span class="s1">&#39;no_flip&#39;</span>
+        <span class="k">return</span> <span class="n">flip_state</span></div>
+
+
 <div class="viewcode-block" id="determine_flipping_direction"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.determine_flipping_direction">[docs]</a><span class="k">def</span> <span class="nf">determine_flipping_direction</span><span class="p">(</span><span class="n">tracks_r</span><span class="p">,</span> <span class="n">tracks_g</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Determines based on the direction of the tracks of red and green channels whether the wound is moving left or right and whether the coordinates need to be flipped before passing to :func:`baseline_als`.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks_r : numpy array</span>
+<span class="sd">        (n_spixels x n_frames x 2) centroid superpixel positions of red channel</span>
+<span class="sd">    tracks_g : numpy array</span>
+<span class="sd">        (n_spixels x n_frames x 2) centroid superpixel positions of green channel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flip_state : numpy array</span>
+<span class="sd">        array of size n_frames indicating whether to &#39;flip&#39; or &#39;no_flip&#39; in each frame to be used by :func:`asymmetric_fit`</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
@@ -799,7 +1220,22 @@
         
 <span class="c1"># i&#39;m not sure what the curve2stack is doing?</span>
 <div class="viewcode-block" id="curve2stack"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.curve2stack">[docs]</a><span class="k">def</span> <span class="nf">curve2stack</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">yline</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Given the x-coordinates of the line and its corresponding fixed y-coordinates yline and the image shape, map the line defined by the coordinates into a binary image</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : numpy array</span>
+<span class="sd">        an (nframes, n) where n is the number of sampled points to represent the line&#39;s x-coordinates</span>
+<span class="sd">    yline : numpy array</span>
+<span class="sd">        a (n,) 1-d array specifying the temporally consistent y-coordinates at which the wound boundary was sampled at </span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a (nrows, ncols) tuple specifying the original image dimensions</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    imgs : numpy array </span>
+<span class="sd">        (nframes, nrows, ncols) binary image with 1 indicating the line </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="n">imgs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -813,12 +1249,28 @@
             <span class="n">frame</span><span class="p">[</span><span class="n">yline</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">xline</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
     
         <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span>
-        
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>      </div>
+    <span class="n">imgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>   
+
+    <span class="k">return</span> <span class="n">imgs</span>  </div>
 
 
 <div class="viewcode-block" id="curve2img"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.curve2img">[docs]</a><span class="k">def</span> <span class="nf">curve2img</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; Given the x-coordinates of the line and its corresponding fixed y-coordinates yline and the image shape, map the line defined by the coordinates into a binary image</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : numpy array</span>
+<span class="sd">        an (nframes, n) where n is the number of sampled points to represent the line&#39;s x-coordinates</span>
+<span class="sd">    yline : numpy array</span>
+<span class="sd">        a (n,) 1-d array specifying the temporally consistent y-coordinates at which the wound boundary was sampled at </span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a (nrows, ncols) tuple specifying the original image dimensions</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    imgs : numpy array </span>
+<span class="sd">        (nframes, nrows, ncols) binary image with 1 indicating the line </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="n">imgs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -836,9 +1288,20 @@
     
 
 <div class="viewcode-block" id="normalize_curves_2D"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.normalize_curves_2D">[docs]</a><span class="k">def</span> <span class="nf">normalize_curves_2D</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a curve (list of (x,y)) coordinates and the original image shape, returns the normalised set of coordinates where the x, y coordinate values have been divided by the number of columns and rows in the original image respectively</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : numpy array </span>
+<span class="sd">        an (N,2) array of (x,y) coordinates. First column is the x-coordinate and second column is the y-coordinate. </span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a (nrows, ncols) tuple specifying the original image dimensions</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    shape = (m,n) of image. </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    curve_s : numpy array</span>
+<span class="sd">        normalised curves of the same input shape with the value of each x and y scaled to the range [0-1].</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span>
     <span class="n">curve_s</span> <span class="o">=</span> <span class="n">curves</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -849,25 +1312,49 @@
 
 
 <div class="viewcode-block" id="uniquefy_curves"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.uniquefy_curves">[docs]</a><span class="k">def</span> <span class="nf">uniquefy_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a (x,y) list of coordinates that describe (sample) a single curve, this function returns the reduced set of unique (x,y) points that describe the wound such each unique point along the given axis e.g. x corresponds to only one possible value y </span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : numpy array </span>
+<span class="sd">        (N,2) array of (x,y) coordinates describing the wound</span>
+<span class="sd">    axis : int</span>
+<span class="sd">        the column to uniquefy values over, default = 1 corresponding to y-values in (x,y)</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    make curves manifold, 1-1 (x,y) mapping (not duply sampled....), where there is duplicates we use mode-seeking behaviour... ?</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    curve_s : numpy array</span>
+<span class="sd">        reduced array of (x,y) coordinates where the appropriate axis x (axis=0) or y (axis=1) is unique.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">uniq_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">curves</span><span class="p">[:,</span><span class="n">axis</span><span class="p">])</span>
     <span class="n">uniq_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">curves</span><span class="p">))[</span><span class="n">curves</span><span class="p">[:,</span><span class="n">axis</span><span class="p">]</span> <span class="o">==</span> <span class="n">xx</span><span class="p">]</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">uniq_x</span><span class="p">]</span>
-    <span class="c1"># keep_ids = np.hstack([i for i in uniq_ids if len(i)==1])</span>
-    <span class="c1"># mod_ids = [i for i in uniq_ids if len(i)&gt;1]</span>
-    <span class="c1"># curve_s = curves[keep_ids]</span>
-    <span class="c1"># if len(mod_ids) &gt; 0:</span>
-    <span class="c1">#     curve_mod = np.vstack([np.median(curves[ii], axis=0) for ii in mod_ids])</span>
-    <span class="c1">#     curve_s = np.vstack([curve_mod, curve_s])</span>
-    <span class="c1">#     curve_s = curve_s[np.argsort(curve_s[:,axis])]</span>
-
     <span class="n">curve_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">curves</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">uniq_ids</span><span class="p">])</span>
+
     <span class="k">return</span> <span class="n">curve_s</span></div>
 
 
 <div class="viewcode-block" id="fit_spline"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.fit_spline">[docs]</a><span class="k">def</span> <span class="nf">fit_spline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Fit a univariate spline function y = spl(x) to given x, y image coordinates. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : numpy array</span>
+<span class="sd">        1-D array of x direction image coordinates </span>
+<span class="sd">    y : numpy array</span>
+<span class="sd">        1-D array of y direction image coordinates</span>
+<span class="sd">    k : int </span>
+<span class="sd">        order of the polynomical spline</span>
+<span class="sd">    s : </span>
+<span class="sd">        Positive smoothing factor used to choose the number of knots. Number of knots will be increased until the smoothing condition is satisfied c.f. scipy.interpolate.UnivariateSpline function</span>
+<span class="sd">    ext : int </span>
+<span class="sd">        the extrapolation mode of scipy.interpolate.UnivariateSpline function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    spl : scipy UnivariateSpline object</span>
+<span class="sd">        fitted scipy.interpolate.UnivariateSpline object. Can be used as a function given x values to get corresponding y values e.g. y=spl(x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">UnivariateSpline</span>
 
@@ -877,12 +1364,25 @@
                         
 
 <div class="viewcode-block" id="densify_boundary_line"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.densify_boundary_line">[docs]</a><span class="k">def</span> <span class="nf">densify_boundary_line</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a set of points that lie on the boundary of the wound curve, this function uniquefies the coordinates to enable fitting of a cubic spline function which is then used to interpolate the curve at fixed y-coordinates for visualisation</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : list of numpy array</span>
+<span class="sd">        list of an array of (x,y) coordinates that sample the wound line between two epithelial sheets</span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a tuple (nrow, ncol) specifying the size of the image shape</span>
+<span class="sd">    axis : int (default:1)</span>
+<span class="sd">        the axis to use for uniquefying the coordinates for spline fitting</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    curves is a list or numpy array. </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blines : list of numpy array</span>
+<span class="sd">        list of a corresponding array of (x,y) coordinates that have been reinterpolated after the cubic spline fitting</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">blines</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># </span>
+    <span class="n">blines</span> <span class="o">=</span> <span class="p">[]</span> 
 
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curves</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
@@ -911,9 +1411,20 @@
 
 
 <div class="viewcode-block" id="boundary_roughness"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.boundary_roughness">[docs]</a><span class="k">def</span> <span class="nf">boundary_roughness</span><span class="p">(</span><span class="n">curves_full</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Computes the roughness of a boundary line for a given collective of lines (line that describes the interface between two sheets) defined as the ratio between the total length of the line and an equivalent straight line</span>
+<span class="sd">    </span>
+<span class="sd">    The equivalent straight line is derived from the first and last coordinate describing each line, thus each line is expected to be sorted in ascending / describe y-coordinate order (corresponding to image rows).</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes a boundary smoothness term. using l/l_0 </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves_full : list of numpy array</span>
+<span class="sd">        list of (x,y) coordinate array specifying the coordinates of the curve. The number in the list equals the number of curves to evaluate e.g. the number of frames in the video</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coefs : numpy array</span>
+<span class="sd">        1-D numpy array of boundary roughness, one value per input curve</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">coefs</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -932,13 +1443,49 @@
     <span class="k">return</span> <span class="n">coefs</span></div>
 
 
-<div class="viewcode-block" id="boundary_superpixel_coords_RGB"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB">[docs]</a><span class="k">def</span> <span class="nf">boundary_superpixel_coords_RGB</span><span class="p">(</span><span class="n">rgb_video</span><span class="p">,</span> <span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">movement_thresh</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">t_av_motion</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lenient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">debug_visual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">y_bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">y_frac_thresh</span><span class="o">=</span><span class="mf">0.60</span><span class="p">):</span>
-    
+<div class="viewcode-block" id="boundary_superpixel_coords_RGB"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_coords_RGB">[docs]</a><span class="k">def</span> <span class="nf">boundary_superpixel_coords_RGB</span><span class="p">(</span><span class="n">rgb_video</span><span class="p">,</span> <span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">movement_thresh</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">t_av_motion</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lenient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">debug_visual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">y_bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">y_frac_thresh</span><span class="o">=</span><span class="mf">0.60</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Unbiasedly finds and tracks the moving interface between two colour epithelial sheets from the derived superpixel tracks of each colour</span>
+
+<span class="sd">    Compared to :func:`boundary_superpixel_meantracks_RGB`, this function conducts the modified density biased asymmetric least squares algorithm which is better for (x,y) coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rgb_video : numpy array</span>
+<span class="sd">        (n_frames, n_rows, n_cols, 3) RGB video </span>
+<span class="sd">    meantracks_r : numpy array</span>
+<span class="sd">        (n_spixels, n_frames, 2) coordinates of superpixel centroids for red channel</span>
+<span class="sd">    meantracks_g : numpy array</span>
+<span class="sd">        (n_spixels, n_frames, 2) coordinates of superpixel centroids for green channel</span>
+<span class="sd">    movement_thresh : float </span>
+<span class="sd">        the minimum displacement between 1 frame for superpixels to be considered &#39;moving&#39;</span>
+<span class="sd">    t_av_motion : int </span>
+<span class="sd">        the number of frames to average motion over </span>
+<span class="sd">    robust : bool</span>
+<span class="sd">        if True utilise the density based asymmetric smoothing of :func:`baseline_als_density`</span>
+<span class="sd">    lenient : bool</span>
+<span class="sd">        if True utilises flipping in the asymmetric smoothing of :func:`baseline_als`. </span>
+<span class="sd">    debug_visual : bool</span>
+<span class="sd">        if True plots intermediate results for debugging</span>
+<span class="sd">    max_dist : float </span>
+<span class="sd">        upper distance to be considered a match between red and green points at the boundary</span>
+<span class="sd">    y_bins : int</span>
+<span class="sd">        the number of bins to divide the image rows into to assess the number of points sampled of the boundary</span>
+<span class="sd">    y_frac_thresh : float (0-1) </span>
+<span class="sd">        the minimum number of bins that should contain points for the boundary to be estimated</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boundary_curves : list of numpy array</span>
+<span class="sd">        list of all superpixel track positions that model the boundary </span>
+<span class="sd">    als_curves : </span>
+<span class="sd">        list of all asymmetrically filtered superpixel track positions that model the boundary </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
     <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="kn">from</span> <span class="nn">skimage.exposure</span> <span class="k">import</span> <span class="n">rescale_intensity</span>
-    <span class="kn">from</span> <span class="nn">Motion_Analysis.tracks_statistics_tools</span> <span class="k">import</span> <span class="n">find_moving_spixels</span><span class="p">,</span> <span class="n">find_const_tracks</span>
+    <span class="kn">from</span> <span class="nn">.tracks_statistics_tools</span> <span class="k">import</span> <span class="n">find_moving_spixels</span><span class="p">,</span> <span class="n">find_const_tracks</span>
     
     <span class="n">n_frames</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rgb_video</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">meantracks_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">meantracks_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># spixel size.</span>
@@ -955,7 +1502,7 @@
     <span class="n">moving_r</span> <span class="o">=</span> <span class="n">find_moving_spixels</span><span class="p">(</span><span class="n">meantracks_r_</span><span class="p">,</span> <span class="n">t_av</span><span class="o">=</span><span class="n">t_av_motion</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="n">movement_thresh</span><span class="p">)</span>
     <span class="n">moving_g</span> <span class="o">=</span> <span class="n">find_moving_spixels</span><span class="p">(</span><span class="n">meantracks_g_</span><span class="p">,</span> <span class="n">t_av</span><span class="o">=</span><span class="n">t_av_motion</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="n">movement_thresh</span><span class="p">)</span>
     
-    <span class="nb">print</span> <span class="n">moving_r</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># print moving_r.shape</span>
 
     <span class="c1"># if robust==True or lenient==True:</span>
     <span class="c1">#     &quot;&quot;&quot;</span>
@@ -983,7 +1530,7 @@
         <span class="c1"># print &#39;---&#39;</span>
         <span class="c1"># print move_r_frame.shape</span>
 
-        <span class="c1"># flip_state = determine_flipping_direction(meantracks_r[:,frame:frame+2], meantracks_g[:, frame:frame+2])</span>
+        <span class="n">flip_state</span> <span class="o">=</span> <span class="n">determine_flipping_direction</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">[:,</span><span class="n">frame</span><span class="p">:</span><span class="n">frame</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">meantracks_g</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">:</span><span class="n">frame</span><span class="o">+</span><span class="mi">2</span><span class="p">])</span>
         <span class="c1"># print flip_state</span>
 
         <span class="c1"># if the positions is empty then don&#39;t bother.</span>
@@ -1028,14 +1575,14 @@
                         <span class="n">x_filt_ALS</span> <span class="o">=</span> <span class="n">baseline_als_density</span><span class="p">(</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">lam</span><span class="o">=</span><span class="mi">1</span><span class="n">e1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="o">*</span><span class="n">spixel_size</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">N_cutoff</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>                                       
                         <span class="n">all_pos_filt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x_filt_ALS</span><span class="p">,</span> <span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
                     <span class="k">elif</span> <span class="n">lenient</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;flipping&#39;</span><span class="p">)</span>
+                        <span class="c1"># print(&#39;flipping&#39;)</span>
                         <span class="c1"># # set the opposite. </span>
                         <span class="c1"># if flip_state ==&#39;flip&#39;:</span>
                         <span class="c1">#     flip_state = &#39;no_flip&#39;</span>
                         <span class="c1"># elif flip_state == &#39;no_flip&#39;:</span>
                         <span class="c1">#     flip_state = &#39;flip&#39;</span>
                         <span class="n">flip</span> <span class="o">=</span> <span class="n">flip_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="nb">print</span> <span class="n">flip</span> 
+                        <span class="c1"># print flip </span>
                         <span class="n">x_filt_ALS</span> <span class="o">=</span> <span class="n">asymmetric_fit</span><span class="p">(</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">lam</span><span class="o">=</span><span class="mi">1</span><span class="n">e4</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">flip_state</span><span class="o">=</span><span class="n">flip</span><span class="p">)</span>                                            
                         <span class="n">all_pos_filt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x_filt_ALS</span><span class="p">,</span> <span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1083,20 +1630,57 @@
 
 
 <div class="viewcode-block" id="boundary_superpixel_meantracks_RGB"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.boundary_superpixel_meantracks_RGB">[docs]</a><span class="k">def</span> <span class="nf">boundary_superpixel_meantracks_RGB</span><span class="p">(</span><span class="n">rgb_video</span><span class="p">,</span> <span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">,</span> <span class="n">movement_thresh</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">t_av_motion</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">lenient</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">debug_visual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">y_bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">y_frac_thresh</span><span class="o">=</span><span class="mf">0.60</span><span class="p">):</span>
-    
+    <span class="sd">&quot;&quot;&quot; Unbiasedly finds and tracks the moving interface between two colour epithelial sheets from the derived superpixel tracks of each colour</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rgb_video : numpy array</span>
+<span class="sd">        (n_frames, n_rows, n_cols, 3) RGB video </span>
+<span class="sd">    meantracks_r : numpy array</span>
+<span class="sd">        (n_spixels, n_frames, 2) coordinates of superpixel centroids for red channel</span>
+<span class="sd">    meantracks_g : numpy array</span>
+<span class="sd">        (n_spixels, n_frames, 2) coordinates of superpixel centroids for green channel</span>
+<span class="sd">    movement_thresh : float </span>
+<span class="sd">        the minimum displacement between 1 frame for superpixels to be considered &#39;moving&#39;</span>
+<span class="sd">    t_av_motion : int </span>
+<span class="sd">        the number of frames to average motion over </span>
+<span class="sd">    robust : bool</span>
+<span class="sd">        if True increases the asymmetric penalisation in :func:`baseline_als`</span>
+<span class="sd">    lenient : bool</span>
+<span class="sd">        if True utilises flipping in the asymmetric smoothing of :func:`baseline_als`. </span>
+<span class="sd">    debug_visual : bool</span>
+<span class="sd">        if True plots intermediate results for debugging</span>
+<span class="sd">    max_dist : float </span>
+<span class="sd">        upper distance to be considered a match between red and green points at the boundary</span>
+<span class="sd">    y_bins : int</span>
+<span class="sd">        the number of bins to divide the image rows into to assess the number of points sampled of the boundary</span>
+<span class="sd">    y_frac_thresh : float (0-1) </span>
+<span class="sd">        the minimum number of bins that should contain points for the boundary to be estimated</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boundary_curves : list </span>
+<span class="sd">        list of all spline (quadratic) fitted coefficients (functions) that model the boundary </span>
+<span class="sd">    curves_lines : list </span>
+<span class="sd">        list of all spline (quadratic) interpolated x-coordinates that model the boundary </span>
+<span class="sd">    curve_img : numpy array</span>
+<span class="sd">        the (n_frames, n_rows, n_cols) corresponding binary video when the coordinates are remapped into an image.</span>
+<span class="sd">    boundary_line :</span>
+<span class="sd">        the (n_rows, n_cols) binary kymograph image illustrating the wound boundary evolution over time </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
     <span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
     <span class="kn">from</span> <span class="nn">skimage.exposure</span> <span class="k">import</span> <span class="n">rescale_intensity</span>
-    <span class="kn">from</span> <span class="nn">Motion_Analysis.tracks_statistics_tools</span> <span class="k">import</span> <span class="n">find_moving_spixels</span><span class="p">,</span> <span class="n">find_const_tracks</span>
+    <span class="kn">from</span> <span class="nn">.tracks_statistics_tools</span> <span class="k">import</span> <span class="n">find_moving_spixels</span><span class="p">,</span> <span class="n">find_const_tracks</span>
     
     <span class="n">n_frames</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rgb_video</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">spixel_size</span> <span class="o">=</span> <span class="n">meantracks_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">meantracks_r</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># spixel size.</span>
-    
+
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the moving spixels in the meantracks for each colour</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="n">select_r_track</span> <span class="o">=</span> <span class="n">find_const_tracks</span><span class="p">(</span><span class="n">meantracks_r</span><span class="p">)</span>
     <span class="n">select_g_track</span> <span class="o">=</span> <span class="n">find_const_tracks</span><span class="p">(</span><span class="n">meantracks_g</span><span class="p">)</span>
     
@@ -1111,7 +1695,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        flag switches on whether or not we should use asymmetric least squares method to fit the points.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">flip_state</span> <span class="o">=</span> <span class="n">determine_flipping_direction</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">]))</span>
+        <span class="n">flip_state</span> <span class="o">=</span> <span class="n">determine_flipping_direction_single</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">meantracks_r</span><span class="p">,</span> <span class="n">meantracks_g</span><span class="p">]))</span>
     
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Frame Iteration to determine the boundary curves.</span>
@@ -1149,11 +1733,11 @@
 <span class="sd">                    &quot;&quot;&quot;</span>
                     
                     <span class="k">if</span> <span class="n">robust</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;robust&#39;</span><span class="p">)</span>
+                        <span class="c1"># print(&#39;robust&#39;)</span>
                         <span class="n">x_filt_ALS</span> <span class="o">=</span> <span class="n">asymmetric_fit</span><span class="p">(</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">lam</span><span class="o">=</span><span class="mi">1</span><span class="n">e4</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">flip_state</span><span class="o">=</span><span class="n">flip_state</span><span class="p">)</span>                                            
                         <span class="n">all_pos_filt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">x_filt_ALS</span><span class="p">,</span> <span class="n">all_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
                     <span class="k">elif</span> <span class="n">lenient</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;flipping&#39;</span><span class="p">)</span>
+                        <span class="c1"># print(&#39;flipping&#39;)</span>
                         <span class="c1"># set the opposite. </span>
                         <span class="k">if</span> <span class="n">flip_state</span> <span class="o">==</span><span class="s1">&#39;flip&#39;</span><span class="p">:</span>
                             <span class="n">flip_state</span> <span class="o">=</span> <span class="s1">&#39;no_flip&#39;</span>
@@ -1165,7 +1749,6 @@
                         <span class="c1"># do nothing more.</span>
                         <span class="n">all_pos_filt</span> <span class="o">=</span> <span class="n">all_pos</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                     
-                        
                     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                    Fitting of the final boundary curve :D.  (can we use a more smoothed spline? like a bspline that doesn&#39;t need to pass through all points?)</span>
 <span class="sd">                    &quot;&quot;&quot;</span>
@@ -1197,11 +1780,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">boundary_curves</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
             
-    
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assemble the boundary curve.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="k">if</span> <span class="n">debug_visual</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
         <span class="c1"># Check if we find any curves by seeing if we fit the coefficient or not.</span>
         <span class="n">n_curves</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">boundary_curves</span><span class="p">]</span> <span class="c1"># and we es</span>
@@ -1221,20 +1802,19 @@
 <span class="c1">#    if debug_visual==True:</span>
     <span class="n">masked_curve_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">kymograph_curve_img</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">kymograph_curve_img</span><span class="p">)</span>
 
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">kymograph_curve_img</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">debug_visual</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">kymograph_curve_img</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">rgb_video</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masked_curve_img</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">boundary_line</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary_line</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">rgb_video</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">masked_curve_img</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray_r&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">boundary_line</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">boundary_line</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        
-        
     <span class="k">return</span> <span class="n">boundary_curves</span><span class="p">,</span> <span class="n">curves_lines</span><span class="p">,</span> <span class="n">curve_img</span><span class="p">,</span> <span class="n">boundary_line</span></div>
    
     
@@ -1242,11 +1822,23 @@
 <span class="c1"># =============================================================================</span>
 <span class="c1">#   Post-processing and linking of wound boundary tools </span>
 <span class="c1"># =============================================================================</span>
-
 <div class="viewcode-block" id="temporal_filter_curves"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.temporal_filter_curves">[docs]</a><span class="k">def</span> <span class="nf">temporal_filter_curves</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="n">max_gaps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find the maximum number of frame gaps and impute in the gap given a set of curves. </span>
+    <span class="sd">&quot;&quot;&quot; Given a temporal numpy array of equal length x-coordinates, find the frames with missing predictions and linearly impute the x-values based on the available data either side of the temporal gap as long as the temporal gap is smaller than that given by max_gaps</span>
+
+<span class="sd">    In essence this function aims to ensure temporal consistency for frame by frame predicted wound coordinates (which treat frames independently)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curves : numpy array</span>
+<span class="sd">        (n_frames, len_curve) array of (x-) coordinate values or (y-) coordinate values if the x coordinates were the ones fixed over time</span>
+<span class="sd">    max_gaps : int </span>
+<span class="sd">        the maximum number of missing frames for linear imputation to be conducted over</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    curves_ : numpy array</span>
+<span class="sd">        same array as input but with missing temporal frames &lt; max_gaps imputed for a more continuous evolution</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># first copy the curves object </span>
     <span class="n">curves_</span> <span class="o">=</span> <span class="n">curves</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1318,7 +1910,19 @@
 <span class="c1"># boiler scripts to describe the wound boundary to enable plotting for the kymograph.</span>
 <span class="c1"># =============================================================================</span>
 <div class="viewcode-block" id="fetch_coordinates_sections"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.fetch_coordinates_sections">[docs]</a><span class="k">def</span> <span class="nf">fetch_coordinates_sections</span><span class="p">(</span><span class="n">labelled</span><span class="p">):</span>
-    
+    <span class="sd">&quot;&quot;&quot; Given a labelled integer image such as that returned by doing connected components analysis by skimage.measure.label retrieve the coordinates belonging to each labelled region ignoring the label 0 which is assumed to refer to the background pixels.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    labelled : numpy array</span>
+<span class="sd">        (n_rows, n_cols) integer array where each unique integer i &gt; 0 denotes a connected region one wants to retrieve all the image coordinates over. The integer 0 regions are treated as image background and their coordinates are not fetched</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coords : list </span>
+<span class="sd">        list of (x,y) coordinate numpy arrays for each unique labelled region</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">labelled</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">))</span>
     
@@ -1327,15 +1931,25 @@
     <span class="n">coords</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">uniq_regions</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-<span class="c1">#        plt.figure()</span>
-<span class="c1">#        plt.imshow(labelled==i)</span>
-<span class="c1">#        plt.show()</span>
         <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">X</span><span class="p">[</span><span class="n">labelled</span><span class="o">==</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">labelled</span><span class="o">==</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         
     <span class="k">return</span> <span class="n">coords</span></div>
     
 <div class="viewcode-block" id="check_intersect"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.check_intersect">[docs]</a><span class="k">def</span> <span class="nf">check_intersect</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">list_array</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; function to check whether a given list is present within a list array of other lists. Result is either &#39;yes&#39; or &#39;add&#39; meaning it should be added</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ref : list </span>
+<span class="sd">        reference list that one wants to check if it is already in list_array</span>
+<span class="sd">    list_array : list</span>
+<span class="sd">        list of 1-D arrays or list</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    intersect : str</span>
+<span class="sd">        &#39;yes&#39; for ref is already contained in one of the items in list_array or &#39;add&#39; if it isn&#39;t and needs to be added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     <span class="n">intersect</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1353,7 +1967,19 @@
     <span class="k">return</span> <span class="n">intersect</span></div>
      
 <div class="viewcode-block" id="find_uniq_merge_groups"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.find_uniq_merge_groups">[docs]</a><span class="k">def</span> <span class="nf">find_uniq_merge_groups</span><span class="p">(</span><span class="n">merge_groups</span><span class="p">):</span>
-     
+    <span class="sd">&quot;&quot;&quot; Given a list of items this function reduces this list into a minimal set of groups that captures their relationships. It is used for example when one has a list of pairwise relationships and wants to reduce this into a few groups that these elements belong to that would describe the relationships.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    merge_groups : list </span>
+<span class="sd">        list of items to merge and combine together</span>
+
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    final_filt_list : list</span>
+<span class="sd">        the filtered reduced list of items. Each item should contain mutually exclusive members</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
     <span class="n">merge_cand</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">merge_groups</span><span class="p">)</span> <span class="c1"># create a new copy</span>
@@ -1421,7 +2047,20 @@
     <span class="k">return</span> <span class="n">final_filt_list</span></div>
     
 <div class="viewcode-block" id="match_labelled_regions"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.match_labelled_regions">[docs]</a><span class="k">def</span> <span class="nf">match_labelled_regions</span><span class="p">(</span><span class="n">coord_list</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a coordinate list describing different image regions, merge the regions based on distance proximity given by a maximum distance threshold given by dist_thresh</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coord_list : list of numpy array</span>
+<span class="sd">        list of (x,y) coordinate array with each describing a region of the image to consider for merging</span>
+<span class="sd">    dist_thresh : float </span>
+<span class="sd">        maximum distance to consider for region merging</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cands : list</span>
+<span class="sd">        list of region id groups after merging (not the combined coordinates)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># this aims to join together random matching elements -&gt; actually there is a more robust method based on gradients! and prediction....    </span>
     <span class="kn">import</span> <span class="nn">itertools</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="k">import</span> <span class="n">pairwise_distances</span>
@@ -1455,7 +2094,21 @@
     
     
 <div class="viewcode-block" id="fetch_skeletion_line"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.fetch_skeletion_line">[docs]</a><span class="k">def</span> <span class="nf">fetch_skeletion_line</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">fun</span><span class="p">):</span>
-    
+    <span class="sd">&quot;&quot;&quot; Binarise the given line image and return the line describing the skeleton by running through every unique image row and applying fun to aggregate the x-coordinates. Used for returning the single wound line to overlay on a kymograph</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array </span>
+<span class="sd">        (n_rows, n_cols) binary image of a line</span>
+<span class="sd">    fun : numpy function </span>
+<span class="sd">        aggregation function to merge coordinate values e.g. np.median, np.mean for median and mean respectively from the numpy library</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    coords : numpy array    </span>
+<span class="sd">        the (x,y) coordinates of the skeleton line that pass through the &#39;centre&#39; of the binary image</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     <span class="n">binary</span> <span class="o">=</span> <span class="n">img</span> <span class="o">&gt;</span> <span class="mi">0</span>
     
@@ -1478,12 +2131,24 @@
 
     <span class="k">return</span> <span class="n">coords</span></div>
     
-<span class="c1"># this function produces an equation for each boundary curve to plot on kymograph.</span>
-<span class="c1"># =============================================================================</span>
-<span class="c1">#   To do: utilise gradient info? and continuity... ideas.    </span>
-<span class="c1"># =============================================================================</span>
 <div class="viewcode-block" id="process_curve_img_multiple"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_statistics_tools.html#MOSES.Motion_Analysis.wound_statistics_tools.process_curve_img_multiple">[docs]</a><span class="k">def</span> <span class="nf">process_curve_img_multiple</span><span class="p">(</span><span class="n">curve_img</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    
+    <span class="sd">&quot;&quot;&quot; Given a kymograph curve_img as a result of applying superpixel boundary tracking, :func:`boundary_superpixel_meantracks_RGB` automatically identify if there exist the unique boundary curves present returning them as a list of (x,y) coordinate list. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_img : numpy array</span>
+<span class="sd">        (nrows, ncols) numpy image of the boundary line between two populations with time as the image row and x- as the image columns as returned by :func:`boundary_superpixel_meantracks_RGB`</span>
+<span class="sd">    dilation : int</span>
+<span class="sd">        the size of the disk kernel used to dilate the binary curve_img to close small gaps between very close disconnected regions of the same line</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        the maximum distance to consider two regions to be neighbours and merged</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    b_lines : list</span>
+<span class="sd">        list of (x,y) coordinates describing each line found</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># just fit the largest component. ? </span>
     <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">square</span><span class="p">,</span> <span class="n">binary_closing</span><span class="p">,</span> <span class="n">binary_dilation</span><span class="p">,</span> <span class="n">diamond</span><span class="p">,</span> <span class="n">disk</span>
     <span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">label</span> 
@@ -1493,43 +2158,26 @@
     
     <span class="c1"># now get the coordinates belonging to and find components to link. </span>
     <span class="n">labelled_coords</span> <span class="o">=</span> <span class="n">fetch_coordinates_sections</span><span class="p">(</span><span class="n">labelled</span><span class="p">)</span>
-    
-<span class="c1">#    plt.figure()</span>
-<span class="c1">#    plt.plot([len(c) for c in labelled_coords])</span>
-<span class="c1">#    plt.show()</span>
-    
+
 <span class="c1">#    print labelled_coords</span>
     <span class="n">merge_regions</span> <span class="o">=</span> <span class="n">match_labelled_regions</span><span class="p">(</span><span class="n">labelled_coords</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="o">=</span><span class="n">dist_thresh</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">merge_regions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;merging&#39;</span><span class="p">)</span>
+        <span class="c1"># print(&#39;merging&#39;)</span>
         <span class="c1"># then we merge labelled regions. </span>
         <span class="n">labelled_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">labelled</span><span class="p">)</span>
         <span class="n">regions_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labelled</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">merge_regions</span><span class="p">)):</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">merge_regions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
             <span class="k">for</span> <span class="n">mm</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
                 <span class="n">labelled_new</span><span class="p">[</span><span class="n">labelled</span><span class="o">==</span><span class="n">regions_old</span><span class="p">[</span><span class="n">mm</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span> 
-
     <span class="k">else</span><span class="p">:</span>
         <span class="n">labelled_new</span> <span class="o">=</span> <span class="n">labelled</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        
-<span class="c1">#    fig, ax = plt.subplots()</span>
-<span class="c1">#    ax.imshow(labelled)</span>
-<span class="c1">#    for i in range(len(labelled_coords)):</span>
-<span class="c1">#        mean_coords = np.mean(labelled_coords[i], axis=0)</span>
-<span class="c1">#        ax.text(mean_coords[0], mean_coords[1], str(i))</span>
-<span class="c1">#    ax.set_aspect(&#39;auto&#39;)</span>
-<span class="c1">#    plt.show()</span>
-    <span class="c1"># having gotten we go ahead to derive the lines ...</span>
-            
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">labelled_new</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-    
+    <span class="c1"># fig, ax = plt.subplots()</span>
+    <span class="c1"># ax.imshow(labelled_new)</span>
+    <span class="c1"># ax.set_aspect(&#39;auto&#39;)</span>
+    <span class="c1"># plt.show()</span>
     <span class="n">b_lines</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">reg</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labelled_new</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]:</span>

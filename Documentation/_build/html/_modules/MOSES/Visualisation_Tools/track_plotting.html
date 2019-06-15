@@ -153,22 +153,26 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="plot_tracks"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.track_plotting.html#MOSES.Visualisation_Tools.track_plotting.plot_tracks">[docs]</a><span class="k">def</span> <span class="nf">plot_tracks</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Input:</span>
-<span class="sd">    ------</span>
-<span class="sd">    tracks: (n_superpixels x n_frames x 2) numpy array, giving the meantracks</span>
-<span class="sd">    ax: matplotlib ax object</span>
-<span class="sd">    color: color of the plotted lines given either named or as (r,g,b) value.   </span>
-<span class="sd">    lw: linewidth, c.f. matplotlib</span>
-<span class="sd">    alpha: transparency of the plotted lines, c.f. matplotlib</span>
+    <span class="sd">&quot;&quot;&quot; plots tracks onto a given matplotlib axis </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels x n_frames x 2) numpy array, giving the centroid positions of superpixels over time</span>
+<span class="sd">    ax : matplotlib ax object</span>
+<span class="sd">        a matplotlib axis instance such as that returned from fig, ax = plt.subplots()</span>
+<span class="sd">    color : str</span>
+<span class="sd">        colour of the plotted lines given either named or as (r,g,b) value.   </span>
+<span class="sd">    lw : float</span>
+<span class="sd">        linewidth, c.f. matplotlib</span>
+<span class="sd">    alpha : float</span>
+<span class="sd">        transparency of the plotted lines, c.f. matplotlib value between 0-1 with 0 being fully transparent and 1 being solid</span>
 <span class="sd">        </span>
-<span class="sd">    Output:</span>
+<span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    None, void function</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
     <span class="n">n_spixels</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_spixels</span><span class="p">):</span>

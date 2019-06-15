@@ -163,16 +163,16 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    points : </span>
+<span class="sd">    points : numpy array</span>
 <span class="sd">        (y,x) numpy array of points, (n_points x 2)</span>
-<span class="sd">    limits : </span>
+<span class="sd">    limits : array-like</span>
 <span class="sd">        (n_rows, n_cols), essentially the image dimension.</span>
-<span class="sd">    spixel_size : </span>
+<span class="sd">    spixel_size : float</span>
 <span class="sd">        (float) average superpixel width</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    direction : </span>
+<span class="sd">    direction : str</span>
 <span class="sd">        a string either &#39;left&#39; or &#39;right&#39; designating the direction in which the superpixel moves. </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -203,16 +203,16 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    points_r : </span>
+<span class="sd">    points_r : numpy array</span>
 <span class="sd">        (n_points_to_keep*n_sweeps, 2) boundary points of red sheet</span>
-<span class="sd">    points_g :</span>
+<span class="sd">    points_g : numpy array</span>
 <span class="sd">        (n_points_to_keep*n_sweeps, 2) boundary points of green sheet</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    spixels_r : </span>
+<span class="sd">    spixels_r : numpy array</span>
 <span class="sd">        the green ids in points_g to match each r point to.</span>
-<span class="sd">    spixels_g : </span>
+<span class="sd">    spixels_g : numpy array</span>
 <span class="sd">        the red ids in points_r to match each g point to.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -239,11 +239,11 @@
 <div class="viewcode-block" id="baseline_als"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.html#MOSES.Motion_Analysis.wound_close_sweepline_area_segmentation.baseline_als">[docs]</a><span class="k">def</span> <span class="nf">baseline_als</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Code adapted from https://stackoverflow.com/questions/29156532/python-baseline-correction-library. </span>
 
-<span class="sd">    Implements paper of &quot;Asymmetric Least Squares Smoothing&quot; by P. Eilers and H. Boelens in 2005.</span>
+<span class="sd">    Implements paper of &quot;Asymmetric Least Squares Smoothing&quot; by P. Eilers and H. Boelens (2005), [1].</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    y : </span>
+<span class="sd">    y : numpy array</span>
 <span class="sd">        numpy vector of observations to fit.</span>
 <span class="sd">    lam : float </span>
 <span class="sd">        smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.</span>
@@ -254,8 +254,12 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    z : </span>
+<span class="sd">    z : numpy array</span>
 <span class="sd">        fitted baseline, same numpy vector size as y.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Eilers PH, Boelens HF. &quot;Baseline correction with asymmetric least squares smoothing.&quot; Leiden University Medical Centre Report. 2005 Oct 21;1(1):5.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
@@ -266,7 +270,7 @@
     <span class="n">D</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">L</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
         <span class="n">W</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">spdiags</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">W</span> <span class="o">+</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">D</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
         <span class="n">z</span> <span class="o">=</span> <span class="n">spsolve</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">w</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
@@ -280,14 +284,14 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    array : </span>
+<span class="sd">    array : numpy array</span>
 <span class="sd">        a numpy array of numbers </span>
 <span class="sd">    thresh : float</span>
 <span class="sd">        specified cutoff </span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    wound_close : </span>
+<span class="sd">    wound_close : int</span>
 <span class="sd">        the position of the array for which the value is just above thresh.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -323,7 +327,7 @@
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    filt : </span>
+<span class="sd">    filt : numpy array</span>
 <span class="sd">        (n_rows x n_cols), post-processed binary image.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -346,26 +350,26 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    areas_img : </span>
+<span class="sd">    areas_img : numpy array</span>
 <span class="sd">        (n_rows x n_cols) binary image of the epithelial sheet.</span>
-<span class="sd">    frame : </span>
+<span class="sd">    frame : int</span>
 <span class="sd">        int, which frame number to compute.</span>
-<span class="sd">    spixel_size : (float) </span>
+<span class="sd">    spixel_size : float </span>
 <span class="sd">        the average superpixel width.</span>
-<span class="sd">    direction : (default None)</span>
+<span class="sd">    direction : str (default: None)</span>
 <span class="sd">        which direction the sheet is moving, takes &#39;left&#39; or &#39;right&#39;</span>
-<span class="sd">    n_sweeps : (int)</span>
+<span class="sd">    n_sweeps : int</span>
 <span class="sd">        the number of vertical divisions of the image.</span>
-<span class="sd">    n_points_keep : (int)</span>
+<span class="sd">    n_points_keep : int</span>
 <span class="sd">        for each vertical strip, the number of points to sample to approximate the sheet boundary.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    good_boundary_coords : </span>
+<span class="sd">    good_boundary_coords : numpy array</span>
 <span class="sd">        the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.</span>
-<span class="sd">    sweepline_seg_y : </span>
+<span class="sd">    sweepline_seg_y : numpy array</span>
 <span class="sd">        (n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in. </span>
-<span class="sd">    direction : </span>
+<span class="sd">    direction : str</span>
 <span class="sd">        &#39;left&#39; or &#39;right&#39; string, denoting the direction in which the epithelial sheet is moving in </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -394,7 +398,6 @@
         <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span><span class="p">:</span>
             <span class="n">move_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span> <span class="mi">0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> 
     
-<span class="c1">#    print direction</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    # create the sweep lines intervals. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -434,8 +437,7 @@
             <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span>
                 <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">spixel_region_x</span><span class="p">)</span>
                 <span class="n">good_x</span> <span class="o">=</span> <span class="n">spixel_region</span><span class="p">[</span><span class="n">sort_order</span><span class="p">[:</span><span class="n">n_points_keep</span><span class="p">]]</span>
-                                     
-<span class="c1">#            print direction  </span>
+                                      
             <span class="n">kept_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">good_x</span><span class="p">)</span>
             <span class="n">sweepline_seg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">good_x</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))</span>
             
@@ -476,16 +478,16 @@
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    image : </span>
+<span class="sd">    image : numpy array</span>
 <span class="sd">        (n_rows x n_cols), grayscale image</span>
-<span class="sd">    n_clusters : </span>
+<span class="sd">    n_clusters : int</span>
 <span class="sd">        the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.</span>
-<span class="sd">    train_split : </span>
+<span class="sd">    train_split : float</span>
 <span class="sd">        (0-1 float) proportion of pixels to use for fitting the kmeans cluster. </span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    Y_new : </span>
+<span class="sd">    Y_new :  numpy array</span>
 <span class="sd">        (n_rows x n_cols), integer image, labelled by the cluster numbers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
@@ -526,26 +528,26 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    vid_stack : </span>
-<span class="sd">        (n_frames, n_rows, n_cols, 3),     </span>
-<span class="sd">    spixel_size : </span>
+<span class="sd">    vid_stack : numpy array</span>
+<span class="sd">        (n_frames, n_rows, n_cols, 3) RGB video     </span>
+<span class="sd">    spixel_size : int</span>
 <span class="sd">        average superpixel width (int)</span>
-<span class="sd">    max_frame :</span>
+<span class="sd">    max_frame : int</span>
 <span class="sd">        maximum frame number to which to compute the gap closure over.</span>
-<span class="sd">    n_sweeps :</span>
+<span class="sd">    n_sweeps : int</span>
 <span class="sd">        number of strips to divide vertically the image.</span>
-<span class="sd">    n_points_keep : </span>
+<span class="sd">    n_points_keep : int</span>
 <span class="sd">        the number of points to keep for summarising the boundary.</span>
-<span class="sd">    n_clusters : </span>
+<span class="sd">    n_clusters : int</span>
 <span class="sd">        number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.</span>
-<span class="sd">    p_als : </span>
+<span class="sd">    p_als : float</span>
 <span class="sd">        this controls the assymmetry in fitting the baseline. see stackoverflow: https://stackoverflow.com/questions/29156532/python-baseline-correction-library </span>
-<span class="sd">    to_plot : </span>
+<span class="sd">    to_plot : bool</span>
 <span class="sd">        plot the diagnostic image or not to check fitting and inference.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    wound_frame : </span>
+<span class="sd">    wound_frame : int</span>
 <span class="sd">        predicted frame where gap closure occurs.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -674,35 +676,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     
     <span class="k">return</span> <span class="n">wound_frame</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1"># remember to add one onto... </span></div>
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        
-        
-    
-    
-    
-    
-    
-    
+ 
 </pre></div>
 
            </div>

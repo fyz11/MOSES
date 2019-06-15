@@ -145,45 +145,83 @@
 
 <span class="sd">@author: felix</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="c1"># a normal kymograph projection. </span>
 <div class="viewcode-block" id="kymograph_img"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.kymographs.html#MOSES.Visualisation_Tools.kymographs.kymograph_img">[docs]</a><span class="k">def</span> <span class="nf">kymograph_img</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">proj_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a video create a kymograph with time by collapsing out one of the given spatial dimensions as give by &#39;axis&#39; using the given projection function, &#39;proj_fn&#39; or by taking a slice if &#39;pos&#39; is defined</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vid : numpy array</span>
+<span class="sd">        a (n_frames, n_rows, n_cols) or (n_frames, n_rows, n_cols, 3) or (n_z, n_y, n_x) image</span>
+<span class="sd">    pos : None or int</span>
+<span class="sd">        the slice number along the given &#39;axis&#39; to take image slice instead of using proj_fn</span>
+<span class="sd">    axis : int </span>
+<span class="sd">        the image axis to aggregate information over (in order to collapse the image dimensionality)</span>
+<span class="sd">    proj_fn : None or numpy function</span>
+<span class="sd">        function to aggregate image information along one axis, if None, defaults to np.mean</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kymograph_img : numpy array</span>
+<span class="sd">        the projected image with time along the image rows and a spatial dimension along the image columns</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
     <span class="k">if</span> <span class="n">pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>    
         <span class="k">if</span> <span class="n">proj_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+            <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">kymograph_img</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">proj_fn</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+            <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">proj_fn</span><span class="p">(</span><span class="n">vid</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">kymograph_img</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">vid</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">vid</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">kymograph_img</span>
         <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">vid</span><span class="p">[:,</span><span class="n">pos</span><span class="p">]</span>
+            <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">vid</span><span class="p">[:,</span><span class="n">pos</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">kymograph_img</span>
         <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">vid</span><span class="p">[:,:,</span><span class="n">pos</span><span class="p">]</span></div>
+            <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">vid</span><span class="p">[:,:,</span><span class="n">pos</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">kymograph_img</span></div>
         
-        
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">To Do: Kymograph using masks and erosion to.....</span>
-<span class="sd">&quot;&quot;&quot;</span> 
-
-
-
 <span class="c1">#==============================================================================</span>
 <span class="c1"># Below are the extensions of kymographs to superpixels.... </span>
 <span class="c1"># to do: make it more general to work with histograms (current) + masks!</span>
 <span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="construct_spatial_time_MOSES_velocity_x"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.kymographs.html#MOSES.Visualisation_Tools.kymographs.construct_spatial_time_MOSES_velocity_x">[docs]</a><span class="k">def</span> <span class="nf">construct_spatial_time_MOSES_velocity_x</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">proj_fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the velocity kymograph given computed superpixel tracks collapsing out one of the given spatial dimensions as give by &#39;axis&#39; using the given projection function, &#39;proj_fn&#39; or by taking a slice if &#39;pos&#39; is defined</span>
 
-<div class="viewcode-block" id="construct_spatial_time_MOSES_velocity_x"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.kymographs.html#MOSES.Visualisation_Tools.kymographs.construct_spatial_time_MOSES_velocity_x">[docs]</a><span class="k">def</span> <span class="nf">construct_spatial_time_MOSES_velocity_x</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    
+<span class="sd">    n_samples is used to bin across the designated spatial axis in order to create an image from the unordered nature of the (x,y) points</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        a (n_spixels, n_frames, 2) array of (y,x) coordinates giving the superpixel centroid</span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a tuple (n_rows, n_cols) giving the dimensions of the original image</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        the number of values to divide the axis into to aggregate statistics</span>
+<span class="sd">    axis : int </span>
+<span class="sd">        the image axis to aggregate information over (in order to collapse the image dimensionality)</span>
+<span class="sd">    proj_fn : None or numpy function</span>
+<span class="sd">        function to aggregate image information along one axis, if None, defaults to np.nanmedian which handles NaN</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kymograph_img : numpy array</span>
+<span class="sd">        the projected image of size (n_frames-1, n_samples-1) with time along the image rows and a spatial dimension along the image columns</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     <span class="n">nspixels</span><span class="p">,</span> <span class="n">nframes</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span>
     <span class="n">velocity_tracks</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">tracks</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    
+    <span class="n">velocity_tracks</span> <span class="o">=</span> <span class="n">velocity_tracks</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
 <span class="c1">#    pos_x = np.mean(tracks, axis=1)[:,1] # take the x positions</span>
     <span class="n">x_sampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
- 
     <span class="n">res_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nframes</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_sampling</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
 <span class="c1">#    for x in unique_x:</span>
@@ -192,17 +230,51 @@
             <span class="n">pos_x</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="n">t</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">pos_x</span><span class="o">&gt;=</span><span class="n">x_sampling</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pos_x</span><span class="o">&lt;</span><span class="n">x_sampling</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">moses</span> <span class="o">=</span> <span class="n">velocity_tracks</span><span class="p">[</span><span class="n">select</span><span class="p">,</span> <span class="n">t</span> <span class="p">,</span> <span class="n">axis</span><span class="p">]</span>
-            <span class="n">av_moses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">moses</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-            
+            <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">moses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span>
+            <span class="c1"># this line is required for dense tracking to avoid biasing the statistics towards 0 causing aliasing artifacts.</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">nonzero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">av_moses</span> <span class="o">=</span> <span class="n">proj_fn</span><span class="p">(</span><span class="n">moses</span><span class="p">[</span><span class="n">nonzero</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">av_moses</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">select</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">res_map</span><span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">av_moses</span>
 <span class="c1">#            else:</span>
 <span class="c1">#                res_map.append(np.zeros(nframes-1))</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res_map</span><span class="p">)</span>  </div>
+    <span class="n">kymograph_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res_map</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kymograph_img</span></div>
     
     
-<div class="viewcode-block" id="construct_spatial_time_MOSES_plot_x"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.kymographs.html#MOSES.Visualisation_Tools.kymographs.construct_spatial_time_MOSES_plot_x">[docs]</a><span class="k">def</span> <span class="nf">construct_spatial_time_MOSES_plot_x</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">moses_spatial_time</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span> <span class="n">filt_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">min_points</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-    
+<div class="viewcode-block" id="construct_spatial_time_MOSES_plot_x"><a class="viewcode-back" href="../../../MOSES.Visualisation_Tools.kymographs.html#MOSES.Visualisation_Tools.kymographs.construct_spatial_time_MOSES_plot_x">[docs]</a><span class="k">def</span> <span class="nf">construct_spatial_time_MOSES_plot_x</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">moses_spatial_time</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">51</span><span class="p">,</span> <span class="n">filt_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">min_points</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">proj_fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the kymograph of the MOSES mesh strain of individual superpixels given the computed superpixel tracks collapsing out one of the given spatial dimensions as give by &#39;axis&#39; using the given projection function, &#39;proj_fn&#39; or by taking a slice if &#39;pos&#39; is defined</span>
+
+<span class="sd">    n_samples is used to bin across the designated spatial axis in order to create an image from the unordered nature of the (x,y) points of the superpixel track positions</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        a (n_spixels, n_frames, 2) array of (y,x) coordinates giving the superpixel centroid</span>
+<span class="sd">    moses_spatial_time : numpy array</span>
+<span class="sd">        (n_frames x n_superpixels) array specifying the average neighbourhood mesh strain in each frame e.g. as generated by :meth:`MOSES.Motion_Analysis.mesh_statistics_tools.construct_MOSES_mesh`</span>
+<span class="sd">    shape : array-like</span>
+<span class="sd">        a tuple (n_rows, n_cols) giving the dimensions of the original image</span>
+<span class="sd">    n_samples : int</span>
+<span class="sd">        the number of values to divide the axis into to aggregate statistics</span>
+<span class="sd">    filt_outliers : bool </span>
+<span class="sd">        if True, tests whether each bin at each frame possesses the minimum number of superpixel positions given by min_points to get an estimate.</span>
+<span class="sd">    min_points : int </span>
+<span class="sd">        the minimum number of points in the selectd bin </span>
+<span class="sd">    axis : int </span>
+<span class="sd">        the image axis to aggregate information over (in order to collapse the image dimensionality)</span>
+<span class="sd">    proj_fn : None or numpy function</span>
+<span class="sd">        function to aggregate image information along one axis, if None, defaults to np.nanmedian which handles NaN</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kymograph_img : numpy array</span>
+<span class="sd">        the projected image of size (n_frames-1, n_samples-1) with time along the image rows and a spatial dimension along the image columns</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
     
     <span class="n">nframes</span><span class="p">,</span> <span class="n">nspixels</span> <span class="o">=</span> <span class="n">moses_spatial_time</span><span class="o">.</span><span class="n">shape</span>
@@ -212,12 +284,16 @@
 
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nframes</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_sampling</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">pos_x</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="n">t</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pos_x</span> <span class="o">=</span> <span class="n">tracks</span><span class="p">[:,</span><span class="n">t</span><span class="p">,</span><span class="n">axis</span><span class="p">]</span>
             <span class="n">select</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">pos_x</span><span class="o">&gt;=</span><span class="n">x_sampling</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pos_x</span><span class="o">&lt;</span><span class="n">x_sampling</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-            
             <span class="n">moses</span> <span class="o">=</span> <span class="n">moses_spatial_time</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">select</span><span class="p">]</span>
-            <span class="n">av_moses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">moses</span><span class="p">)</span>
-<span class="c1">#            print av_moses</span>
+            <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">moses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">nonzero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">av_moses</span> <span class="o">=</span> <span class="n">proj_fn</span><span class="p">(</span><span class="n">moses</span><span class="p">[</span><span class="n">nonzero</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">av_moses</span> <span class="o">=</span> <span class="mi">0</span>
+                
             <span class="k">if</span> <span class="n">filt_outliers</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">select</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_points</span><span class="p">:</span>
                     <span class="n">res_map</span><span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">av_moses</span>

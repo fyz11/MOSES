@@ -171,7 +171,29 @@
 <dl class="function">
 <dt id="MOSES.Visualisation_Tools.motion_field_visualisation.view_ang_flow">
 <code class="descclassname">MOSES.Visualisation_Tools.motion_field_visualisation.</code><code class="descname">view_ang_flow</code><span class="sig-paren">(</span><em>motion_field</em>, <em>ang_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Visualisation_Tools/motion_field_visualisation.html#view_ang_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Visualisation_Tools.motion_field_visualisation.view_ang_flow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create the angular flow from the optical flow field and visualise using HSV colouring.</p>
+<dd><p>Create the angular flow from the computed optical flow or motion field and visualise it using HSV colour scheme.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>motion_field</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">n_rows x n_cols x 2 numpy array where the two dimensions are assumed to be (x,y) giving the computed vector displacements</p>
+</dd>
+<dt><strong>ang_only</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True, the intensity of the colours will be fixed to the maximum brightness and not be correlated with the speed of motion</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>None, it is a void function.</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

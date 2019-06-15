@@ -22,16 +22,16 @@ def find_direction_wound(points, limits, spixel_size):
     
     Parameters
     ----------
-    points : 
+    points : numpy array
         (y,x) numpy array of points, (n_points x 2)
-    limits : 
+    limits : array-like
         (n_rows, n_cols), essentially the image dimension.
-    spixel_size : 
+    spixel_size : float
         (float) average superpixel width
     
     Returns
     -------
-    direction : 
+    direction : str
         a string either 'left' or 'right' designating the direction in which the superpixel moves. 
     
     """
@@ -62,16 +62,16 @@ def find_nearest_pairs_points(points_r, points_g):
     
     Parameters
     ----------
-    points_r : 
+    points_r : numpy array
         (n_points_to_keep*n_sweeps, 2) boundary points of red sheet
-    points_g :
+    points_g : numpy array
         (n_points_to_keep*n_sweeps, 2) boundary points of green sheet
     
     Returns
     -------
-    spixels_r : 
+    spixels_r : numpy array
         the green ids in points_g to match each r point to.
-    spixels_g : 
+    spixels_g : numpy array
         the red ids in points_r to match each g point to.
     
     """
@@ -98,11 +98,11 @@ def find_nearest_pairs_points(points_r, points_g):
 def baseline_als(y, lam, p, niter=10):
     """ Code adapted from https://stackoverflow.com/questions/29156532/python-baseline-correction-library. 
 
-    Implements paper of "Asymmetric Least Squares Smoothing" by P. Eilers and H. Boelens in 2005.
+    Implements paper of "Asymmetric Least Squares Smoothing" by P. Eilers and H. Boelens (2005), [1].
     
     Parameters
     ----------
-    y : 
+    y : numpy array
         numpy vector of observations to fit.
     lam : float 
         smoothness parameter, paper recommends 10**2 ≤ λ ≤ 10**9 for most applications.
@@ -113,8 +113,12 @@ def baseline_als(y, lam, p, niter=10):
     
     Returns
     -------
-    z : 
+    z : numpy array
         fitted baseline, same numpy vector size as y.
+
+    References
+    ----------
+    .. [1] Eilers PH, Boelens HF. "Baseline correction with asymmetric least squares smoothing." Leiden University Medical Centre Report. 2005 Oct 21;1(1):5.
     
     """
     from scipy import sparse
@@ -139,14 +143,14 @@ def locate_thresh(array, thresh):
     
     Parameters
     ----------
-    array : 
+    array : numpy array
         a numpy array of numbers 
     thresh : float
         specified cutoff 
     
     Returns
     -------
-    wound_close : 
+    wound_close : int
         the position of the array for which the value is just above thresh.
     
     """
@@ -182,7 +186,7 @@ def postprocess_img(img, close_ksize=5, size_factor=0.05):
     
     Returns
     -------
-    filt : 
+    filt : numpy array
         (n_rows x n_cols), post-processed binary image.
     """
     
@@ -205,26 +209,26 @@ def locate_boundary_points_sweepline_segmentation( areas_img, spixel_size, direc
     
     Parameters
     ----------
-    areas_img : 
+    areas_img : numpy array
         (n_rows x n_cols) binary image of the epithelial sheet.
-    frame : 
+    frame : int
         int, which frame number to compute.
-    spixel_size : (float) 
+    spixel_size : float 
         the average superpixel width.
-    direction : (default None)
+    direction : str (default: None)
         which direction the sheet is moving, takes 'left' or 'right'
-    n_sweeps : (int)
+    n_sweeps : int
         the number of vertical divisions of the image.
-    n_points_keep : (int)
+    n_points_keep : int
         for each vertical strip, the number of points to sample to approximate the sheet boundary.
     
     Returns
     -------
-    good_boundary_coords : 
+    good_boundary_coords : numpy array
         the (y,x) coordinates, (n_points_keep*n_sweeps x 2) numpy array that mark the boundary.
-    sweepline_seg_y : 
+    sweepline_seg_y : numpy array
         (n_points_keep*n_sweeps,) numpy vector which strip id the boundary points are in. 
-    direction : 
+    direction : str
         'left' or 'right' string, denoting the direction in which the epithelial sheet is moving in 
     
     """
@@ -253,7 +257,6 @@ def locate_boundary_points_sweepline_segmentation( areas_img, spixel_size, direc
         if direction == 'left':
             move_points = np.vstack([np.arange(m, dtype=np.int), 0*np.ones(m, dtype=np.int)]).T 
     
-#    print direction
     """
     # create the sweep lines intervals. 
     """
@@ -293,8 +296,7 @@ def locate_boundary_points_sweepline_segmentation( areas_img, spixel_size, direc
             if direction == 'right':
                 sort_order = np.argsort(spixel_region_x)
                 good_x = spixel_region[sort_order[:n_points_keep]]
-                                     
-#            print direction  
+                                      
             kept_points.append(good_x)
             sweepline_seg.append(i*np.ones(len(good_x), dtype=np.int))
             
@@ -335,16 +337,16 @@ def kmeans_cluster(image, n_clusters=2, train_split=0.1):
     
     Parameters
     ----------
-    image : 
+    image : numpy array
         (n_rows x n_cols), grayscale image
-    n_clusters : 
+    n_clusters : int
         the number of clusters to partition the image intensity, the higher the number, the finer the partitioning, allows for better handling of lower intensity cells.
-    train_split : 
+    train_split : float
         (0-1 float) proportion of pixels to use for fitting the kmeans cluster. 
     
     Returns
     -------
-    Y_new : 
+    Y_new :  numpy array
         (n_rows x n_cols), integer image, labelled by the cluster numbers.
     """
     from sklearn.cluster import KMeans
@@ -385,26 +387,26 @@ def wound_sweep_area_segmentation(vid_stack, spixel_size, max_frame, n_sweeps=50
 
     Parameters
     ----------
-    vid_stack : 
-        (n_frames, n_rows, n_cols, 3),     
-    spixel_size : 
+    vid_stack : numpy array
+        (n_frames, n_rows, n_cols, 3) RGB video     
+    spixel_size : int
         average superpixel width (int)
-    max_frame :
+    max_frame : int
         maximum frame number to which to compute the gap closure over.
-    n_sweeps :
+    n_sweeps : int
         number of strips to divide vertically the image.
-    n_points_keep : 
+    n_points_keep : int
         the number of points to keep for summarising the boundary.
-    n_clusters : 
+    n_clusters : int
         number of kmeans cluster for identifying the epithelial sheet. A larger number is better for segmenting weaker fluorescence/intensity staining.
-    p_als : 
+    p_als : float
         this controls the assymmetry in fitting the baseline. see stackoverflow: https://stackoverflow.com/questions/29156532/python-baseline-correction-library 
-    to_plot : 
+    to_plot : bool
         plot the diagnostic image or not to check fitting and inference.
     
     Returns
     -------
-    wound_frame : 
+    wound_frame : int
         predicted frame where gap closure occurs.
     
     """
@@ -533,32 +535,4 @@ def wound_sweep_area_segmentation(vid_stack, spixel_size, max_frame, n_sweeps=50
         plt.show()
     
     return wound_frame + 1 # remember to add one onto... 
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        
-        
-    
-    
-    
-    
-    
-    
+ 

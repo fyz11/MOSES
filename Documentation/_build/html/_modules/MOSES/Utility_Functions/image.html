@@ -148,35 +148,65 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
 
-<span class="c1"># check the two are identical.</span>
-<div class="viewcode-block" id="maxpool_scale"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.maxpool_scale">[docs]</a><span class="k">def</span> <span class="nf">maxpool_scale</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+<span class="c1"># # check the two are identical.</span>
+<span class="c1"># def maxpool_scale(img, scale=32):</span>
     
-    <span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">MaxPooling2D</span>
-    <span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Sequential</span>
+<span class="c1">#     from keras.layers import MaxPooling2D</span>
+<span class="c1">#     from keras.models import Sequential</span>
     
-    <span class="n">im</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># pad... </span>
+<span class="c1">#     im = img[None,:] # pad... </span>
     
-    <span class="n">mod</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
-    <span class="n">mod</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">scale</span><span class="p">),</span> <span class="n">input_shape</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+<span class="c1">#     mod = Sequential()</span>
+<span class="c1">#     mod.add(MaxPooling2D(pool_size=(scale, scale), input_shape=img.shape))</span>
+<span class="c1">#     out = mod.predict(im)</span>
     
-    <span class="k">return</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+<span class="c1">#     return out[0]</span>
 
+<div class="viewcode-block" id="pool_numpy"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.pool_numpy">[docs]</a><span class="k">def</span> <span class="nf">pool_numpy</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Downscale the given array by the given factor by the method specified by func.</span>
 
-<div class="viewcode-block" id="pool_numpy"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.pool_numpy">[docs]</a><span class="k">def</span> <span class="nf">pool_numpy</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">):</span>
-    
+<span class="sd">    N.B the array dimensions needs to be fully divisible by the specified factor along each array dimension</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    array : numpy array </span>
+<span class="sd">        any sized numpy array</span>
+<span class="sd">    factor : numpy array</span>
+<span class="sd">        a (n,) sized list or array specifying the integer size to pool each of the n array dimensions by, the array dimension along the corresponding axis must be able to be fully divided by the specified factor e.g. for an (m,n) array which we wish to downsample by 2 the factor=(2,2). For a (m,n,3) array we can use factor=(2,2,1) to downscale only the spatial dimensions by a factor of 2</span>
+<span class="sd">    func : python/numpy function</span>
+<span class="sd">        the function to use for pooling e.g. np.mean for taking the mean, np.median for taking the median </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    reduced_array : numpy array</span>
+<span class="sd">        the output downscaled array with each dimension shrunk by the given factor amount along each respective array dimension</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="k">import</span> <span class="n">block_reduce</span>
-    <span class="k">return</span> <span class="n">block_reduce</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="n">factor</span><span class="p">,</span><span class="n">factor</span><span class="p">),</span> <span class="n">func</span><span class="p">)</span></div>
+    <span class="n">reduced_array</span> <span class="o">=</span> <span class="n">block_reduce</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="n">factor</span><span class="p">,</span><span class="n">factor</span><span class="p">),</span> <span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reduced_array</span></div>
 
 
 <div class="viewcode-block" id="ridge_filter_hessian"><a class="viewcode-back" href="../../../MOSES.Utility_Functions.image.html#MOSES.Utility_Functions.image.ridge_filter_hessian">[docs]</a><span class="k">def</span> <span class="nf">ridge_filter_hessian</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Apply Hessian </span>
+    <span class="sd">&quot;&quot;&quot; Apply Hessian filtering to enhance vessel-like structures</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : numpy array</span>
+<span class="sd">        (n_rows, n_cols) grayscale input image</span>
+<span class="sd">    sigma : int </span>
+<span class="sd">        width of the Gaussian used for smoothing gradients</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    i2 : numpy array</span>
+<span class="sd">        image same size image showing enhanced ridge like structures</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">skimage.feature</span> <span class="k">import</span> <span class="n">hessian_matrix</span><span class="p">,</span> <span class="n">hessian_matrix_eigvals</span>
     <span class="kn">from</span> <span class="nn">skimage.filters</span> <span class="k">import</span> <span class="n">threshold_otsu</span>
     <span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="k">import</span> <span class="n">skeletonize</span>
-    <span class="c1">#assume you have an image img</span>
-    
+
     <span class="n">hxx</span><span class="p">,</span> <span class="n">hxy</span><span class="p">,</span> <span class="n">hyy</span> <span class="o">=</span> <span class="n">hessian_matrix</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
     <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span> <span class="o">=</span> <span class="n">hessian_matrix_eigvals</span><span class="p">(</span><span class="n">hxx</span><span class="p">,</span> <span class="n">hxy</span><span class="p">,</span> <span class="n">hyy</span><span class="p">)</span>
     

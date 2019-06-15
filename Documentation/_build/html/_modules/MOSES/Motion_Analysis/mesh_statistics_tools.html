@@ -174,7 +174,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    MOSES_mesh_strain_time : numpy array</span>
-<span class="sd">        (n_superpixels x n_frames), specifying the average neighbourhood mesh strain of each superpixel in each frame.</span>
+<span class="sd">        (n_frames x n_superpixels), specifying the average neighbourhood mesh strain of each superpixel in each frame.</span>
 <span class="sd">    nearest_neighbors_refined : list of numpy arrays</span>
 <span class="sd">        adjacency graph of how superpixels are connected (only found from initial points therefore is defined with the one timepoint at frame 0)</span>
 <span class="sd">    </span>
@@ -389,11 +389,120 @@
     
     <span class="k">return</span> <span class="n">mesh_stability_index</span><span class="p">,</span> <span class="n">norm_mean_strain</span></div>
     
+<span class="c1">#==============================================================================</span>
+<span class="c1"># Additional mesh implementations</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="construct_radial_neighbour_mesh"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.construct_radial_neighbour_mesh">[docs]</a><span class="k">def</span> <span class="nf">construct_radial_neighbour_mesh</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">spixel_size</span><span class="p">,</span> <span class="n">use_counts</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; constructs the radial neighbours mesh, linking a superpixel to any superpixels separated by a maximum distance &lt; dist_thresh * spixel_size </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    dist_thresh : float</span>
+<span class="sd">        radial distance cut-off as a multiplier of the average superpixel width.</span>
+<span class="sd">    spixel_size : float</span>
+<span class="sd">        average superpixel width.</span>
+<span class="sd">    use_counts : bool</span>
+<span class="sd">        if True returns the number of neighbours over time instead of the strain</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_strain_time : numpy array</span>
+<span class="sd">        (n_frames x n_superpixels) array specifying either the average neighbourhood distances of each superpixel in each frame (if use_counts=False) or the number of neighbours of each superpixel in each frame</span>
+<span class="sd">    nearest_neighbours_time : list of list of numpy arrays</span>
+<span class="sd">        adjacency graphs of how superpixels are connected over time</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">BallTree</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># ignore for now the dist_thresh:</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_spixels</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">use_counts</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+        <span class="n">mesh_strain_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_spixels</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mesh_strain_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_spixels</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
+        
+    <span class="n">nearest_neighbours_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+        <span class="c1"># prefilter the tracks, find the tracks whose coordinates are on the boundaries.    </span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tracks</span><span class="p">[:,</span><span class="n">frame</span><span class="p">,:])</span>
+        <span class="c1"># select = np.logical_and(np.logical_and(points[:,1] &gt; 0, points[:,0] &gt; 0), np.logical_and(points[:,1] &lt; limits[0]-1, points[:,0] &lt; limits[1]-1))</span>
+        <span class="c1"># bad = np.logical_not(select)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">leaf_size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">ind</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">count_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">return_distance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># return distance.        </span>
+        <span class="c1"># remove self from neighbours.</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">ii</span><span class="p">)</span>  <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">))]</span>
+
+        <span class="n">nearest_neighbours_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="c1"># report the number of neighbours.</span>
+        <span class="k">if</span> <span class="n">use_counts</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>        
+            <span class="n">num_neighbour_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ind_</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind_</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="c1"># num_neighbour_counts[bad] = np.median(num_neighbour_counts[select])</span>
+            <span class="c1"># save counts into array.</span>
+            <span class="n">mesh_strain_time</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_neighbour_counts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mean_neighbour_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dist</span><span class="p">])</span>
+            <span class="c1"># save counts into array.</span>
+            <span class="n">mesh_strain_time</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_neighbour_distance</span>
+
+    <span class="k">return</span> <span class="n">mesh_strain_time</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nearest_neighbours_time</span></div>
+
+
+<div class="viewcode-block" id="construct_knn_neighbour_mesh"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.construct_knn_neighbour_mesh">[docs]</a><span class="k">def</span> <span class="nf">construct_knn_neighbour_mesh</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; constructs the K nearest neighbours mesh, linking a superpixel to its closest K superpixels</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tracks : numpy array</span>
+<span class="sd">        (n_superpixels, n_frames, 2), numpy array of superpixel tracks.</span>
+<span class="sd">    k : int </span>
+<span class="sd">        the number of closest superpixels to link to</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mesh_strain_time : numpy array</span>
+<span class="sd">        (n_frames x n_superpixels) specifying the average neighbourhood distances of each superpixel at each frame</span>
+<span class="sd">    nearest_neighbours_time : list of list of numpy arrays</span>
+<span class="sd">        adjacency graphs of how superpixels are connected over time</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">BallTree</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="c1"># ignore for now the dist_thresh:</span>
+    <span class="n">n_frames</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_spixels</span> <span class="o">=</span> <span class="n">tracks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">mesh_strain_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_spixels</span><span class="p">,</span> <span class="n">n_frames</span><span class="p">))</span>
+    <span class="n">nearest_neighbours_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">):</span>
+        <span class="c1"># prefilter the tracks, find the tracks whose coordinates are on the boundaries.    </span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tracks</span><span class="p">[:,</span><span class="n">frame</span><span class="p">,:])</span>
+        <span class="c1"># select = np.logical_and(np.logical_and(points[:,1] &gt; 0, points[:,0] &gt; 0), np.logical_and(points[:,1] &lt; limits[0]-1, points[:,0] &lt; limits[1]-1))</span>
+        <span class="c1"># bad = np.logical_not(select)</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">BallTree</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">leaf_size</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">ind</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query_radius</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">count_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">return_distance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># return distance.        </span>
+        <span class="c1"># remove self from neighbours.</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">ii</span><span class="p">)</span>  <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">))]</span>
+
+        <span class="n">nearest_neighbours_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+        <span class="n">mean_neighbour_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dist</span><span class="p">])</span>
+        <span class="c1"># save counts into array.</span>
+        <span class="n">mesh_strain_time</span><span class="p">[:,</span> <span class="n">frame</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_neighbour_distance</span>
+
+    <span class="k">return</span> <span class="n">mesh_strain_time</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nearest_neighbours_time</span></div>
+
     
 <span class="c1">#==============================================================================</span>
 <span class="c1"># Boundary formation tools</span>
 <span class="c1">#==============================================================================</span>
-    
 <div class="viewcode-block" id="count_dynamic_nn_neighbors"><a class="viewcode-back" href="../../../MOSES.Motion_Analysis.mesh_statistics_tools.html#MOSES.Motion_Analysis.mesh_statistics_tools.count_dynamic_nn_neighbors">[docs]</a><span class="k">def</span> <span class="nf">count_dynamic_nn_neighbors</span><span class="p">(</span><span class="n">tracks</span><span class="p">,</span> <span class="n">dist_thresh</span><span class="p">,</span> <span class="n">limits</span><span class="p">):</span>
     
     <span class="sd">&quot;&quot;&quot; Uses an efficient radiusBallTree structure in sklearn to efficiently compute the number of neighbours to each superpixel efficiently for each frame.</span>
@@ -498,7 +607,7 @@
     
     <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="p">[]</span>
     
-    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
 
         <span class="n">blank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
         <span class="n">posframe</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">frame</span><span class="p">,:,:]</span>
@@ -1380,7 +1489,7 @@
     
     <span class="n">spatial_time_saliency_map</span> <span class="o">=</span> <span class="p">[]</span>
     
-    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">end_frame</span><span class="p">):</span>
 
         <span class="n">blank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">))</span>
         <span class="n">posframe</span> <span class="o">=</span> <span class="n">meantracks</span><span class="p">[</span><span class="n">frame</span><span class="p">,:,:]</span>

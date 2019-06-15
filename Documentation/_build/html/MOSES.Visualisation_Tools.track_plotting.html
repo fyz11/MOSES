@@ -170,7 +170,39 @@
 <dl class="function">
 <dt id="MOSES.Visualisation_Tools.track_plotting.plot_tracks">
 <code class="descclassname">MOSES.Visualisation_Tools.track_plotting.</code><code class="descname">plot_tracks</code><span class="sig-paren">(</span><em>tracks</em>, <em>ax</em>, <em>color=None</em>, <em>lw=1.0</em>, <em>alpha=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Visualisation_Tools/track_plotting.html#plot_tracks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Visualisation_Tools.track_plotting.plot_tracks" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>plots tracks onto a given matplotlib axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames x 2) numpy array, giving the centroid positions of superpixels over time</p>
+</dd>
+<dt><strong>ax</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib ax object</span><dd><p class="first last">a matplotlib axis instance such as that returned from fig, ax = plt.subplots()</p>
+</dd>
+<dt><strong>color</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">str</span><dd><p class="first last">colour of the plotted lines given either named or as (r,g,b) value.</p>
+</dd>
+<dt><strong>lw</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">linewidth, c.f. matplotlib</p>
+</dd>
+<dt><strong>alpha</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">transparency of the plotted lines, c.f. matplotlib value between 0-1 with 0 being fully transparent and 1 being solid</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>None, void function</strong></dt>
+<dd></dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 

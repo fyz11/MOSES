@@ -648,10 +648,42 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>MOSES_mesh_strain_time</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels x n_frames), specifying the average neighbourhood mesh strain of each superpixel in each frame.</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_superpixels), specifying the average neighbourhood mesh strain of each superpixel in each frame.</p>
 </dd>
 <dt><strong>nearest_neighbors_refined</strong></dt>
  <span class="classifier-delimiter">:</span> <span class="classifier">list of numpy arrays</span><dd><p class="first last">adjacency graph of how superpixels are connected (only found from initial points therefore is defined with the one timepoint at frame 0)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.construct_knn_neighbour_mesh">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">construct_knn_neighbour_mesh</code><span class="sig-paren">(</span><em>tracks</em>, <em>k=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#construct_knn_neighbour_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.construct_knn_neighbour_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>constructs the K nearest neighbours mesh, linking a superpixel to its closest K superpixels</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>k</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">the number of closest superpixels to link to</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_strain_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_superpixels) specifying the average neighbourhood distances of each superpixel at each frame</p>
+</dd>
+<dt><strong>nearest_neighbours_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of list of numpy arrays</span><dd><p class="first last">adjacency graphs of how superpixels are connected over time</p>
 </dd>
 </dl>
 </td>
@@ -681,6 +713,44 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><strong>mesh_strain_time_vector</strong></dt>
  <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_superpixels x 2), giving the mean mesh strain vector of each superpixel relative to its neighbours at each time point.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MOSES.Motion_Analysis.mesh_statistics_tools.construct_radial_neighbour_mesh">
+<code class="descclassname">MOSES.Motion_Analysis.mesh_statistics_tools.</code><code class="descname">construct_radial_neighbour_mesh</code><span class="sig-paren">(</span><em>tracks</em>, <em>dist_thresh</em>, <em>spixel_size</em>, <em>use_counts=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Motion_Analysis/mesh_statistics_tools.html#construct_radial_neighbour_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Motion_Analysis.mesh_statistics_tools.construct_radial_neighbour_mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>constructs the radial neighbours mesh, linking a superpixel to any superpixels separated by a maximum distance &lt; dist_thresh * spixel_size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>tracks</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_superpixels, n_frames, 2), numpy array of superpixel tracks.</p>
+</dd>
+<dt><strong>dist_thresh</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">radial distance cut-off as a multiplier of the average superpixel width.</p>
+</dd>
+<dt><strong>spixel_size</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">average superpixel width.</p>
+</dd>
+<dt><strong>use_counts</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd><p class="first last">if True returns the number of neighbours over time instead of the strain</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>mesh_strain_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_frames x n_superpixels) array specifying either the average neighbourhood distances of each superpixel in each frame (if use_counts=False) or the number of neighbours of each superpixel in each frame</p>
+</dd>
+<dt><strong>nearest_neighbours_time</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list of list of numpy arrays</span><dd><p class="first last">adjacency graphs of how superpixels are connected over time</p>
 </dd>
 </dl>
 </td>

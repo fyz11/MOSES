@@ -404,11 +404,6 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="MOSES.Utility_Functions.image.maxpool_scale">
-<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">maxpool_scale</code><span class="sig-paren">(</span><em>img</em>, <em>scale=32</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#maxpool_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.maxpool_scale" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="MOSES.Utility_Functions.image.min_max_scaling">
 <code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">min_max_scaling</code><span class="sig-paren">(</span><em>img</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#min_max_scaling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.min_max_scaling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Min-max scaling of image intensities, same as skimage.rescale_intensity()</p>
@@ -479,8 +474,36 @@
 
 <dl class="function">
 <dt id="MOSES.Utility_Functions.image.pool_numpy">
-<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">pool_numpy</code><span class="sig-paren">(</span><em>array</em>, <em>factor=2</em>, <em>func=&lt;function amax&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#pool_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.pool_numpy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">pool_numpy</code><span class="sig-paren">(</span><em>array</em>, <em>factor</em>, <em>func=&lt;function amax&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#pool_numpy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.pool_numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downscale the given array by the given factor by the method specified by func.</p>
+<p>N.B the array dimensions needs to be fully divisible by the specified factor along each array dimension</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>array</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">any sized numpy array</p>
+</dd>
+<dt><strong>factor</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">a (n,) sized list or array specifying the integer size to pool each of the n array dimensions by, the array dimension along the corresponding axis must be able to be fully divided by the specified factor e.g. for an (m,n) array which we wish to downsample by 2 the factor=(2,2). For a (m,n,3) array we can use factor=(2,2,1) to downscale only the spatial dimensions by a factor of 2</p>
+</dd>
+<dt><strong>func</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">python/numpy function</span><dd><p class="first last">the function to use for pooling e.g. np.mean for taking the mean, np.median for taking the median</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>reduced_array</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">the output downscaled array with each dimension shrunk by the given factor amount along each respective array dimension</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="MOSES.Utility_Functions.image.quant_boundary_cells">
@@ -522,7 +545,30 @@
 <dl class="function">
 <dt id="MOSES.Utility_Functions.image.ridge_filter_hessian">
 <code class="descclassname">MOSES.Utility_Functions.image.</code><code class="descname">ridge_filter_hessian</code><span class="sig-paren">(</span><em>img</em>, <em>sigma=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MOSES/Utility_Functions/image.html#ridge_filter_hessian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MOSES.Utility_Functions.image.ridge_filter_hessian" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply Hessian</p>
+<dd><p>Apply Hessian filtering to enhance vessel-like structures</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>img</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">(n_rows, n_cols) grayscale input image</p>
+</dd>
+<dt><strong>sigma</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">width of the Gaussian used for smoothing gradients</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>i2</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span><dd><p class="first last">image same size image showing enhanced ridge like structures</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
