@@ -331,7 +331,7 @@ def construct_knn_neighbour_mesh(tracks, k=4):
         adjacency graphs of how superpixels are connected over time
     
     """
-    from sklearn.neighbors import BallTree
+    from sklearn.neighbors import NearestNeighbors
     import numpy as np 
     
     # ignore for now the dist_thresh:
@@ -346,8 +346,9 @@ def construct_knn_neighbour_mesh(tracks, k=4):
         points = np.squeeze(tracks[:,frame,:])
         # select = np.logical_and(np.logical_and(points[:,1] > 0, points[:,0] > 0), np.logical_and(points[:,1] < limits[0]-1, points[:,0] < limits[1]-1))
         # bad = np.logical_not(select)
-        tree = BallTree(points, leaf_size=30)
-        ind, dist = tree.query_radius(points, k = k + 1, count_only = False, return_distance = True) # return distance.        
+        neighbor_model = NearestNeighbors(n_neighbors = k+1)
+        neighbor_model.fit(points)
+        ind = neighbor_model.kneighbors(points, return_distance=False) # return distance.        
         # remove self from neighbours.
         ind = [np.setdiff1d(ind[ii], ii)  for ii in range(len(ind))]
 
