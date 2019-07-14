@@ -348,7 +348,7 @@ def construct_knn_neighbour_mesh(tracks, k=4):
         # bad = np.logical_not(select)
         neighbor_model = NearestNeighbors(n_neighbors = k+1)
         neighbor_model.fit(points)
-        ind = neighbor_model.kneighbors(points, return_distance=False) # return distance.        
+        dist, ind = neighbor_model.kneighbors(points, return_distance=True) # return distance.        
         # remove self from neighbours.
         ind = [np.setdiff1d(ind[ii], ii)  for ii in range(len(ind))]
 
